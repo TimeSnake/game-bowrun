@@ -9,8 +9,9 @@ import de.timesnake.basic.loungebridge.util.user.GameUser;
 import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.library.basic.util.chat.ChatColor;
-import de.timesnake.library.basic.util.cmd.Arguments;
-import de.timesnake.library.basic.util.cmd.ExCommand;
+import de.timesnake.library.extension.util.chat.Chat;
+import de.timesnake.library.extension.util.cmd.Arguments;
+import de.timesnake.library.extension.util.cmd.ExCommand;
 import net.md_5.bungee.api.chat.ClickEvent;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public class RecordVerification implements CommandListener {
                 continue;
             }
 
-            user.sendClickableMessage(Server.getChatManager().getSenderPlugin(Plugin.BOWRUN) + ChatColor.WARNING + "§lVerify record, if it was legal", "/bowrun_verify", "Click to verify", ClickEvent.Action.RUN_COMMAND);
+            user.sendClickableMessage(Chat.getSenderPlugin(Plugin.BOWRUN) + ChatColor.WARNING + "§lVerify record, if it was legal", "/bowrun_verify", "Click to verify", ClickEvent.Action.RUN_COMMAND);
         }
     }
 
@@ -76,7 +77,7 @@ public class RecordVerification implements CommandListener {
                 continue;
             }
 
-            user.sendClickableMessage(Server.getChatManager().getSenderPlugin(Plugin.BOWRUN) + ChatColor.WARNING + "§lReject record, if it was illegal", "/bowrun_reject", "Click to reject", ClickEvent.Action.RUN_COMMAND);
+            user.sendClickableMessage(Chat.getSenderPlugin(Plugin.BOWRUN) + ChatColor.WARNING + "§lReject record, if it was illegal", "/bowrun_reject", "Click to reject", ClickEvent.Action.RUN_COMMAND);
         }
 
         Server.runTaskLaterSynchrony(() -> {
