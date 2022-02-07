@@ -18,6 +18,7 @@ import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.game.bowrun.user.BowRunUser;
 import de.timesnake.game.bowrun.user.UserManager;
 import de.timesnake.library.basic.util.statistics.Stat;
+import de.timesnake.library.extension.util.chat.Chat;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -240,7 +241,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
             }
         }
 
-        this.broadcastGameMessage(Server.getChat().getLongLineSeparator());
+        this.broadcastGameMessage(Chat.getLongLineSeparator());
         Server.broadcastSound(END_SOUND, 5F);
         switch (winType) {
             case ARCHER:
@@ -276,7 +277,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
                 this.broadcastGameMessage(ChatColor.WHITE + "Game has ended");
         }
 
-        this.broadcastGameMessage(Server.getChat().getLongLineSeparator());
+        this.broadcastGameMessage(Chat.getLongLineSeparator());
 
         GameUser userKills = LoungeBridgeServer.getMostKills((Collection) BowRunServer.getGame().getArcherTeam().getUsers());
         GameUser userDeaths = LoungeBridgeServer.getMostDeaths(((Collection) BowRunServer.getGame().getRunnerTeam().getUsers()));
@@ -292,7 +293,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
             this.broadcastGameMessage(ChatColor.WHITE + "Longest Shot: " + ChatColor.GOLD + userLongestShot.getLongestShot() + ChatColor.WHITE + " by " + userLongestShot.getChatName());
         }
 
-        this.broadcastGameMessage(Server.getChat().getLongLineSeparator());
+        this.broadcastGameMessage(Chat.getLongLineSeparator());
 
         String recordTime = null;
         UUID lastRecord = null;
