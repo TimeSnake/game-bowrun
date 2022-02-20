@@ -7,7 +7,6 @@ import de.timesnake.basic.loungebridge.util.user.GameUser;
 import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.game.bowrun.server.BowRunMap;
 import de.timesnake.game.bowrun.server.BowRunServer;
-import de.timesnake.game.bowrun.server.BowRunServerManager;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -20,14 +19,14 @@ import java.util.List;
 public class BowRunUser extends GameUser {
 
     public static final ItemStack RUNNER_REMOVER = new ExItemStack(Material.NETHERITE_SWORD, "§6RunnerRemover", true, List.of(Enchantment.DAMAGE_ALL, Enchantment.SWEEPING_EDGE), List.of(10, 10));
-    public static final ExItemStack BOW = new ExItemStack(Material.BOW, true, List.of(Enchantment.ARROW_INFINITE), List.of(1));
+    public static final ExItemStack BOW = new ExItemStack(Material.BOW, true);
     public static final ExItemStack FOOD = new ExItemStack(Material.COOKED_BEEF, 32);
     public static final ExItemStack ARROW = new ExItemStack(Material.ARROW);
     public static final ExItemStack DEATH = new ExItemStack(8, Material.RED_DYE, "§cSuicide (no special item)");
 
-    public static final ExItemStack INSTANT_BOW = new ExItemStack(Material.BOW, "§6Instant-Bow", true, List.of(Enchantment.ARROW_INFINITE, Enchantment.ARROW_DAMAGE), List.of(1, 10));
+    public static final ExItemStack INSTANT_BOW = new ExItemStack(Material.BOW, "§6Instant-Bow", true, List.of(Enchantment.ARROW_DAMAGE), List.of(10));
 
-    public static final ExItemStack PUNCH_BOW = new ExItemStack(Material.BOW, "§6Punch-Bow", true, List.of(Enchantment.ARROW_INFINITE, Enchantment.ARROW_KNOCKBACK), List.of(1, 5));
+    public static final ExItemStack PUNCH_BOW = new ExItemStack(Material.BOW, "§6Punch-Bow", true, List.of(Enchantment.ARROW_KNOCKBACK), List.of(5));
 
     private ItemStack[] armor;
 
@@ -111,24 +110,24 @@ public class BowRunUser extends GameUser {
     }
 
     private void setArmor() {
-        if (BowRunServerManager.getInstance().getRunnerArmor().get(0)) {
-            this.getInventory().setBoots(BowRunServerManager.armor.get(0));
+        if (BowRunServer.getRunnerArmor().get(0)) {
+            this.getInventory().setBoots(BowRunServer.armor.get(0));
         }
-        if (BowRunServerManager.getInstance().getRunnerArmor().get(1)) {
-            this.getInventory().setLeggings(BowRunServerManager.armor.get(1));
+        if (BowRunServer.getRunnerArmor().get(1)) {
+            this.getInventory().setLeggings(BowRunServer.armor.get(1));
         }
-        if (BowRunServerManager.getInstance().getRunnerArmor().get(2)) {
-            this.getInventory().setChestplate(BowRunServerManager.armor.get(2));
+        if (BowRunServer.getRunnerArmor().get(2)) {
+            this.getInventory().setChestplate(BowRunServer.armor.get(2));
         }
-        if (BowRunServerManager.getInstance().getRunnerArmor().get(3)) {
-            this.getInventory().setHelmet(BowRunServerManager.armor.get(3));
+        if (BowRunServer.getRunnerArmor().get(3)) {
+            this.getInventory().setHelmet(BowRunServer.armor.get(3));
         }
     }
 
     @Override
     public void addKill() {
         super.addKill();
-        this.playSound(BowRunServerManager.KILL_SOUND, 4F);
+        this.playSound(BowRunServer.KILL_SOUND, 4F);
         this.setScoreboardKillDeathScore();
     }
 
@@ -184,8 +183,8 @@ public class BowRunUser extends GameUser {
 
             if (!this.suicided) {
                 if (!map.isRunnerNoSpecialItems()) {
-                    if (Math.random() < BowRunServerManager.getInstance().getRunnerItemChance()) {
-                        this.addItem(BowRunServerManager.getInstance().getRandomRunnerItem());
+                    if (Math.random() < BowRunServer.getRunnerItemChance()) {
+                        this.addItem(BowRunServer.getRandomRunnerItem());
                     }
                 }
             } else {
@@ -219,7 +218,7 @@ public class BowRunUser extends GameUser {
         } else {
             this.setItem(1, BOW);
         }
-        this.setItem(8, ARROW);
+        this.setItem(8, ARROW.cloneWithId().asQuantity(BowRunServer.MAX_ARROWS));
         this.getInventory().setHelmet(new ExItemStack(Material.LEATHER_HELMET, BowRunServer.getGame().getArcherTeam().getColor()));
     }
 
@@ -235,14 +234,14 @@ public class BowRunUser extends GameUser {
     }
 
     public void loadGameSideboard() {
-        this.setSideboard(BowRunServerManager.getInstance().getGameSideboard());
+        this.setSideboard(BowRunServer.getGameSideboard());
         if (this.getTeam() == null) {
             return;
         }
         if (this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
-            this.setSideboardScore(1, BowRunServerManager.SIDEBOARD_DEATHS_TEXT);
+            this.setSideboardScore(1, BowRunServer.SIDEBOARD_DEATHS_TEXT);
         } else if (this.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
-            this.setSideboardScore(1, BowRunServerManager.SIDEBOARD_KILLS_TEXT);
+            this.setSideboardScore(1, BowRunServer.SIDEBOARD_KILLS_TEXT);
         }
         this.setScoreboardKillDeathScore();
     }
