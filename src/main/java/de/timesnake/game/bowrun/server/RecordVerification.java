@@ -89,7 +89,7 @@ public class RecordVerification implements CommandListener {
 
     public void setRecord() {
         this.map.setBestTime(time, this.finisher.getUniqueId());
-        this.finisher.addCoins(BowRunServerManager.RECORD_COINS, true);
+        this.finisher.addCoins(BowRunServer.RECORD_COINS, true);
         this.time = null;
     }
 

@@ -26,11 +26,14 @@ import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitTask;
 
 public class UserManager implements Listener, UserInventoryInteractListener {
 
     private static final double WATER_DAMAGE = 2; // per sec
     private static final int ITEM_REMOVE_DELAY = 15 * 20; // in ticks
+
+    private BukkitTask arrowGeneratorTask;
 
     public UserManager() {
         Server.registerListener(this, GameBowRun.getPlugin());
@@ -49,6 +52,25 @@ public class UserManager implements Listener, UserInventoryInteractListener {
                 }
             }
         }, 0, 10, GameBowRun.getPlugin());
+    }
+
+    public void runArrowGenerator(int periodInTicks) {
+        this.arrowGeneratorTask = Server.runTaskTimerSynchrony(() -> {
+            if (BowRunServer.getMap() != null) {
+                for (TeamUser user : BowRunServer.getGame().getArcherTeam().getInGameUsers()) {
+                    int delta = user.containsAtLeast(BowRunUser.ARROW, BowRunServer.MAX_ARROWS, true);
+                    if (delta < 0) {
+                        user.addItem(BowRunUser.ARROW.cloneWithId().asQuantity(Math.min(BowRunServer.RESPAWN_ARROW_AMOUNT, -delta)));
+                    }
+                }
+            }
+        }, 0, periodInTicks, GameBowRun.getPlugin());
+    }
+
+    public void cancelArrowGenerator() {
+        if (this.arrowGeneratorTask != null) {
+            this.arrowGeneratorTask.cancel();
+        }
     }
 
     @EventHandler
@@ -93,20 +115,29 @@ public class UserManager implements Listener, UserInventoryInteractListener {
     }
 
     @EventHandler
-    public synchronized void onUserMoveEvent(UserMoveEvent e) {
+    public void onUserMoveEvent(UserMoveEvent e) {
 
         BowRunUser user = (BowRunUser) e.getUser();
 
-        if (user.getTeam() != null && user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
+        if (user.getTeam() == null) {
+            return;
+        }
+
+        if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
             if (BowRunServer.getMap().isArcherHover()) {
                 if (e.getFrom().getY() != e.getTo().getY()) {
                     e.setCancelled(true);
                 }
             }
 
-            if (BowRunServer.getMap().isArcherBorder() && !e.getFrom().getBlock().equals(e.getTo().getBlock())) {
+            if ((BowRunServer.getMap().isArcherBorder() || BowRunServer.getMap().isArcherKnockbackBorder()) && !e.getFrom().getBlock().equals(e.getTo().getBlock())) {
                 if (BowRunServer.getMap().getArcherBorderLocs().contains(new Tuple<>(e.getTo().getBlockX(), e.getTo().getBlockZ()))) {
-                    user.teleportToTeamSpawn();
+                    if (BowRunServer.getMap().isArcherBorder()) {
+                        user.teleportToTeamSpawn();
+                    } else if (BowRunServer.getMap().isArcherKnockbackBorder()) {
+                        e.setCancelled(true);
+                        Server.runTaskLaterSynchrony(() -> user.setVelocity(e.getFrom().toVector().subtract(e.getTo().toVector()).normalize().multiply(1)), 1, GameBowRun.getPlugin());
+                    }
                 }
             }
         }
@@ -123,9 +154,9 @@ public class UserManager implements Listener, UserInventoryInteractListener {
         }
 
         if (e.getTo().getBlockY() < BowRunServer.getMap().getRunnerDeathHeight()) {
-            if (user.getTeam() != null && user.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
+            if (user.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
                 user.kill();
-            } else if (user.getTeam() != null && user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
+            } else if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
                 user.teleportToTeamSpawn();
             }
         }
@@ -134,12 +165,12 @@ public class UserManager implements Listener, UserInventoryInteractListener {
             if (user.getLocation().getBlock().equals(BowRunServer.getMap().getRunnerFinish().getBlock())) {
                 if (BowRunServer.getMap().isRelayRace()) {
                     if (user.contains(RelayManager.RELAY)) {
-                        user.addCoins(BowRunServerManager.WIN_COINS, true);
-                        BowRunServer.stopGame(BowRunServerManager.WinType.RUNNER_FINISH, user);
+                        user.addCoins(BowRunServer.WIN_COINS, true);
+                        BowRunServer.stopGame(BowRunServer.WinType.RUNNER_FINISH, user);
                     }
                 } else {
-                    user.addCoins(BowRunServerManager.WIN_COINS, true);
-                    BowRunServer.stopGame(BowRunServerManager.WinType.RUNNER_FINISH, user);
+                    user.addCoins(BowRunServer.WIN_COINS, true);
+                    BowRunServer.stopGame(BowRunServer.WinType.RUNNER_FINISH, user);
                 }
             }
 

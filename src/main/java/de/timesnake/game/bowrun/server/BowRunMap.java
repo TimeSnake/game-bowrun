@@ -28,6 +28,7 @@ public class BowRunMap extends Map {
     private static final String ARCHER_ONLY_PUNCH = "p";
     private static final String ARCHER_BOW_NO_GRAVITY = "g";
     private static final String ARCHER_BORDER = "b";
+    private static final String ARCHER_KNOCKBACK_BORDER = "k";
     private static final String ARCHER_NO_SPEED = "s";
 
     private static final String RUNNER_NO_SPECIAL_ITEMS = "N";
@@ -45,6 +46,7 @@ public class BowRunMap extends Map {
     private boolean archerHover = false;
     private boolean archerBowNoGravity = false;
     private boolean archerBorder = false;
+    private boolean archerKnockbackBorder = false;
     private boolean archerNoSpeed = false;
     private boolean onlyInstant = false;
     private boolean onlyPunch = false;
@@ -183,7 +185,11 @@ public class BowRunMap extends Map {
             this.archerBorder = tags.contains(ARCHER_BORDER);
             Server.printText(Plugin.BOWRUN, "Map" + this.getName() + " archer-border: " + this.archerBorder);
 
-            if (this.archerBorder) {
+            // knockback border
+            this.archerKnockbackBorder = tags.contains(ARCHER_KNOCKBACK_BORDER);
+            Server.printText(Plugin.BOWRUN, "Map" + this.getName() + " archer-knockback-border: " + this.archerKnockbackBorder);
+
+            if (this.archerBorder || this.archerKnockbackBorder) {
                 this.searchArcherBorder();
             }
 
@@ -319,6 +325,10 @@ public class BowRunMap extends Map {
 
     public boolean isArcherBorder() {
         return archerBorder;
+    }
+
+    public boolean isArcherKnockbackBorder() {
+        return archerKnockbackBorder;
     }
 
     public boolean isArcherNoSpeed() {
