@@ -162,20 +162,21 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
             this.userManager.runArrowGenerator(period);
 
             playingTimeTask = Server.runTaskTimerSynchrony(() -> {
+                this.playingTime--;
+
                 updateGameTimeOnSideboard();
-                if (playingTime % 20 == 0) {
+                if (this.playingTime % 20 == 0) {
                     this.giveArcherSpecialItems();
                 }
 
-                if ((playingTime % 60) == 0) {
+                if ((this.playingTime % 60) == 0) {
                     Server.broadcastNote(BowRunServer.TIME_INSTRUMENT, BowRunServer.TIME_NOTE);
                 }
-                if (playingTime == 0) {
+                if (this.playingTime == 0) {
                     Server.runTaskSynchrony(() -> stopGame(BowRunServer.WinType.ARCHER_TIME, null), GameBowRun.getPlugin());
                 }
 
-                playingTime--;
-            }, 0, 20, GameBowRun.getPlugin());
+            }, 20, 20, GameBowRun.getPlugin());
         }
     }
 

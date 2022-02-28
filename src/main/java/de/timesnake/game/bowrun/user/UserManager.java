@@ -143,7 +143,7 @@ public class UserManager implements Listener, UserInventoryInteractListener {
         }
 
         if (!BowRunServer.isGameRunning()) {
-            if (e.getTo().getBlockY() < 0) {
+            if (e.getTo().getBlockY() < BowRunServer.getMap().getRunnerDeathHeight()) {
                 user.teleportToTeamSpawn();
             }
             return;
