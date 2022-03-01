@@ -76,10 +76,15 @@ public class BowRunMap extends Map {
         if (world != null) {
             Server.getWorldManager().backupWorld(world);
             Server.printText(Plugin.BOWRUN, "Backup map " + world.getName());
-            world.setBlockPlaceAllow(false);
+            world.allowBlockPlace(false);
             world.allowFireSpread(false);
             world.allowBlockBreak(false);
             world.allowEntityExplode(false);
+            world.allowBlockBurnUp(false);
+            world.allowFirecampInteraction(true);
+            world.allowFluidCollect(false);
+            world.allowFluidPlace(false);
+            world.allowFlintAndSteel(false);
             world.setExceptService(true);
             world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
             world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
