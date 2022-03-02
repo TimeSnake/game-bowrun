@@ -81,7 +81,7 @@ public class BowRunMap extends Map {
             world.allowBlockBreak(false);
             world.allowEntityExplode(false);
             world.allowBlockBurnUp(false);
-            world.allowFirecampInteraction(true);
+            world.allowLightUpInteraction(true);
             world.allowFluidCollect(false);
             world.allowFluidPlace(false);
             world.allowFlintAndSteel(false);
