@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
@@ -293,7 +294,7 @@ public class UserManager implements Listener, UserInventoryInteractListener {
             return;
         }
 
-        if (BowRunServerManager.getInstance().isGameRunning()) {
+        if (BowRunServerManager.getInstance().isGameRunning() && (e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK))) {
             if (user.getLastDamager() == null) {
                 user.suicided();
             }
@@ -310,14 +311,8 @@ public class UserManager implements Listener, UserInventoryInteractListener {
 
         if ((e.getOldEffect() != null && e.getOldEffect().getType().equals(PotionEffectType.INVISIBILITY)) || (e.getNewEffect() != null && e.getNewEffect().getType().equals(PotionEffectType.INVISIBILITY))) {
             switch (e.getAction()) {
-                case ADDED:
-                case CHANGED:
-                    Server.getUser(((Player) e.getEntity())).clearArmor();
-                    break;
-                case CLEARED:
-                case REMOVED:
-                    ((BowRunUser) Server.getUser(((Player) e.getEntity()))).restoreArmor();
-                    break;
+                case ADDED, CHANGED -> Server.getUser(((Player) e.getEntity())).clearArmor();
+                case CLEARED, REMOVED -> ((BowRunUser) Server.getUser(((Player) e.getEntity()))).restoreArmor();
             }
         }
 
