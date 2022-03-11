@@ -94,6 +94,19 @@ public class UserManager implements Listener, UserInventoryInteractListener {
     }
 
     @EventHandler
+    public void onPotion(EntityPotionEffectEvent e) {
+        if (!(e.getEntity() instanceof Player)) {
+            return;
+        }
+
+        BowRunUser user = (BowRunUser) Server.getUser(((Player) e.getEntity()));
+
+        if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     public void onUserDamage(UserDamageEvent e) {
         TeamUser user = (TeamUser) e.getUser();
 
