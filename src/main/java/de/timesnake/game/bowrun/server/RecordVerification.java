@@ -83,8 +83,23 @@ public class RecordVerification implements CommandListener {
         Server.runTaskLaterSynchrony(() -> {
             if (!this.rejected) {
                 this.setRecord();
+                for (User user : Server.getUsers()) {
+                    if (!user.hasPermission("game.bowrun.reject")) {
+                        continue;
+                    }
+
+                    user.sendPluginMessage(Plugin.BOWRUN, ChatColor.WARNING + "Saved verified record");
+                }
+            } else {
+                for (User user : Server.getUsers()) {
+                    if (!user.hasPermission("game.bowrun.reject")) {
+                        continue;
+                    }
+
+                    user.sendPluginMessage(Plugin.BOWRUN, ChatColor.WARNING + "Discarded unverified record");
+                }
             }
-        }, 20 * 10, GameBowRun.getPlugin());
+        }, 20 * 8, GameBowRun.getPlugin());
     }
 
     public void setRecord() {
