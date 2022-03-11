@@ -6,7 +6,6 @@ import de.timesnake.basic.bukkit.util.chat.ChatColor;
 import de.timesnake.basic.bukkit.util.user.ExItemStack;
 import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.bukkit.util.user.scoreboard.Sideboard;
-import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServer;
 import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServerManager;
 import de.timesnake.basic.loungebridge.util.user.GameUser;
 import de.timesnake.basic.loungebridge.util.user.Kit;
@@ -250,21 +249,9 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
         }
 
         this.broadcastGameMessage(Chat.getLongLineSeparator());
-
-        GameUser userKills = LoungeBridgeServer.getMostKills((Collection) BowRunServer.getGame().getArcherTeam().getUsers());
-        GameUser userDeaths = LoungeBridgeServer.getMostDeaths(((Collection) BowRunServer.getGame().getRunnerTeam().getUsers()));
-        GameUser userLongestShot = LoungeBridgeServer.getLongestShot(((Collection) BowRunServer.getGame().getArcherTeam().getUsers()));
-
-        if (userKills != null) {
-            this.broadcastGameMessage(ChatColor.WHITE + "Kills: " + ChatColor.GOLD + userKills.getKills() + ChatColor.WHITE + " by " + userKills.getChatName());
-        }
-        if (userDeaths != null) {
-            this.broadcastGameMessage(ChatColor.WHITE + "Deaths: " + ChatColor.GOLD + userDeaths.getDeaths() + ChatColor.WHITE + " by " + userDeaths.getChatName());
-        }
-        if (userLongestShot != null && userLongestShot.getLongestShot() > 0) {
-            this.broadcastGameMessage(ChatColor.WHITE + "Longest Shot: " + ChatColor.GOLD + userLongestShot.getLongestShot() + ChatColor.WHITE + " by " + userLongestShot.getChatName());
-        }
-
+        this.broadcastHighscore("Kills", (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3, GameUser::getKills);
+        this.broadcastHighscore("Deaths", (Collection) (BowRunServer.getGame().getRunnerTeam().getUsers()), 3, GameUser::getDeaths);
+        this.broadcastHighscore("Longest Shot: ", (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3, u -> u.getLongestShot() > 0, GameUser::getLongestShot);
         this.broadcastGameMessage(Chat.getLongLineSeparator());
 
         String recordTime = null;
