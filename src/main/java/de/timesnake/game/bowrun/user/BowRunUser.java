@@ -64,8 +64,8 @@ public class BowRunUser extends GameUser {
 
         BowRunMap map = BowRunServer.getMap();
 
-        this.getPlayer().setGravity(true);
-        this.getPlayer().setInvulnerable(true);
+        this.setGravity(true);
+        this.setInvulnerable(true);
 
         if (this.getTeam() != null && this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
             this.lockLocation(true);
@@ -78,8 +78,8 @@ public class BowRunUser extends GameUser {
             }
 
             if (!map.isArcherNoSpeed()) {
-                this.getPlayer().setWalkSpeed((float) 0.6);
-                this.getPlayer().setFlySpeed((float) 0.4);
+                this.setWalkSpeed((float) 0.6);
+                this.setFlySpeed((float) 0.4);
             }
         }
 
@@ -91,10 +91,10 @@ public class BowRunUser extends GameUser {
     public void startGame() {
         BowRunMap map = BowRunServer.getMap();
         if (this.getTeam() != null && this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
-            this.getPlayer().setWalkSpeed((float) 0.2);
-            this.getPlayer().setFlySpeed((float) 0.2);
+            this.setWalkSpeed((float) 0.2);
+            this.setFlySpeed((float) 0.2);
             this.lockLocation(false);
-            this.getPlayer().setInvulnerable(false);
+            this.setInvulnerable(false);
 
             if (map.isRunnerSpeed()) {
                 this.addPotionEffect(PotionEffectType.SPEED, 2);
@@ -103,7 +103,7 @@ public class BowRunUser extends GameUser {
                 this.addPotionEffect(PotionEffectType.JUMP, 9);
             }
             if (map.isRunnerHover()) {
-                this.getPlayer().setGravity(false);
+                this.setGravity(false);
             }
             this.setArmor();
         }
@@ -201,7 +201,7 @@ public class BowRunUser extends GameUser {
             }, 5, GameBowRun.getPlugin());
 
             if (map.isRunnerHover()) {
-                this.getPlayer().setGravity(false);
+                this.setGravity(false);
             }
         } else if (this.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
             this.setArcherItems();

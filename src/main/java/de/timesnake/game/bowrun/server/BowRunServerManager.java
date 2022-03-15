@@ -364,11 +364,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
         this.winType = null;
 
         if (BowRunServer.getMap() != null) {
-            BowRunServer.getMap().getWorld().removePlayers();
             Server.getWorldManager().reloadWorld(BowRunServer.getMap().getWorld());
-            Server.printText(Plugin.BOWRUN, "Loaded backup of map " + BowRunServer.getMap().getName());
-        } else {
-            Server.printWarning(Plugin.BOWRUN, "Can not load backup of map " + BowRunServer.getMap().getName());
         }
     }
 
