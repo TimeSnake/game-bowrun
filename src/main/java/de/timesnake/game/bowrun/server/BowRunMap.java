@@ -75,7 +75,6 @@ public class BowRunMap extends Map {
         ExWorld world = this.getWorld();
         if (world != null) {
             Server.getWorldManager().backupWorld(world);
-            Server.printText(Plugin.BOWRUN, "Backup map " + world.getName());
             world.allowBlockPlace(false);
             world.allowFireSpread(false);
             world.allowBlockBreak(false);
