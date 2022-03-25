@@ -215,43 +215,50 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
         this.broadcastGameMessage(Chat.getLongLineSeparator());
         Server.broadcastSound(BowRunServer.END_SOUND, 5F);
         switch (winType) {
-            case ARCHER:
-                Server.broadcastTitle(ChatColor.RED + "Archers " + ChatColor.PUBLIC + "win!", "", Duration.ofSeconds(5));
+            case ARCHER -> {
+                Server.broadcastTitle(ChatColor.RED + "Archers " + ChatColor.PUBLIC + "win!", "",
+                        Duration.ofSeconds(5));
                 this.broadcastGameMessage(ChatColor.RED + "Archers " + ChatColor.PUBLIC + "win!");
                 for (User user : this.getGame().getArcherTeam().getUsers()) {
                     user.addCoins(BowRunServer.WIN_COINS, true);
                 }
-                break;
-            case RUNNER:
-                Server.broadcastTitle(ChatColor.BLUE + "Runners " + ChatColor.PUBLIC + "win!", "", Duration.ofSeconds(5));
+            }
+            case RUNNER -> {
+                Server.broadcastTitle(ChatColor.BLUE + "Runners " + ChatColor.PUBLIC + "win!", "",
+                        Duration.ofSeconds(5));
                 this.broadcastGameMessage(ChatColor.BLUE + "Runners " + ChatColor.PUBLIC + "win!");
                 for (User user : this.getGame().getRunnerTeam().getUsers()) {
                     user.addCoins(BowRunServer.WIN_COINS, true);
                 }
-                break;
-            case ARCHER_TIME:
-                Server.broadcastTitle(ChatColor.RED + "Archers " + ChatColor.PUBLIC + "win!", ChatColor.PUBLIC + "Time is up", Duration.ofSeconds(5));
+            }
+            case ARCHER_TIME -> {
+                Server.broadcastTitle(ChatColor.RED + "Archers " + ChatColor.PUBLIC + "win!", ChatColor.PUBLIC +
+                        "Time is up", Duration.ofSeconds(5));
                 this.broadcastGameMessage(ChatColor.RED + "Archers " + ChatColor.PUBLIC + "win!");
                 for (User user : this.getGame().getArcherTeam().getUsers()) {
                     user.addCoins(BowRunServer.WIN_COINS, true);
                 }
-                break;
-            case RUNNER_FINISH:
-                Server.broadcastTitle(ChatColor.BLUE + "Runners " + ChatColor.PUBLIC + "win!", finisher.getChatName() + ChatColor.PUBLIC + " reached the finish", Duration.ofSeconds(5));
+            }
+            case RUNNER_FINISH -> {
+                Server.broadcastTitle(ChatColor.BLUE + "Runners " + ChatColor.PUBLIC + "win!",
+                        finisher.getChatName() + ChatColor.PUBLIC + " reached the finish", Duration.ofSeconds(5));
                 this.broadcastGameMessage(ChatColor.BLUE + "Runners " + ChatColor.PUBLIC + "win!");
                 for (User user : this.getGame().getRunnerTeam().getUsers()) {
                     user.addCoins(BowRunServer.WIN_COINS, true);
                 }
-                break;
-            default:
+            }
+            default -> {
                 Server.broadcastTitle(ChatColor.WHITE + "Game has ended", "", Duration.ofSeconds(5));
                 this.broadcastGameMessage(ChatColor.WHITE + "Game has ended");
+            }
         }
 
         this.broadcastGameMessage(Chat.getLongLineSeparator());
         this.broadcastHighscore("Kills", (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3, GameUser::getKills);
-        this.broadcastHighscore("Deaths", (Collection) (BowRunServer.getGame().getRunnerTeam().getUsers()), 3, GameUser::getDeaths);
-        this.broadcastHighscore("Longest Shot: ", (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3, u -> u.getLongestShot() > 0, GameUser::getLongestShot);
+        this.broadcastHighscore("Deaths", (Collection) (BowRunServer.getGame().getRunnerTeam().getUsers()), 3,
+                GameUser::getDeaths);
+        this.broadcastHighscore("Longest Shot", (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3,
+                u -> u.getLongestShot() > 0, GameUser::getLongestShot);
         this.broadcastGameMessage(Chat.getLongLineSeparator());
 
         String recordTime = null;
