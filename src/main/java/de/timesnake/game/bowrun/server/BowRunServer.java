@@ -5,6 +5,7 @@ import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.bukkit.util.user.scoreboard.Sideboard;
 import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServer;
 import de.timesnake.library.basic.util.TimeCoins;
+import de.timesnake.library.basic.util.Tuple;
 import de.timesnake.library.basic.util.statistics.Stat;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
@@ -17,9 +18,29 @@ import java.util.List;
 
 public class BowRunServer extends LoungeBridgeServer {
 
-    public static final List<ExItemStack> RUNNER_ITEMS = List.of(new ExItemStack(true, "§6Heal II", PotionEffectType.HEAL, 0, 2, 2), new ExItemStack(true, "§6Jump II  (7 s)", PotionEffectType.JUMP, 20 * 7, 2, 1), new ExItemStack(true, "§6Slow Fall (20 s)", PotionEffectType.SLOW_FALLING, 20 * 20, 1, 1), new ExItemStack(true, "§6Speed II (30 s)", PotionEffectType.SPEED, 20 * 15, 2, 1), new ExItemStack(true, "§6Invisibility (8 s)", List.of("§fRemoves your armor"), PotionEffectType.INVISIBILITY, 20 * 8, 1, 1), new ExItemStack(Material.GOLDEN_APPLE, 2), new ExItemStack(true, "§6Fire Resistance (45 s)", PotionEffectType.FIRE_RESISTANCE, 20 * 45, 1, 1), new ExItemStack(true, "§6Resistance (1 min)", PotionEffectType.DAMAGE_RESISTANCE, 20 * 60, 1, 1), new ExItemStack(Material.SHIELD, 1, 300), new ExItemStack(Material.TOTEM_OF_UNDYING));
+    public static final List<ExItemStack> RUNNER_ITEMS = List.of(
+            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 2, "§6Heal II", PotionEffectType.HEAL, 0, 2),
+            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Jump II  (7 s)", PotionEffectType.JUMP,
+                    20 * 7, 2),
+            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Slow Fall (20 s)",
+                    PotionEffectType.SLOW_FALLING, 20 * 20, 1),
+            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Speed II (30 s)", PotionEffectType.SPEED,
+                    20 * 15, 2),
+            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Invisibility (8 s)",
+                    PotionEffectType.INVISIBILITY, 20 * 8, 1, List.of("§fRemoves your armor")),
+            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Fire Resistance (45 s)",
+                    PotionEffectType.FIRE_RESISTANCE, 20 * 45, 1),
+            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Resistance (1 min)",
+                    PotionEffectType.DAMAGE_RESISTANCE, 20 * 60, 1),
+            new ExItemStack(Material.GOLDEN_APPLE, 2),
+            new ExItemStack(Material.SHIELD, 1), new ExItemStack(Material.TOTEM_OF_UNDYING),
+            new ExItemStack(Material.CHORUS_FRUIT, 5));
 
-    public static final List<ExItemStack> ARCHER_ITEMS = List.of(new ExItemStack(Material.BOW, "§6Flame-Bow", 380, List.of(Enchantment.ARROW_FIRE), List.of(1)), new ExItemStack(Material.BOW, "§6Power-Bow", 384, List.of(Enchantment.ARROW_DAMAGE), List.of(7)), new ExItemStack(Material.BOW, "§6Punch-Bow", 382, List.of(Enchantment.ARROW_KNOCKBACK), List.of(2)), new ExItemStack(Material.SPECTRAL_ARROW, 32, "§6Spectral-Arrow"));
+    public static final List<ExItemStack> ARCHER_ITEMS = List.of(
+            new ExItemStack(Material.BOW, "§6Flame-Bow").setDamage(380).addEnchantments(new Tuple<>(Enchantment.ARROW_FIRE, 1)),
+            new ExItemStack(Material.BOW, "§6Power-Bow").setDamage(384).addEnchantments(new Tuple<>(Enchantment.ARROW_DAMAGE, 7)),
+            new ExItemStack(Material.BOW, "§6Punch-Bow").setDamage(382).addEnchantments(new Tuple<>(Enchantment.ARROW_KNOCKBACK, 2)),
+            new ExItemStack(Material.SPECTRAL_ARROW, 32, "§6Spectral-Arrow"));
 
     public static final Instrument TIME_INSTRUMENT = Instrument.PLING;
     public static final Note TIME_NOTE = Note.natural(1, Note.Tone.A);
