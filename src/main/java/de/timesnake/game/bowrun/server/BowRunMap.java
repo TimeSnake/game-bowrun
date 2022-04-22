@@ -90,6 +90,7 @@ public class BowRunMap extends Map {
             world.setGameRule(GameRule.DO_FIRE_TICK, false);
             world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
             world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+            world.setLockedBlockInventories(List.of(Material.DROPPER, Material.HOPPER, Material.DISPENSER));
             world.setTime(1000);
             world.setStorm(false);
             world.setAutoSave(false);
