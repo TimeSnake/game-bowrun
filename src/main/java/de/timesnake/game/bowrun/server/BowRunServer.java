@@ -33,7 +33,8 @@ public class BowRunServer extends LoungeBridgeServer {
             ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Resistance (1 min)",
                     PotionEffectType.DAMAGE_RESISTANCE, 20 * 60, 1),
             new ExItemStack(Material.GOLDEN_APPLE, 2),
-            new ExItemStack(Material.SHIELD, 1), new ExItemStack(Material.TOTEM_OF_UNDYING),
+            new ExItemStack(Material.SHIELD).setDamage(300),
+            new ExItemStack(Material.TOTEM_OF_UNDYING),
             new ExItemStack(Material.CHORUS_FRUIT, 5));
 
     public static final List<ExItemStack> ARCHER_ITEMS = List.of(
