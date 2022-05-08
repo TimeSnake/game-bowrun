@@ -122,77 +122,27 @@ public class BowRunMap extends Map {
         }
 
         if (this.tags != null) {
-
-            // time night/dark
             this.timeNight = tags.contains(TIME_NIGHT);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " time-night: " + this.timeNight);
             if (world != null) {
                 world.setTime(18000);
             }
 
-            // no special items
             this.archerNoSpecialItems = tags.contains(ARCHER_NO_SPECIAL_ITEMS);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " archer-no-special-items: " + this.archerNoSpecialItems);
-
-            // hover
             this.archerHover = tags.contains(ARCHER_HOVER);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " archer-hover:"  + this.archerHover);
-
-            // no bow gravity
             this.archerBowNoGravity = tags.contains(ARCHER_BOW_NO_GRAVITY);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " archer-bow-no-gravity: " + this.archerBowNoGravity);
-
             this.archerNoSpeed = tags.contains(ARCHER_NO_SPEED);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " archer-no-speed: " + this.archerNoSpeed);
-
-            // only instant
             this.onlyInstant = tags.contains(ARCHER_ONLY_INSTANT);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " archer-only-instant: " + this.onlyInstant);
-
-            // only punch
             this.onlyPunch = tags.contains(ARCHER_ONLY_PUNCH);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " archer-only-punch: " + this.onlyPunch);
-
-            // hover
             this.runnerHover = tags.contains(RUNNER_HOVER);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " runner-hover: " + this.runnerHover);
-
-
-            // no special items
             this.runnerNoSpecialItems = tags.contains(RUNNER_NO_SPECIAL_ITEMS);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " runner-no-special-items: " + this.runnerNoSpecialItems);
-
-            // armor
             this.runnerArmor = tags.contains(RUNNER_ARMOR);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " runner-armor: " + this.runnerArmor);
-
-            // jump
             this.runnerJump = tags.contains(RUNNER_JUMP);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " runner-jump: " + this.runnerJump);
-
-            // speed
             this.runnerSpeed = tags.contains(RUNNER_SPEED);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " runner-speed: " + this.runnerSpeed);
-
-            // no fall damage
             this.runnerNoFallDamage = tags.contains(RUNNER_NO_FALL_DAMAGE);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " runner-no-fall-damage: " + this.runnerNoFallDamage);
-
-            // water damage
             this.runnerWaterDamage = tags.contains(RUNNER_WATER_DAMAGE);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " runner-water-damage: " + this.runnerWaterDamage);
-
-            // relay race
             this.relayRace = tags.contains(RELAY_RACE);
-            Server.printText(Plugin.BOWRUN, "Map " + this.getName() + " relay-race: " + this.relayRace);
-
-            // border
             this.archerBorder = tags.contains(ARCHER_BORDER);
-            Server.printText(Plugin.BOWRUN, "Map" + this.getName() + " archer-border: " + this.archerBorder);
-
-            // knockback border
             this.archerKnockbackBorder = tags.contains(ARCHER_KNOCKBACK_BORDER);
-            Server.printText(Plugin.BOWRUN, "Map" + this.getName() + " archer-knockback-border: " + this.archerKnockbackBorder);
 
             if (this.archerBorder || this.archerKnockbackBorder) {
                 this.searchArcherBorder();
@@ -206,8 +156,9 @@ public class BowRunMap extends Map {
                 }
             }
 
-        }
+            Server.printText(Plugin.BOWRUN, "Loaded map " + this.getName() + " with tags " + this.tags);
 
+        }
 
         if (info.size() >= 3) {
             try {
@@ -305,7 +256,8 @@ public class BowRunMap extends Map {
         this.bestTime = bestTime;
         this.bestTimeUser = bestTimeUser;
         String tags = this.tags != null ? this.tags : "";
-        this.getDatabase().setInfo(List.of("" + this.time, tags, "" + this.runnerDeathHeight, "" + this.bestTime, this.bestTimeUser.toString()));
+        this.getDatabase().setInfo(List.of("" + this.time, tags, "" + this.runnerDeathHeight, "" + this.bestTime,
+                this.bestTimeUser.toString()));
     }
 
     public UUID getBestTimeUser() {
