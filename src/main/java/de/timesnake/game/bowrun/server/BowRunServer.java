@@ -63,13 +63,19 @@ public class BowRunServer extends LoungeBridgeServer {
     public static final String SIDEBOARD_KILLS_TEXT = "§c§lKills";
     public static final String SIDEBOARD_DEATHS_TEXT = "§c§lDeaths";
     public static final String SIDEBOARD_MAP_TEXT = "§c§lMap";
-    public static final Stat<Integer> RUNNER_WINS = Stat.Type.INTEGER.asStat("runner_wins", "Runner Wins", 0, 0, 2);
-    public static final Stat<Integer> ARCHER_WINS = Stat.Type.INTEGER.asStat("archer_wins", "Archer Wins", 0, 0, 3);
-    public static final Stat<Float> WIN_CHANCE = Stat.Type.PERCENT.asStat("win_chance", "Win Chance", 0f, 0, 4);
-    public static final Stat<Integer> DEATHS = Stat.Type.INTEGER.asStat("runner_deaths", "Deaths", 0, 1, 1);
-    public static final Stat<Integer> KILLS = Stat.Type.INTEGER.asStat("archer_kills", "Kills", 0, 1, 2);
+
+    public static final Stat<Integer> RUNNER_WINS = Stat.Type.INTEGER.asStat("runner_wins", "Runner Wins",
+            0, 10, 2, true, 0, 2);
+    public static final Stat<Integer> ARCHER_WINS = Stat.Type.INTEGER.asStat("archer_wins", "Archer Wins",
+            0, 10, 3, true, 0, 3);
+    public static final Stat<Float> WIN_CHANCE = Stat.Type.PERCENT.asStat("win_chance", "Win Chance",
+            0f, 10, 4, false, null, null);
+    public static final Stat<Integer> DEATHS = Stat.Type.INTEGER.asStat("runner_deaths", "Deaths",
+            0, 10, 5, true, 1, 1);
+    public static final Stat<Integer> KILLS = Stat.Type.INTEGER.asStat("archer_kills", "Kills",
+            0, 10, 6, true, 1, 2);
     public static final Stat<Integer> LONGEST_SHOT = Stat.Type.INTEGER.asStat("archer_longest_shot", "Longest Shot",
-            0, 1, 3);
+            0, 10, 7, true, 1, 3);
     public static List<ExItemStack> armor;
 
     public static void stopGame(BowRunServer.WinType winType, User finisher) {
