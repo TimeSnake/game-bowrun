@@ -509,6 +509,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
 
     @Override
     public Set<Stat<?>> getStats() {
-        return Set.of(BowRunServer.RUNNER_WINS, BowRunServer.ARCHER_WINS, BowRunServer.WIN_CHANCE, BowRunServer.KILLS, BowRunServer.DEATHS, BowRunServer.LONGEST_SHOT);
+        return Set.of(BowRunServer.RUNNER_WINS, BowRunServer.ARCHER_WINS, BowRunServer.WIN_CHANCE, BowRunServer.KILLS,
+                BowRunServer.DEATHS, BowRunServer.MOST_KILLS_PER_MATCH, BowRunServer.LONGEST_SHOT);
     }
 }

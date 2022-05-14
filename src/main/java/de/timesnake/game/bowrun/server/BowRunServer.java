@@ -74,8 +74,13 @@ public class BowRunServer extends LoungeBridgeServer {
             0, 10, 5, true, 1, 1);
     public static final Stat<Integer> KILLS = Stat.Type.INTEGER.asStat("archer_kills", "Kills",
             0, 10, 6, true, 1, 2);
-    public static final Stat<Integer> LONGEST_SHOT = Stat.Type.INTEGER.asStat("archer_longest_shot", "Longest Shot",
+    public static final Stat<Integer> MOST_KILLS_PER_MATCH = Stat.Type.INTEGER.asStat("archer_most_kills_match",
+            "Most Kills in a Match",
             0, 10, 7, true, 1, 3);
+    public static final Stat<Integer> LONGEST_SHOT = Stat.Type.INTEGER.asStat("archer_longest_shot", "Longest Shot",
+            0, 10, 8, true, 1, 4);
+
+
     public static List<ExItemStack> armor;
 
     public static void stopGame(BowRunServer.WinType winType, User finisher) {
