@@ -86,7 +86,11 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
         this.updateGameTimeOnSideboard();
 
         Color color = this.getGame().getRunnerTeam().getColor();
-        BowRunServer.armor = List.of(new ExItemStack(Material.GOLDEN_BOOTS, List.of(Enchantment.PROTECTION_PROJECTILE), List.of(1)), new ExItemStack(Material.GOLDEN_LEGGINGS, List.of(Enchantment.PROTECTION_PROJECTILE), List.of(1)), new ExItemStack(Material.GOLDEN_CHESTPLATE, List.of(Enchantment.PROTECTION_PROJECTILE), List.of(1)), new ExItemStack(Material.LEATHER_HELMET, color));
+        BowRunServer.armor = List.of(new ExItemStack(Material.GOLDEN_BOOTS,
+                List.of(Enchantment.PROTECTION_PROJECTILE), List.of(1)), new ExItemStack(Material.GOLDEN_LEGGINGS,
+                List.of(Enchantment.PROTECTION_PROJECTILE), List.of(1)), new ExItemStack(Material.GOLDEN_CHESTPLATE,
+                List.of(Enchantment.PROTECTION_PROJECTILE), List.of(1)), new ExItemStack(Material.LEATHER_HELMET,
+                color));
     }
 
     @Override
@@ -157,7 +161,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
                 ((BowRunUser) user).startGame();
             }
 
-            int period = (int) (Math.sqrt(BowRunServer.ARROW_GENERATION_PLAYER_MULTIPLIER * BowRunServer.getGame().getArcherTeam().getInGameUsers().size()) * BowRunServer.ARROW_GENERATION_SPEED);
+            int period =
+                    (int) (Math.sqrt(BowRunServer.ARROW_GENERATION_PLAYER_MULTIPLIER * BowRunServer.getGame().getArcherTeam().getInGameUsers().size()) * BowRunServer.ARROW_GENERATION_SPEED);
             this.userManager.runArrowGenerator(period);
 
             playingTimeTask = Server.runTaskTimerSynchrony(() -> {
@@ -172,7 +177,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
                     Server.broadcastNote(BowRunServer.TIME_INSTRUMENT, BowRunServer.TIME_NOTE);
                 }
                 if (this.playingTime == 0) {
-                    Server.runTaskSynchrony(() -> stopGame(BowRunServer.WinType.ARCHER_TIME, null), GameBowRun.getPlugin());
+                    Server.runTaskSynchrony(() -> stopGame(BowRunServer.WinType.ARCHER_TIME, null),
+                            GameBowRun.getPlugin());
                 }
 
             }, 20, 20, GameBowRun.getPlugin());
@@ -254,7 +260,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
         }
 
         this.broadcastGameMessage(Chat.getLongLineSeparator());
-        this.broadcastHighscore("Kills", (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3, GameUser::getKills);
+        this.broadcastHighscore("Kills", (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3,
+                GameUser::getKills);
         this.broadcastHighscore("Deaths", (Collection) (BowRunServer.getGame().getRunnerTeam().getUsers()), 3,
                 GameUser::getDeaths);
         this.broadcastHighscore("Longest Shot", (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3,
@@ -334,7 +341,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
             return;
         }
 
-        this.stopGame(user.getTeam().equals(this.getGame().getArcherTeam()) ? BowRunServer.WinType.RUNNER : BowRunServer.WinType.ARCHER, null);
+        this.stopGame(user.getTeam().equals(this.getGame().getArcherTeam()) ? BowRunServer.WinType.RUNNER :
+                BowRunServer.WinType.ARCHER, null);
     }
 
     @Override
@@ -502,7 +510,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
                 user.higherStat(BowRunServer.LONGEST_SHOT, user.getLongestShot());
             }
 
-            user.setStat(BowRunServer.WIN_CHANCE, (user.getStat(BowRunServer.ARCHER_WINS) + user.getStat(BowRunServer.RUNNER_WINS)) / ((float) user.getStat(GAMES_PLAYED)));
+            user.setStat(BowRunServer.WIN_CHANCE,
+                    (user.getStat(BowRunServer.ARCHER_WINS) + user.getStat(BowRunServer.RUNNER_WINS)) / ((float) user.getStat(GAMES_PLAYED)));
         }
 
     }
