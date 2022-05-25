@@ -66,7 +66,8 @@ public class RecordVerification implements CommandListener {
                 continue;
             }
 
-            user.sendClickableMessage(Chat.getSenderPlugin(Plugin.BOWRUN) + ChatColor.WARNING + "§lVerify record, if it was legal", "/bowrun_verify", "Click to verify", ClickEvent.Action.RUN_COMMAND);
+            user.sendClickableMessage(Chat.getSenderPlugin(Plugin.BOWRUN) + ChatColor.WARNING + "§lVerify record, if " +
+                    "it was legal", "/bowrun_verify", "Click to verify", ClickEvent.Action.RUN_COMMAND);
         }
     }
 
@@ -77,7 +78,8 @@ public class RecordVerification implements CommandListener {
                 continue;
             }
 
-            user.sendClickableMessage(Chat.getSenderPlugin(Plugin.BOWRUN) + ChatColor.WARNING + "§lReject record, if it was illegal", "/bowrun_reject", "Click to reject", ClickEvent.Action.RUN_COMMAND);
+            user.sendClickableMessage(Chat.getSenderPlugin(Plugin.BOWRUN) + ChatColor.WARNING + "§lReject record, if " +
+                    "it was illegal", "/bowrun_reject", "Click to reject", ClickEvent.Action.RUN_COMMAND);
         }
 
         Server.runTaskLaterSynchrony(() -> {

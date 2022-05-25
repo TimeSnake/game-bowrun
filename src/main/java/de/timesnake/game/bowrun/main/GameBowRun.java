@@ -21,8 +21,10 @@ public class GameBowRun extends JavaPlugin {
 
         BowRunServerManager.getInstance().onBowRunEnable();
 
-        Server.getCommandManager().addCommand(this, "bowrun_verify", BowRunServerManager.getInstance().getRecordVerification(), Plugin.BOWRUN);
-        Server.getCommandManager().addCommand(this, "bowrun_reject", BowRunServerManager.getInstance().getRecordVerification(), Plugin.BOWRUN);
+        Server.getCommandManager().addCommand(this, "bowrun_verify",
+                BowRunServerManager.getInstance().getRecordVerification(), Plugin.BOWRUN);
+        Server.getCommandManager().addCommand(this, "bowrun_reject",
+                BowRunServerManager.getInstance().getRecordVerification(), Plugin.BOWRUN);
     }
 
     public static GameBowRun getPlugin() {

@@ -147,7 +147,11 @@ public class BowRunServer extends LoungeBridgeServer {
     }
 
     public enum WinType {
-        RUNNER_FINISH, RUNNER, ARCHER, ARCHER_TIME, END
+        RUNNER_FINISH,
+        RUNNER,
+        ARCHER,
+        ARCHER_TIME,
+        END
     }
 
 }

@@ -145,7 +145,8 @@ public class UserManager implements Listener, UserInventoryInteractListener {
             }
 
             if ((BowRunServer.getMap().isArcherBorder() || BowRunServer.getMap().isArcherKnockbackBorder()) && !e.getFrom().getBlock().equals(e.getTo().getBlock())) {
-                if (BowRunServer.getMap().getArcherBorderLocs().contains(new Tuple<>(e.getTo().getBlockX(), e.getTo().getBlockZ()))) {
+                if (BowRunServer.getMap().getArcherBorderLocs().contains(new Tuple<>(e.getTo().getBlockX(),
+                        e.getTo().getBlockZ()))) {
                     if (BowRunServer.getMap().isArcherBorder()) {
                         user.teleportToTeamSpawn();
                     } else if (BowRunServer.getMap().isArcherKnockbackBorder()) {
