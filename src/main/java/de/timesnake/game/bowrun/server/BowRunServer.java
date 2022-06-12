@@ -6,11 +6,14 @@ import de.timesnake.basic.bukkit.util.user.scoreboard.Sideboard;
 import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServer;
 import de.timesnake.library.basic.util.TimeCoins;
 import de.timesnake.library.basic.util.Tuple;
-import de.timesnake.library.basic.util.statistics.Stat;
+import de.timesnake.library.basic.util.statistics.IntegerStat;
+import de.timesnake.library.basic.util.statistics.PercentStat;
+import de.timesnake.library.basic.util.statistics.StatType;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Sound;
+import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.potion.PotionEffectType;
 
@@ -64,31 +67,29 @@ public class BowRunServer extends LoungeBridgeServer {
     public static final String SIDEBOARD_DEATHS_TEXT = "§c§lDeaths";
     public static final String SIDEBOARD_MAP_TEXT = "§c§lMap";
 
-    public static final Stat<Integer> RUNNER_WINS = Stat.Type.INTEGER.asStat("runner_wins", "Runner Wins",
-            0, 10, 2, true, 0, 2);
-    public static final Stat<Integer> ARCHER_WINS = Stat.Type.INTEGER.asStat("archer_wins", "Archer Wins",
-            0, 10, 3, true, 0, 3);
-    public static final Stat<Float> WIN_CHANCE = Stat.Type.PERCENT.asStat("win_chance", "Win Chance",
+    public static final StatType<Integer> RUNNER_WINS = new IntegerStat("runner_wins", "Runner Wins",
+            0, 10, 2, true, 0, 1);
+    public static final StatType<Integer> ARCHER_WINS = new IntegerStat("archer_wins", "Archer Wins",
+            0, 10, 3, true, 0, 2);
+    public static final StatType<Float> WIN_CHANCE = new PercentStat("win_chance", "Win Chance",
             0f, 10, 4, false, null, null);
-    public static final Stat<Integer> DEATHS = Stat.Type.INTEGER.asStat("runner_deaths", "Deaths",
-            0, 10, 5, true, 1, 1);
-    public static final Stat<Integer> KILLS = Stat.Type.INTEGER.asStat("archer_kills", "Kills",
-            0, 10, 6, true, 1, 2);
-    public static final Stat<Integer> MOST_KILLS_PER_MATCH = Stat.Type.INTEGER.asStat("archer_most_kills_match",
+    public static final StatType<Integer> DEATHS = new IntegerStat("runner_deaths", "Deaths",
+            0, 10, 5, true, 0, 3);
+    public static final StatType<Integer> KILLS = new IntegerStat("archer_kills", "Kills",
+            0, 10, 6, true, 1, 1);
+    public static final StatType<Integer> MOST_KILLS_PER_MATCH = new IntegerStat("archer_most_kills_match",
             "Most Kills in a Match",
-            0, 10, 7, true, 1, 3);
-    public static final Stat<Integer> LONGEST_SHOT = Stat.Type.INTEGER.asStat("archer_longest_shot", "Longest Shot",
-            0, 10, 8, true, 1, 4);
+            0, 10, 7, true, 1, 2);
+    public static final StatType<Integer> LONGEST_SHOT = new IntegerStat("archer_longest_shot", "Longest Shot",
+            0, 10, 8, true, 1, 3);
 
-
-    public static List<ExItemStack> armor;
+    public static BossBar getTimeBar() {
+        return server.getTimeBar();
+    }
 
     public static void stopGame(BowRunServer.WinType winType, User finisher) {
         server.stopGame(winType, finisher);
     }
-
-
-    private static final BowRunServerManager server = BowRunServerManager.getInstance();
 
     public static BowRunMap getMap() {
         return server.getMap();
@@ -145,6 +146,9 @@ public class BowRunServer extends LoungeBridgeServer {
     public static List<Boolean> getRunnerArmor() {
         return server.getRunnerArmor();
     }
+
+    private static final BowRunServerManager server = BowRunServerManager.getInstance();
+    public static List<ExItemStack> armor;
 
     public enum WinType {
         RUNNER_FINISH,
