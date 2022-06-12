@@ -16,11 +16,15 @@ import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.game.bowrun.user.BowRunUser;
 import de.timesnake.game.bowrun.user.UserManager;
 import de.timesnake.library.basic.util.Status;
-import de.timesnake.library.basic.util.statistics.Stat;
+import de.timesnake.library.basic.util.statistics.StatPeriod;
+import de.timesnake.library.basic.util.statistics.StatType;
 import de.timesnake.library.extension.util.chat.Chat;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -36,25 +40,17 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
         return (BowRunServerManager) ServerManager.getInstance();
     }
 
-
+    private final RecordVerification recordVerification = new RecordVerification();
     private Sideboard sideboard;
     private Sideboard spectatorSideboard;
-
+    private BossBar timeBar;
     private Integer playingTime = 0;
     private BukkitTask playingTimeTask;
-
     private int runnerDeaths = 0;
-
     private boolean stopAfterStart = false;
-
     private List<Boolean> runnerArmor;
-
     private UserManager userManager;
-
-    private final RecordVerification recordVerification = new RecordVerification();
-
     private RelayManager relayManager;
-
     private BowRunServer.WinType winType;
 
     public void onBowRunEnable() {
@@ -82,6 +78,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
         this.spectatorSideboard.setScore(2, "§r§f-----------");
         this.spectatorSideboard.setScore(1, BowRunServer.SIDEBOARD_MAP_TEXT);
         // map
+
+        this.timeBar = Server.createBossBar("", BarColor.YELLOW, BarStyle.SOLID);
 
         this.updateGameTimeOnSideboard();
 
@@ -117,26 +115,32 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
 
 
     @Override
-    public void loadMap() {
+    public void onMapLoad() {
         BowRunMap map = BowRunServer.getMap();
         this.setPlayingTime(map.getTime());
         map.getWorld().setTime(map.isTimeNight() ? 19000 : 1000);
         this.updateGameTimeOnSideboard();
         if (map.getBestTime() != null) {
-            StringBuilder time = new StringBuilder();
-            if (map.getBestTime() >= 60) time.append(map.getBestTime() / 60).append(" min").append("  ");
-            time.append(map.getBestTime() % 60).append(" s");
+            String recordTime = Chat.getTimeString(map.getBestTime());
             if (map.getBestTimeUser() != null) {
-                BowRunServer.getGameTablist().setFooter(ChatColor.GOLD + "Record: " + ChatColor.BLUE + time + ChatColor.GOLD + " by " + ChatColor.BLUE + Database.getUsers().getUser(map.getBestTimeUser()).getName());
+                BowRunServer.getGameTablist().setFooter(ChatColor.GOLD + "Record: " + ChatColor.BLUE + recordTime +
+                        ChatColor.GOLD + " by " + ChatColor.BLUE + Database.getUsers().getUser(map.getBestTimeUser()).getName());
             } else {
-                BowRunServer.getGameTablist().setFooter(ChatColor.GOLD + "Record: " + ChatColor.BLUE + time);
+                BowRunServer.getGameTablist().setFooter(ChatColor.GOLD + "Record: " + ChatColor.BLUE + "- - -");
             }
+
+            String playTime = Chat.getTimeString(this.playingTime);
+
+            this.timeBar.setTitle(playTime);
+            this.timeBar.setColor(BarColor.GREEN);
+            this.timeBar.setProgress(1);
+            this.timeBar.setVisible(true);
         }
 
     }
 
     @Override
-    public void startGame() {
+    public void onGameStart() {
         if (stopAfterStart) {
             this.stopGame(BowRunServer.WinType.END, null);
         } else {
@@ -406,12 +410,20 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
     }
 
     public void updateGameTimeOnSideboard() {
-        StringBuilder time = new StringBuilder();
-        if (this.playingTime >= 60) time.append(playingTime / 60).append(" min").append("  ");
-        time.append(playingTime % 60).append(" s");
+        String time = Chat.getTimeString(this.playingTime);
 
-        this.setGameSideboardScore(3, time.toString());
-        this.setSpectatorSideboardScore(3, time.toString());
+        this.setGameSideboardScore(3, time);
+        this.setSpectatorSideboardScore(3, time);
+
+        if (this.getMap() != null) {
+            this.timeBar.setTitle(time);
+            this.timeBar.setProgress(this.playingTime / ((double) this.getMap().getTime()));
+
+            if (this.playingTime == 60) {
+                this.timeBar.setColor(BarColor.RED);
+            }
+        }
+
     }
 
     public void updateMapOnSideboard() {
@@ -444,6 +456,10 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
 
     public void setPlayingTime(Integer playingTime) {
         this.playingTime = playingTime;
+    }
+
+    public BossBar getTimeBar() {
+        return timeBar;
     }
 
     @Override
@@ -497,27 +513,37 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
 
         if (this.winType != null) {
             if (user.getTeam().equals(this.getGame().getRunnerTeam())) {
-                if ((this.winType.equals(BowRunServer.WinType.RUNNER_FINISH) || this.winType.equals(BowRunServer.WinType.RUNNER))) {
-                    user.increaseStat(BowRunServer.RUNNER_WINS, 1);
+                if ((this.winType.equals(BowRunServer.WinType.RUNNER_FINISH)
+                        || this.winType.equals(BowRunServer.WinType.RUNNER))) {
+                    user.getStat(BowRunServer.RUNNER_WINS).increaseAll(1);
                 }
-                user.increaseStat(BowRunServer.DEATHS, user.getDeaths());
+                user.getStat(BowRunServer.DEATHS).increaseAll(user.getDeaths());
             } else if (user.getTeam().equals(this.getGame().getArcherTeam())) {
-                if (this.winType.equals(BowRunServer.WinType.ARCHER_TIME) || this.winType.equals(BowRunServer.WinType.ARCHER)) {
-                    user.increaseStat(BowRunServer.ARCHER_WINS, 1);
+                if (this.winType.equals(BowRunServer.WinType.ARCHER_TIME)
+                        || this.winType.equals(BowRunServer.WinType.ARCHER)) {
+                    user.getStat(BowRunServer.ARCHER_WINS).increaseAll(1);
                 }
-                user.increaseStat(BowRunServer.KILLS, user.getKills());
+                user.getStat(BowRunServer.KILLS).increaseAll(user.getKills());
 
-                user.higherStat(BowRunServer.LONGEST_SHOT, user.getLongestShot());
+                user.getStat(BowRunServer.LONGEST_SHOT).higherAll(user.getLongestShot());
             }
 
-            user.setStat(BowRunServer.WIN_CHANCE,
-                    (user.getStat(BowRunServer.ARCHER_WINS) + user.getStat(BowRunServer.RUNNER_WINS)) / ((float) user.getStat(GAMES_PLAYED)));
+            for (StatPeriod period : StatPeriod.values()) {
+                Integer archerWins = user.getStat(BowRunServer.ARCHER_WINS).get(period);
+                Integer runnerWins = user.getStat(BowRunServer.RUNNER_WINS).get(period);
+                Integer gamesPlayed = user.getStat(GAMES_PLAYED).get(period);
+                user.getStat(BowRunServer.WIN_CHANCE).set(period, (archerWins + runnerWins) / ((float) gamesPlayed));
+            }
+        }
+
+        if (user.getTeam().equals(this.getGame().getArcherTeam())) {
+            user.getStat(BowRunServer.MOST_KILLS_PER_MATCH).higherAll(user.getKills());
         }
 
     }
 
     @Override
-    public Set<Stat<?>> getStats() {
+    public Set<StatType<?>> getStats() {
         return Set.of(BowRunServer.RUNNER_WINS, BowRunServer.ARCHER_WINS, BowRunServer.WIN_CHANCE, BowRunServer.KILLS,
                 BowRunServer.DEATHS, BowRunServer.MOST_KILLS_PER_MATCH, BowRunServer.LONGEST_SHOT);
     }

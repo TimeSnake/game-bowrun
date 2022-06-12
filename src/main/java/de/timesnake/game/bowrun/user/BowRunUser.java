@@ -38,6 +38,7 @@ public class BowRunUser extends GameUser {
 
     public BowRunUser(Player player) {
         super(player);
+        this.setBossBar(BowRunServer.getTimeBar());
     }
 
     @Override
