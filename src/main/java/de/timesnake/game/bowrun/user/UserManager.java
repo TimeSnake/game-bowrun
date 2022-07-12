@@ -8,6 +8,7 @@ import de.timesnake.basic.bukkit.util.user.UserDamage;
 import de.timesnake.basic.bukkit.util.user.event.*;
 import de.timesnake.basic.game.util.TeamUser;
 import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServer;
+import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.game.bowrun.server.BowRunMap;
 import de.timesnake.game.bowrun.server.BowRunServer;
@@ -15,6 +16,7 @@ import de.timesnake.game.bowrun.server.BowRunServerManager;
 import de.timesnake.game.bowrun.server.RelayManager;
 import de.timesnake.library.basic.util.Status;
 import de.timesnake.library.basic.util.Tuple;
+import de.timesnake.library.basic.util.chat.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -102,7 +104,7 @@ public class UserManager implements Listener, UserInventoryInteractListener {
 
         BowRunUser user = (BowRunUser) Server.getUser(((Player) e.getEntity()));
 
-        if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
+        if (user.getTeam() != null && user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
             e.setCancelled(true);
         }
     }
@@ -243,13 +245,8 @@ public class UserManager implements Listener, UserInventoryInteractListener {
 
         ExItemStack item = ExItemStack.getItem(e.getItemStack(), true);
 
-        if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
-            e.setCancelled(true);
-            e.getItemDrop().remove();
-        } else if (user.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
-            if (e.getItemDrop().getItemStack().equals(BowRunUser.DEATH)) {
-                e.setCancelled(true);
-            } else if (!item.equals(RelayManager.RELAY)) {
+        if (user.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
+            if (!item.equals(RelayManager.RELAY)) {
                 Server.runTaskLaterSynchrony(() -> {
                     if (!e.getItemDrop().isDead()) e.getItemDrop().remove();
                 }, ITEM_REMOVE_DELAY, GameBowRun.getPlugin());
@@ -295,12 +292,16 @@ public class UserManager implements Listener, UserInventoryInteractListener {
             return;
         }
 
-        if (BowRunServerManager.getInstance().isGameRunning() && (e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK))) {
-            if (user.getLastDamager() == null) {
-                user.suicided();
+        if (BowRunServerManager.getInstance().isGameRunning())
+            if (e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+                if (user.getLastDamager() == null) {
+                    user.suicided();
+                }
+                user.kill();
+            } else {
+                user.sendPluginMessage(Plugin.BOWRUN, ChatColor.PERSONAL + "Left click the suicid item, to kill " +
+                        "yourself");
             }
-            user.kill();
-        }
         e.setCancelled(true);
     }
 

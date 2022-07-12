@@ -19,11 +19,9 @@ import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 
 public class RelayManager implements Listener {
 
+    public static final ExItemStack RELAY = new ExItemStack(Material.MOJANG_BANNER_PATTERN, "§6Relay");
     private static final int DELAY = 20 * 40;
     private static final int MAX_RELAYS = 3;
-
-    public static final ExItemStack RELAY = new ExItemStack(Material.WRITTEN_BOOK, "§6Relay");
-
     private int relays = 0;
     private int counter = 0;
 

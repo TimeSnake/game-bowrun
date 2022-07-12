@@ -56,8 +56,8 @@ public class BowRunServer extends LoungeBridgeServer {
 
     public static final int MAX_ARROWS = 5;
     public static final int RESPAWN_ARROW_AMOUNT = 2;
-    public static final double ARROW_GENERATION_SPEED = 15;
-    public static final double ARROW_GENERATION_PLAYER_MULTIPLIER = 1;
+    public static final double ARROW_GENERATION_SPEED = 20;
+    public static final double ARROW_GENERATION_PLAYER_MULTIPLIER = 1.5;
 
     public static final float KILL_COINS_POOL = 16 * TimeCoins.MULTIPLIER;
     public static final float WIN_COINS = 10 * TimeCoins.MULTIPLIER;
