@@ -84,11 +84,11 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
         this.updateGameTimeOnSideboard();
 
         Color color = this.getGame().getRunnerTeam().getColor();
-        BowRunServer.armor = List.of(new ExItemStack(Material.GOLDEN_BOOTS,
-                List.of(Enchantment.PROTECTION_PROJECTILE), List.of(1)), new ExItemStack(Material.GOLDEN_LEGGINGS,
-                List.of(Enchantment.PROTECTION_PROJECTILE), List.of(1)), new ExItemStack(Material.GOLDEN_CHESTPLATE,
-                List.of(Enchantment.PROTECTION_PROJECTILE), List.of(1)), new ExItemStack(Material.LEATHER_HELMET,
-                color));
+        BowRunServer.armor = List.of(
+                new ExItemStack(Material.GOLDEN_BOOTS, List.of(Enchantment.PROTECTION_PROJECTILE), List.of(1)),
+                new ExItemStack(Material.GOLDEN_LEGGINGS, List.of(Enchantment.PROTECTION_PROJECTILE), List.of(2)),
+                new ExItemStack(Material.GOLDEN_CHESTPLATE, List.of(Enchantment.PROTECTION_PROJECTILE), List.of(2)),
+                new ExItemStack(Material.LEATHER_HELMET, color));
     }
 
     @Override
@@ -166,7 +166,9 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
             }
 
             int period =
-                    (int) (Math.sqrt(BowRunServer.ARROW_GENERATION_PLAYER_MULTIPLIER * BowRunServer.getGame().getArcherTeam().getInGameUsers().size()) * BowRunServer.ARROW_GENERATION_SPEED);
+                    (int) (BowRunServer.ARROW_GENERATION_SPEED +
+                            Math.sqrt(BowRunServer.ARROW_GENERATION_PLAYER_MULTIPLIER *
+                                    BowRunServer.getGame().getArcherTeam().getInGameUsers().size()));
             this.userManager.runArrowGenerator(period);
 
             playingTimeTask = Server.runTaskTimerSynchrony(() -> {
@@ -320,9 +322,13 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
             }
 
             if (gameUser.getBowShots().equals(0)) {
-                stats.add(gameUser.getName() + ": " + gameUser.getTeam().getName() + " " + gameUser.getDeaths() + " " + gameUser.getKills() + " " + gameUser.getBowHits() + " " + gameUser.getBowShots() + " " + gameUser.getBowHitTarget() + " " + (gameUser.getBowHitTarget()));
+                stats.add(gameUser.getName() + ": " + gameUser.getTeam().getName() + " " + gameUser.getDeaths() + " " +
+                        gameUser.getKills() + " " + gameUser.getBowHits() + " " + gameUser.getBowShots() + " " +
+                        gameUser.getBowHitTarget() + " " + (gameUser.getBowHitTarget()));
             } else {
-                stats.add(gameUser.getName() + ": " + gameUser.getTeam().getName() + " " + gameUser.getDeaths() + " " + gameUser.getKills() + " " + gameUser.getBowHits() + " " + gameUser.getBowShots() + " " + gameUser.getBowHitTarget() + " " + gameUser.getBowHitTarget() / ((double) gameUser.getBowShots()));
+                stats.add(gameUser.getName() + ": " + gameUser.getTeam().getName() + " " + gameUser.getDeaths() + " " +
+                        gameUser.getKills() + " " + gameUser.getBowHits() + " " + gameUser.getBowShots() + " " +
+                        gameUser.getBowHitTarget() + " " + gameUser.getBowHitTarget() / ((double) gameUser.getBowShots()));
             }
         }
 

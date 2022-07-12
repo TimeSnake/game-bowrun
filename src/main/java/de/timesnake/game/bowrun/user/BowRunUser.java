@@ -19,18 +19,19 @@ public class BowRunUser extends GameUser {
 
     public static final ItemStack RUNNER_REMOVER =
             new ExItemStack(Material.NETHERITE_SWORD, "§6RunnerRemover").unbreakable().addEnchantments(
-                    new Tuple<>(Enchantment.DAMAGE_ALL, 10), new Tuple<>(Enchantment.SWEEPING_EDGE, 10));
-    public static final ExItemStack BOW = new ExItemStack(Material.BOW).unbreakable().enchant();
+                    new Tuple<>(Enchantment.DAMAGE_ALL, 10), new Tuple<>(Enchantment.SWEEPING_EDGE, 10)).setDropable(false);
+    public static final ExItemStack BOW = new ExItemStack(Material.BOW).unbreakable().enchant().setDropable(false);
     public static final ExItemStack FOOD = new ExItemStack(Material.COOKED_BEEF, 32);
-    public static final ExItemStack ARROW = new ExItemStack(Material.ARROW);
-    public static final ExItemStack DEATH = new ExItemStack(8, Material.RED_DYE, "§cSuicide (no special item)");
+    public static final ExItemStack ARROW = new ExItemStack(Material.ARROW).setDropable(false);
+    public static final ExItemStack DEATH =
+            new ExItemStack(8, Material.RED_DYE, "§cSuicide (left click, no special item)").setDropable(false);
 
     public static final ExItemStack INSTANT_BOW =
             new ExItemStack(Material.BOW, "§6Instant-Bow").unbreakable().addEnchantments(
-                    new Tuple<>(Enchantment.ARROW_DAMAGE, 10));
+                    new Tuple<>(Enchantment.ARROW_DAMAGE, 10)).setDropable(false);
 
     public static final ExItemStack PUNCH_BOW = new ExItemStack(Material.BOW, "§6Punch-Bow").unbreakable().
-            addEnchantments(new Tuple<>(Enchantment.ARROW_KNOCKBACK, 5));
+            addEnchantments(new Tuple<>(Enchantment.ARROW_KNOCKBACK, 5)).setDropable(false);
 
     private ItemStack[] armor;
 
@@ -74,6 +75,7 @@ public class BowRunUser extends GameUser {
 
         if (this.getTeam() != null && this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
             this.lockLocation(true);
+            this.setCollitionWithEntites(true);
         } else if (this.getTeam() != null && this.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
             if (map.isArcherHover()) {
                 Server.runTaskSynchrony(() -> {
@@ -86,6 +88,7 @@ public class BowRunUser extends GameUser {
                 this.setWalkSpeed((float) 0.6);
                 this.setFlySpeed((float) 0.4);
             }
+            this.setCollitionWithEntites(false);
         }
 
         this.teleportToTeamSpawn();
