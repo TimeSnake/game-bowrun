@@ -24,6 +24,7 @@ repositories {
 
 dependencies {
     compileOnly 'de.timesnake:basic-lounge-bridge:1.0-SNAPSHOT'
+    compileOnly 'de.timesnake:library-game:1.0-SNAPSHOT'
     compileOnly 'de.timesnake:basic-game:1.0-SNAPSHOT'
     compileOnly 'de.timesnake:basic-bukkit:1.0-SNAPSHOT'
     compileOnly 'de.timesnake:channel-bukkit:1.0-SNAPSHOT'

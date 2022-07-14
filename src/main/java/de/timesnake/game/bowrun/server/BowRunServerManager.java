@@ -11,6 +11,7 @@ import de.timesnake.basic.loungebridge.util.user.GameUser;
 import de.timesnake.basic.loungebridge.util.user.Kit;
 import de.timesnake.database.util.Database;
 import de.timesnake.database.util.game.DbGame;
+import de.timesnake.database.util.game.DbTmpGame;
 import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.game.bowrun.user.BowRunUser;
@@ -34,7 +35,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.time.Duration;
 import java.util.*;
 
-public class BowRunServerManager extends LoungeBridgeServerManager implements Listener {
+public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> implements Listener {
 
     public static BowRunServerManager getInstance() {
         return (BowRunServerManager) ServerManager.getInstance();
@@ -98,7 +99,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager implements Li
 
     @Override
     protected BowRunGame loadGame(DbGame dbGame, boolean loadWorlds) {
-        return new BowRunGame(dbGame, true);
+        return new BowRunGame((DbTmpGame) dbGame, true);
     }
 
     @Override
