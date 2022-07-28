@@ -194,7 +194,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
     @Override
     public BowRunGame getGame() {
-        return (BowRunGame) super.getGame();
+        return super.getGame();
     }
 
     @Override
