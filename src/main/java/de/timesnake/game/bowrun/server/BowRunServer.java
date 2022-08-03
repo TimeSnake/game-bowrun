@@ -1,9 +1,9 @@
 package de.timesnake.game.bowrun.server;
 
 import de.timesnake.basic.bukkit.util.user.ExItemStack;
-import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.bukkit.util.user.scoreboard.Sideboard;
 import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServer;
+import de.timesnake.game.bowrun.user.BowRunUser;
 import de.timesnake.library.basic.util.TimeCoins;
 import de.timesnake.library.basic.util.Tuple;
 import de.timesnake.library.basic.util.statistics.IntegerStat;
@@ -87,7 +87,7 @@ public class BowRunServer extends LoungeBridgeServer {
         return server.getTimeBar();
     }
 
-    public static void stopGame(BowRunServer.WinType winType, User finisher) {
+    public static void stopGame(BowRunServer.WinType winType, BowRunUser finisher) {
         server.stopGame(winType, finisher);
     }
 
@@ -137,10 +137,6 @@ public class BowRunServer extends LoungeBridgeServer {
 
     public static Integer getPlayingTime() {
         return server.getPlayingTime();
-    }
-
-    public static void setPlayingTime(Integer playingTime) {
-        server.setPlayingTime(playingTime);
     }
 
     public static List<Boolean> getRunnerArmor() {

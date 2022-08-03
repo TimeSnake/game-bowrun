@@ -4,6 +4,8 @@ import de.timesnake.basic.bukkit.util.Server;
 import de.timesnake.basic.bukkit.util.world.ExLocation;
 import de.timesnake.basic.bukkit.util.world.ExWorld;
 import de.timesnake.basic.game.util.Map;
+import de.timesnake.basic.loungebridge.util.game.ResetableMap;
+import de.timesnake.basic.loungebridge.util.tool.Timeable;
 import de.timesnake.database.util.game.DbMap;
 import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.library.basic.util.Tuple;
@@ -12,9 +14,9 @@ import org.bukkit.Material;
 
 import java.util.*;
 
-public class BowRunMap extends Map {
+public class BowRunMap extends Map implements Timeable, ResetableMap {
 
-    public static final Integer RUNNER_SPAWN_NUMBER = 2; //start up to 99
+    public static final Integer RUNNER_SPAWN_NUMBER = 2; //start, up to 99
     public static final Integer ARCHER_SPAWN_NUMBER = 1;
     public static final Integer RUNNER_FINISH = 0;
     public static final Integer RELAY_PICKUP = 100;
@@ -40,6 +42,8 @@ public class BowRunMap extends Map {
     private static final String RUNNER_WATER_DAMAGE = "W";
 
     private final Integer time;
+    private final List<ExLocation> runnerSpawns = new ArrayList<>();
+    private final Set<Tuple<Integer, Integer>> archerBorderLocs = new HashSet<>();
     private String tags;
     private boolean timeNight = false;
     private boolean archerNoSpecialItems = false;
@@ -57,17 +61,10 @@ public class BowRunMap extends Map {
     private boolean runnerSpeed = false;
     private boolean runnerNoFallDamage = false;
     private boolean runnerWaterDamage = false;
-
     private boolean relayRace = false;
-
     private int runnerDeathHeight = 0;
-
     private Integer bestTime;
     private UUID bestTimeUser;
-
-    private final List<ExLocation> runnerSpawns = new ArrayList<>();
-
-    private final Set<Tuple<Integer, Integer>> archerBorderLocs = new HashSet<>();
 
     public BowRunMap(DbMap map) {
         super(map, true);
@@ -244,7 +241,8 @@ public class BowRunMap extends Map {
         return super.getLocation(RELAY_PICKUP);
     }
 
-    public Integer getTime() {
+    @Override
+    public int getTime() {
         return time;
     }
 
