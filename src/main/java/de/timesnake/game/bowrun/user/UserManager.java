@@ -29,14 +29,11 @@ import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitTask;
 
 public class UserManager implements Listener, UserInventoryInteractListener {
 
     private static final double WATER_DAMAGE = 2; // per sec
     private static final int ITEM_REMOVE_DELAY = 15 * 20; // in ticks
-
-    private BukkitTask arrowGeneratorTask;
 
     public UserManager() {
         Server.registerListener(this, GameBowRun.getPlugin());
@@ -55,25 +52,6 @@ public class UserManager implements Listener, UserInventoryInteractListener {
                 }
             }
         }, 0, 10, GameBowRun.getPlugin());
-    }
-
-    public void runArrowGenerator(int periodInTicks) {
-        this.arrowGeneratorTask = Server.runTaskTimerSynchrony(() -> {
-            if (BowRunServer.getMap() != null) {
-                for (TeamUser user : BowRunServer.getGame().getArcherTeam().getInGameUsers()) {
-                    int delta = user.containsAtLeast(BowRunUser.ARROW, BowRunServer.MAX_ARROWS, true);
-                    if (delta < 0) {
-                        user.addItem(BowRunUser.ARROW.cloneWithId().asQuantity(Math.min(BowRunServer.RESPAWN_ARROW_AMOUNT, -delta)));
-                    }
-                }
-            }
-        }, 0, periodInTicks, GameBowRun.getPlugin());
-    }
-
-    public void cancelArrowGenerator() {
-        if (this.arrowGeneratorTask != null) {
-            this.arrowGeneratorTask.cancel();
-        }
     }
 
     @EventHandler
