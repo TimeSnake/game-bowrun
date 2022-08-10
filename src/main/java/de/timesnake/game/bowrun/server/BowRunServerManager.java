@@ -104,6 +104,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
                 if ((this.time % 60) == 0) {
                     Server.broadcastNote(BowRunServer.TIME_INSTRUMENT, BowRunServer.TIME_NOTE);
+                    Server.broadcastTitle("", this.time / 60 + " min left", Duration.ofSeconds(2));
                 }
             }
 
