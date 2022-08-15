@@ -8,10 +8,12 @@ import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.loungebridge.util.user.GameUser;
 import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
-import de.timesnake.library.basic.util.chat.ChatColor;
+import de.timesnake.library.basic.util.chat.ExTextColor;
 import de.timesnake.library.extension.util.cmd.Arguments;
 import de.timesnake.library.extension.util.cmd.ExCommand;
-import net.md_5.bungee.api.chat.ClickEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.TextDecoration;
 
 import java.util.List;
 
@@ -65,9 +67,9 @@ public class RecordVerification implements CommandListener {
                 continue;
             }
 
-            user.sendClickablePluginMessage(Plugin.BOWRUN, ChatColor.GREEN + ChatColor.BOLD +
-                    "Verify " + ChatColor.RED + ChatColor.BOLD + "record, if " +
-                    "it was legal", "/bowrun_verify", "Click to verify", ClickEvent.Action.RUN_COMMAND);
+            user.sendClickablePluginMessage(Plugin.BOWRUN, Component.text("Verify ", ExTextColor.GREEN, TextDecoration.BOLD)
+                            .append(Component.text("record, if it was legal", ExTextColor.WARNING, TextDecoration.BOLD)),
+                    "/bowrun_verify", Component.text("Click to verify"), ClickEvent.Action.RUN_COMMAND);
         }
     }
 
@@ -78,8 +80,8 @@ public class RecordVerification implements CommandListener {
                 continue;
             }
 
-            user.sendClickablePluginMessage(Plugin.BOWRUN, ChatColor.WARNING + ChatColor.BOLD +
-                            "Reject record, if it was illegal", "/bowrun_reject", "Click to reject",
+            user.sendClickablePluginMessage(Plugin.BOWRUN, Component.text("Reject record, if it was illegal", ExTextColor.WARNING, TextDecoration.BOLD),
+                    "/bowrun_reject", Component.text("Click to reject"),
                     ClickEvent.Action.RUN_COMMAND);
         }
 
@@ -91,7 +93,7 @@ public class RecordVerification implements CommandListener {
                         continue;
                     }
 
-                    user.sendPluginMessage(Plugin.BOWRUN, ChatColor.WARNING + "Saved verified record");
+                    user.sendPluginMessage(Plugin.BOWRUN, Component.text("Saved verified record", ExTextColor.WARNING));
                 }
             } else {
                 for (User user : Server.getUsers()) {
@@ -99,7 +101,7 @@ public class RecordVerification implements CommandListener {
                         continue;
                     }
 
-                    user.sendPluginMessage(Plugin.BOWRUN, ChatColor.WARNING + "Discarded unverified record");
+                    user.sendPluginMessage(Plugin.BOWRUN, Component.text("Discarded unverified record", ExTextColor.WARNING));
                 }
             }
         }, 20 * 8, GameBowRun.getPlugin());
@@ -120,10 +122,10 @@ public class RecordVerification implements CommandListener {
 
             if (this.time != null) {
                 this.setRecord();
-                sender.sendPluginMessage(ChatColor.WARNING + "Verified record");
+                sender.sendPluginMessage(Component.text("Verified record", ExTextColor.WARNING));
                 Server.printText(Plugin.BOWRUN, "Record verified by " + sender.getChatName());
             } else {
-                sender.sendPluginMessage(ChatColor.WARNING + "Record already verified");
+                sender.sendPluginMessage(Component.text("Record already verified", ExTextColor.WARNING));
             }
         } else if (cmd.getName().equalsIgnoreCase("bowrun_reject")) {
             if (!sender.hasPermission("game.bowrun.reject", 2414)) {
@@ -132,10 +134,10 @@ public class RecordVerification implements CommandListener {
 
             if (!this.rejected) {
                 this.rejected = true;
-                sender.sendPluginMessage(ChatColor.WARNING + "Rejected record");
+                sender.sendPluginMessage(Component.text("Rejected record", ExTextColor.WARNING));
                 Server.printText(Plugin.BOWRUN, "Record rejected by " + sender.getChatName());
             } else {
-                sender.sendPluginMessage(ChatColor.WARNING + "Record already rejected");
+                sender.sendPluginMessage(Component.text("Record already rejected", ExTextColor.WARNING));
             }
         }
 

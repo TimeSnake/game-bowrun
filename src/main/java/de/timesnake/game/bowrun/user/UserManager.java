@@ -16,7 +16,8 @@ import de.timesnake.game.bowrun.server.BowRunServerManager;
 import de.timesnake.game.bowrun.server.RelayManager;
 import de.timesnake.library.basic.util.Status;
 import de.timesnake.library.basic.util.Tuple;
-import de.timesnake.library.basic.util.chat.ChatColor;
+import de.timesnake.library.basic.util.chat.ExTextColor;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -277,8 +278,8 @@ public class UserManager implements Listener, UserInventoryInteractListener {
                 }
                 user.kill();
             } else {
-                user.sendPluginMessage(Plugin.BOWRUN, ChatColor.PERSONAL + "Left click the suicid item, to kill " +
-                        "yourself");
+                user.sendPluginMessage(Plugin.BOWRUN, Component.text("Left click the suicid item, to kill " +
+                        "yourself", ExTextColor.PERSONAL));
             }
         e.setCancelled(true);
     }
