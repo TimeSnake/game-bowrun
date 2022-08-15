@@ -6,6 +6,7 @@ import de.timesnake.basic.bukkit.util.chat.ChatColor;
 import de.timesnake.basic.bukkit.util.user.ExItemStack;
 import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.bukkit.util.user.scoreboard.Sideboard;
+import de.timesnake.basic.game.util.Team;
 import de.timesnake.basic.game.util.TeamUser;
 import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServerManager;
 import de.timesnake.basic.loungebridge.util.tool.GameTool;
@@ -22,9 +23,11 @@ import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.game.bowrun.user.BowRunUser;
 import de.timesnake.game.bowrun.user.UserManager;
 import de.timesnake.library.basic.util.Status;
+import de.timesnake.library.basic.util.chat.ExTextColor;
 import de.timesnake.library.basic.util.statistics.StatPeriod;
 import de.timesnake.library.basic.util.statistics.StatType;
 import de.timesnake.library.extension.util.chat.Chat;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -104,7 +107,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
                 if ((this.time % 60) == 0) {
                     Server.broadcastNote(BowRunServer.TIME_INSTRUMENT, BowRunServer.TIME_NOTE);
-                    Server.broadcastTitle("", this.time / 60 + " min left", Duration.ofSeconds(2));
+                    Server.broadcastTitle(Component.empty(), Component.text(this.time / 60 + " min left"),
+                            Duration.ofSeconds(2));
                 }
             }
 
@@ -229,13 +233,16 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
         this.setState(BowRunServer.State.STOPPED);
 
-        int archerKills = this.getGame().getArcherTeam().getKills();
+        Team archerTeam = this.getGame().getArcherTeam();
+        Team runnerTeam = this.getGame().getRunnerTeam();
+
+        int archerKills = archerTeam.getKills();
         if (archerKills == 0) archerKills = 1;
 
         for (User user : Server.getInGameUsers()) {
             ((BowRunUser) user).resetGameEquipment();
 
-            if (((BowRunUser) user).getTeam().equals(this.getGame().getArcherTeam())) {
+            if (((BowRunUser) user).getTeam().equals(archerTeam)) {
                 user.addCoins((float) (((BowRunUser) user).getKills() / ((double) archerKills) * BowRunServer.KILL_COINS_POOL), true);
             }
         }
@@ -244,40 +251,51 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         Server.broadcastSound(BowRunServer.END_SOUND, 5F);
         switch (winType) {
             case ARCHER -> {
-                Server.broadcastTitle(ChatColor.RED + "Archers " + ChatColor.PUBLIC + "win!", "",
+                Server.broadcastTitle(Component.text("Archers ", archerTeam.getTextColor())
+                                .append(Component.text("win!", ExTextColor.PUBLIC)), Component.empty(),
                         Duration.ofSeconds(5));
-                this.broadcastGameMessage(ChatColor.RED + "Archers " + ChatColor.PUBLIC + "win!");
+                this.broadcastGameMessage(Component.text("Archers ", archerTeam.getTextColor())
+                        .append(Component.text("win!", ExTextColor.PUBLIC)));
                 for (User user : this.getGame().getArcherTeam().getUsers()) {
                     user.addCoins(BowRunServer.WIN_COINS, true);
                 }
             }
             case RUNNER -> {
-                Server.broadcastTitle(ChatColor.BLUE + "Runners " + ChatColor.PUBLIC + "win!", "",
+                Server.broadcastTitle(Component.text("Runners ", runnerTeam.getTextColor())
+                                .append(Component.text("win!", ExTextColor.PUBLIC)), Component.empty(),
                         Duration.ofSeconds(5));
-                this.broadcastGameMessage(ChatColor.BLUE + "Runners " + ChatColor.PUBLIC + "win!");
+                this.broadcastGameMessage(Component.text("Runners ", runnerTeam.getTextColor())
+                        .append(Component.text("win!", ExTextColor.PUBLIC)));
                 for (User user : this.getGame().getRunnerTeam().getUsers()) {
                     user.addCoins(BowRunServer.WIN_COINS, true);
                 }
             }
             case ARCHER_TIME -> {
-                Server.broadcastTitle(ChatColor.RED + "Archers " + ChatColor.PUBLIC + "win!", ChatColor.PUBLIC +
-                        "Time is up", Duration.ofSeconds(5));
-                this.broadcastGameMessage(ChatColor.RED + "Archers " + ChatColor.PUBLIC + "win!");
+                Server.broadcastTitle(Component.text("Archers ", archerTeam.getTextColor())
+                                .append(Component.text("win!", ExTextColor.PUBLIC)),
+                        Component.text("Time is up", ExTextColor.PUBLIC), Duration.ofSeconds(5));
+                this.broadcastGameMessage(Component.text("Archers ", archerTeam.getTextColor())
+                        .append(Component.text("win!", ExTextColor.PUBLIC)));
                 for (User user : this.getGame().getArcherTeam().getUsers()) {
                     user.addCoins(BowRunServer.WIN_COINS, true);
                 }
             }
             case RUNNER_FINISH -> {
-                Server.broadcastTitle(ChatColor.BLUE + "Runners " + ChatColor.PUBLIC + "win!",
-                        finisher.get().getChatName() + ChatColor.PUBLIC + " reached the finish", Duration.ofSeconds(5));
-                this.broadcastGameMessage(ChatColor.BLUE + "Runners " + ChatColor.PUBLIC + "win!");
+                Server.broadcastTitle(Component.text("Runners ", runnerTeam.getTextColor())
+                                .append(Component.text("win!", ExTextColor.PUBLIC)),
+                        finisher.get().getChatNameComponent()
+                                .append(Component.text(" reached the finish", ExTextColor.PUBLIC)),
+                        Duration.ofSeconds(5));
+                this.broadcastGameMessage(Component.text("Runners ", runnerTeam.getTextColor())
+                        .append(Component.text("win!", ExTextColor.PUBLIC)));
                 for (User user : this.getGame().getRunnerTeam().getUsers()) {
                     user.addCoins(BowRunServer.WIN_COINS, true);
                 }
             }
             default -> {
-                Server.broadcastTitle(ChatColor.WHITE + "Game has ended", "", Duration.ofSeconds(5));
-                this.broadcastGameMessage(ChatColor.WHITE + "Game has ended");
+                Server.broadcastTitle(Component.text("Game has ended", ExTextColor.PUBLIC), Component.empty(),
+                        Duration.ofSeconds(5));
+                this.broadcastGameMessage(Component.text("Game has ended", ExTextColor.PUBLIC));
             }
         }
 
@@ -304,8 +322,10 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         if (oldRecord > time && winType == BowRunServer.WinType.RUNNER_FINISH && finisher.isPresent()) {
             recordTime = Chat.getTimeString(time);
 
-            this.broadcastGameMessage(ChatColor.GOLD + "New record: " + ChatColor.BLUE + recordTime + ChatColor.GOLD +
-                    " by " + finisher.get().getChatName());
+            this.broadcastGameMessage(Component.text("New record: ", ExTextColor.GOLD)
+                    .append(Component.text(recordTime, ExTextColor.BLUE))
+                    .append(Component.text(" by ", ExTextColor.GOLD))
+                    .append(finisher.get().getChatNameComponent()));
 
             this.recordVerification.checkRecord(time, finisher.get(), map);
         }
@@ -475,8 +495,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     }
 
     @Override
-    public void broadcastGameMessage(String message) {
-        Server.broadcastMessage(Plugin.BOWRUN, ChatColor.PUBLIC + message);
+    public void broadcastGameMessage(Component message) {
+        Server.broadcastMessage(Plugin.BOWRUN, message.color(ExTextColor.PUBLIC));
     }
 
     @Override
