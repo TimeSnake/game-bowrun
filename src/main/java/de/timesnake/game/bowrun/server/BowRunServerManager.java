@@ -61,7 +61,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     private RelayManager relayManager;
     private ArrowGenerator arrowGenerator;
     private BowRunServer.WinType winType;
-    private Optional<BowRunUser> finisher;
+    private BowRunUser finisher;
 
     public void onBowRunEnable() {
         super.onLoungeBridgeEnable();
@@ -115,7 +115,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
             @Override
             public void onTimerEnd() {
                 BowRunServerManager.this.winType = BowRunServer.WinType.ARCHER_TIME;
-                BowRunServerManager.this.finisher = Optional.empty();
+                BowRunServerManager.this.finisher = null;
                 Server.runTaskSynchrony(BowRunServerManager.this::stopGame, GameBowRun.getPlugin());
             }
         };
@@ -177,7 +177,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     public void onGameStart() {
         if (stopAfterStart) {
             this.winType = BowRunServer.WinType.END;
-            this.finisher = Optional.empty();
+            this.finisher = null;
         } else {
             runnerArmor = List.of(false, false, false, false);
             if (BowRunServer.getMap().isRunnerArmor()) {
@@ -221,7 +221,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
     public void stopGame(BowRunServer.WinType winType, BowRunUser finisher) {
         this.winType = winType;
-        this.finisher = Optional.ofNullable(finisher);
+        this.finisher = finisher;
         this.stopGame();
     }
 
@@ -283,7 +283,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
             case RUNNER_FINISH -> {
                 Server.broadcastTitle(Component.text("Runners ", runnerTeam.getTextColor())
                                 .append(Component.text("win!", ExTextColor.PUBLIC)),
-                        finisher.get().getChatNameComponent()
+                        finisher.getChatNameComponent()
                                 .append(Component.text(" reached the finish", ExTextColor.PUBLIC)),
                         Duration.ofSeconds(5));
                 this.broadcastGameMessage(Component.text("Runners ", runnerTeam.getTextColor())
@@ -319,15 +319,15 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
             lastRecord = map.getBestTimeUser();
         }
 
-        if (oldRecord > time && winType == BowRunServer.WinType.RUNNER_FINISH && finisher.isPresent()) {
+        if (oldRecord > time && winType == BowRunServer.WinType.RUNNER_FINISH && finisher != null) {
             recordTime = Chat.getTimeString(time);
 
             this.broadcastGameMessage(Component.text("New record: ", ExTextColor.GOLD)
                     .append(Component.text(recordTime, ExTextColor.BLUE))
                     .append(Component.text(" by ", ExTextColor.GOLD))
-                    .append(finisher.get().getChatNameComponent()));
+                    .append(finisher.getChatNameComponent()));
 
-            this.recordVerification.checkRecord(time, finisher.get(), map);
+            this.recordVerification.checkRecord(time, finisher, map);
         }
         // stats
         List<String> stats = new ArrayList<>();
@@ -337,9 +337,9 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         stats.add("Map: " + map.getName());
         if (recordTime != null) {
             if (lastRecord != null) {
-                stats.add("New Record: " + recordTime + " " + finisher.get().getUniqueId() + "(old: " + oldRecord + " " + lastRecord + ")");
+                stats.add("New Record: " + recordTime + " " + finisher.getUniqueId() + "(old: " + oldRecord + " " + lastRecord + ")");
             } else {
-                stats.add("New Record: " + recordTime + " " + finisher.get().getUniqueId());
+                stats.add("New Record: " + recordTime + " " + finisher.getUniqueId());
             }
         }
 
@@ -384,7 +384,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         }
 
         this.winType = user.getTeam().equals(this.getGame().getArcherTeam()) ? BowRunServer.WinType.RUNNER : BowRunServer.WinType.ARCHER;
-        this.finisher = Optional.empty();
+        this.finisher = null;
         this.stopGame();
     }
 
@@ -496,7 +496,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
     @Override
     public void broadcastGameMessage(Component message) {
-        Server.broadcastMessage(Plugin.BOWRUN, message.color(ExTextColor.PUBLIC));
+        Server.broadcastMessage(Plugin.BOWRUN, message);
     }
 
     @Override
