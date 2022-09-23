@@ -50,6 +50,7 @@ group = 'de.timesnake'
 version = '1.0-SNAPSHOT'
 description = 'game-bowrun'
 java.sourceCompatibility = 1.17
+java.targetCompatibility = 1.17
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
