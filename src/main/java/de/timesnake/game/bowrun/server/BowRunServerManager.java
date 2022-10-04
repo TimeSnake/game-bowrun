@@ -138,7 +138,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     }
 
     @Override
-    public de.timesnake.library.basic.util.chat.Plugin getGamePlugin() {
+    public de.timesnake.library.extension.util.chat.Plugin getGamePlugin() {
         return Plugin.BOWRUN;
     }
 
