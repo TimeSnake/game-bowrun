@@ -9,6 +9,7 @@ import de.timesnake.basic.loungebridge.util.user.GameUser;
 import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.library.basic.util.chat.ExTextColor;
+import de.timesnake.library.extension.util.chat.Code;
 import de.timesnake.library.extension.util.cmd.Arguments;
 import de.timesnake.library.extension.util.cmd.ExCommand;
 import net.kyori.adventure.text.Component;
@@ -26,6 +27,9 @@ public class RecordVerification implements CommandListener {
     private BowRunMap map;
 
     private boolean rejected;
+
+    private Code.Permission verifyPerm;
+    private Code.Permission rejectPerm;
 
     public void checkRecord(int time, User finisher, BowRunMap map) {
         this.time = time;
@@ -116,7 +120,7 @@ public class RecordVerification implements CommandListener {
     @Override
     public void onCommand(Sender sender, ExCommand<Sender, Argument> cmd, Arguments<Argument> args) {
         if (cmd.getName().equalsIgnoreCase("bowrun_verify")) {
-            if (!sender.hasPermission("game.bowrun.verify", 2413)) {
+            if (!sender.hasPermission(this.verifyPerm)) {
                 return;
             }
 
@@ -128,7 +132,7 @@ public class RecordVerification implements CommandListener {
                 sender.sendPluginMessage(Component.text("Record already verified", ExTextColor.WARNING));
             }
         } else if (cmd.getName().equalsIgnoreCase("bowrun_reject")) {
-            if (!sender.hasPermission("game.bowrun.reject", 2414)) {
+            if (!sender.hasPermission(this.rejectPerm)) {
                 return;
             }
 
@@ -146,5 +150,11 @@ public class RecordVerification implements CommandListener {
     @Override
     public List<String> getTabCompletion(ExCommand<Sender, Argument> cmd, Arguments<Argument> args) {
         return null;
+    }
+
+    @Override
+    public void loadCodes(de.timesnake.library.extension.util.chat.Plugin plugin) {
+        this.verifyPerm = plugin.createPermssionCode("brr", "game.bowrun.verify");
+        this.rejectPerm = plugin.createPermssionCode("brr", "game.bowrun.reject");
     }
 }
