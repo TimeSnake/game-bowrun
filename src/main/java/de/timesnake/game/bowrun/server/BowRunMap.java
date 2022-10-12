@@ -171,7 +171,7 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
                 }
             }
 
-            Server.printText(Plugin.BOWRUN, "Loaded map " + this.getName() + " with tags " + this.tags);
+            Server.printText(Plugin.BOWRUN, "Loaded map " + this.getName() + " with tags: " + this.tags);
 
         }
 
