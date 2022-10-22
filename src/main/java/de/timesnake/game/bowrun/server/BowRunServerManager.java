@@ -119,13 +119,13 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
             @Override
             public void onTimerUpdate() {
                 updateGameTimeOnSideboard();
-                if (this.time % 20 == 0) {
+                if (this.getTime() % 20 == 0) {
                     BowRunServerManager.this.giveArcherSpecialItems();
                 }
 
-                if ((this.time % 60) == 0) {
+                if ((this.getTime() % 60) == 0) {
                     Server.broadcastNote(BowRunServer.TIME_INSTRUMENT, BowRunServer.TIME_NOTE);
-                    Server.broadcastTitle(Component.empty(), Component.text(this.time / 60 + " min left"),
+                    Server.broadcastTitle(Component.empty(), Component.text(this.getTime() / 60 + " min left"),
                             Duration.ofSeconds(2));
                 }
             }
