@@ -1,5 +1,5 @@
 /*
- * game-bowrun.main
+ * timesnake.game-bowrun.main
  * Copyright (C) 2022 timesnake
  *
  * This program is free software; you can redistribute it and/or
@@ -91,14 +91,14 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
         this.relayManager = new RelayManager();
 
-        this.sideboard = Server.getScoreboardManager().registerNewSideboard("bowrun", "§6§lBowRun");
+        this.sideboard = Server.getScoreboardManager().registerSideboard("bowrun", "§6§lBowRun");
         this.sideboard.setScore(4, BowRunServer.SIDEBOARD_TIME_TEXT);
         //time (method after spec sideboard)
         this.sideboard.setScore(2, "§r§f-----------");
         // kills/deaths
         // kills/deaths amount
 
-        this.spectatorSideboard = Server.getScoreboardManager().registerNewSideboard("bowrunSpectator", "§6§lBowRun");
+        this.spectatorSideboard = Server.getScoreboardManager().registerSideboard("bowrunSpectator", "§6§lBowRun");
         this.spectatorSideboard.setScore(4, BowRunServer.SIDEBOARD_TIME_TEXT);
         // time
         this.spectatorSideboard.setScore(2, "§r§f-----------");
