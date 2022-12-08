@@ -19,8 +19,8 @@
 package de.timesnake.game.bowrun.server;
 
 import de.timesnake.basic.bukkit.util.exception.UnsupportedGroupRankException;
-import de.timesnake.basic.game.util.Team;
-import de.timesnake.basic.game.util.TmpGame;
+import de.timesnake.basic.game.util.game.Team;
+import de.timesnake.basic.game.util.game.TmpGame;
 import de.timesnake.basic.loungebridge.util.user.Kit;
 import de.timesnake.database.util.game.DbKit;
 import de.timesnake.database.util.game.DbMap;

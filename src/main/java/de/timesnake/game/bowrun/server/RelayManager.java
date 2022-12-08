@@ -1,5 +1,5 @@
 /*
- * game-bowrun.main
+ * workspace.game-bowrun.main
  * Copyright (C) 2022 timesnake
  *
  * This program is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.bukkit.util.user.event.UserDeathEvent;
 import de.timesnake.basic.bukkit.util.user.event.UserDropItemEvent;
 import de.timesnake.basic.bukkit.util.user.event.UserMoveEvent;
-import de.timesnake.basic.game.util.TeamUser;
+import de.timesnake.basic.game.util.user.TeamUser;
 import de.timesnake.game.bowrun.main.GameBowRun;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
