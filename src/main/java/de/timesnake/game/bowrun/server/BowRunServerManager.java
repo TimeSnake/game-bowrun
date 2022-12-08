@@ -1,5 +1,5 @@
 /*
- * timesnake.game-bowrun.main
+ * workspace.game-bowrun.main
  * Copyright (C) 2022 timesnake
  *
  * This program is free software; you can redistribute it and/or
@@ -24,8 +24,9 @@ import de.timesnake.basic.bukkit.util.chat.ChatColor;
 import de.timesnake.basic.bukkit.util.user.ExItemStack;
 import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.bukkit.util.user.scoreboard.Sideboard;
-import de.timesnake.basic.game.util.Team;
-import de.timesnake.basic.game.util.TeamUser;
+import de.timesnake.basic.bukkit.util.world.ExLocation;
+import de.timesnake.basic.game.util.game.Team;
+import de.timesnake.basic.game.util.user.TeamUser;
 import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServerManager;
 import de.timesnake.basic.loungebridge.util.tool.GameTool;
 import de.timesnake.basic.loungebridge.util.tool.StartableTool;
@@ -47,7 +48,6 @@ import de.timesnake.library.basic.util.statistics.StatType;
 import de.timesnake.library.extension.util.chat.Chat;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -532,7 +532,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     }
 
     @Override
-    public Location getSpectatorSpawn() {
+    public ExLocation getSpectatorSpawn() {
         return this.getMap().getArcherSpawn();
     }
 
