@@ -32,6 +32,12 @@ import de.timesnake.library.basic.util.chat.ExTextColor;
 import de.timesnake.library.basic.util.statistics.StatPeriod;
 import de.timesnake.library.basic.util.statistics.StatType;
 import de.timesnake.library.extension.util.chat.Chat;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -43,9 +49,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.time.Duration;
-import java.util.*;
 
 public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> implements Listener {
 
@@ -84,7 +87,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         // kills/deaths
         // kills/deaths amount
 
-        this.spectatorSideboard = Server.getScoreboardManager().registerSideboard("bowrunSpectator", "§6§lBowRun");
+        this.spectatorSideboard = Server.getScoreboardManager()
+                .registerSideboard("bowrunSpectator", "§6§lBowRun");
         this.spectatorSideboard.setScore(4, BowRunServer.SIDEBOARD_TIME_TEXT);
         // time
         this.spectatorSideboard.setScore(2, "§r§f-----------");
@@ -95,11 +99,13 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
         Color color = this.getGame().getRunnerTeam().getColor();
         BowRunServer.armor = List.of(
-                new ExItemStack(Material.GOLDEN_BOOTS).addExEnchantment(Enchantment.PROTECTION_PROJECTILE, 1),
-                new ExItemStack(Material.GOLDEN_LEGGINGS).addExEnchantment(Enchantment.PROTECTION_PROJECTILE, 2),
-                new ExItemStack(Material.GOLDEN_CHESTPLATE).addExEnchantment(Enchantment.PROTECTION_PROJECTILE, 2),
+                new ExItemStack(Material.GOLDEN_BOOTS).addExEnchantment(
+                        Enchantment.PROTECTION_PROJECTILE, 1),
+                new ExItemStack(Material.GOLDEN_LEGGINGS).addExEnchantment(
+                        Enchantment.PROTECTION_PROJECTILE, 1),
+                new ExItemStack(Material.GOLDEN_CHESTPLATE).addExEnchantment(
+                        Enchantment.PROTECTION_PROJECTILE, 1),
                 ExItemStack.getLeatherArmor(Material.LEATHER_HELMET, color));
-
 
         this.timerTool = new TimerTool() {
             @Override
@@ -111,7 +117,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
                 if ((this.getTime() % 60) == 0) {
                     Server.broadcastNote(BowRunServer.TIME_INSTRUMENT, BowRunServer.TIME_NOTE);
-                    Server.broadcastTitle(Component.empty(), Component.text(this.getTime() / 60 + " min left"),
+                    Server.broadcastTitle(Component.empty(),
+                            Component.text(this.getTime() / 60 + " min left"),
                             Duration.ofSeconds(2));
                 }
             }
@@ -161,10 +168,13 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         if (map.getBestTime() != null) {
             String recordTime = Chat.getTimeString(map.getBestTime());
             if (map.getBestTimeUser() != null) {
-                BowRunServer.getGameTablist().setFooter(ChatColor.GOLD + "Record: " + ChatColor.BLUE + recordTime +
-                        ChatColor.GOLD + " by " + ChatColor.BLUE + Database.getUsers().getUser(map.getBestTimeUser()).getName());
+                BowRunServer.getGameTablist()
+                        .setFooter(ChatColor.GOLD + "Record: " + ChatColor.BLUE + recordTime +
+                                ChatColor.GOLD + " by " + ChatColor.BLUE + Database.getUsers()
+                                .getUser(map.getBestTimeUser()).getName());
             } else {
-                BowRunServer.getGameTablist().setFooter(ChatColor.GOLD + "Record: " + ChatColor.BLUE + "- - -");
+                BowRunServer.getGameTablist()
+                        .setFooter(ChatColor.GOLD + "Record: " + ChatColor.BLUE + "- - -");
             }
 
             String playTime = Chat.getTimeString(this.getPlayingTime());
@@ -205,9 +215,10 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
             }
 
             int period =
-                    (int) (BowRunServer.ARROW_GENERATION_SPEED +
+                    (int) (BowRunServer.ARROW_GENERATION_PERIOD +
                             Math.sqrt(BowRunServer.ARROW_GENERATION_PLAYER_MULTIPLIER *
-                                    BowRunServer.getGame().getArcherTeam().getInGameUsers().size()));
+                                    BowRunServer.getGame().getArcherTeam().getInGameUsers()
+                                            .size()));
             this.arrowGenerator.setPeriod(period);
         }
     }
@@ -241,13 +252,16 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         Team runnerTeam = this.getGame().getRunnerTeam();
 
         int archerKills = archerTeam.getKills();
-        if (archerKills == 0) archerKills = 1;
+        if (archerKills == 0) {
+            archerKills = 1;
+        }
 
         for (User user : Server.getInGameUsers()) {
             ((BowRunUser) user).resetGameEquipment();
 
             if (((BowRunUser) user).getTeam().equals(archerTeam)) {
-                user.addCoins((float) (((BowRunUser) user).getKills() / ((double) archerKills) * BowRunServer.KILL_COINS_POOL), true);
+                user.addCoins((float) (((BowRunUser) user).getKills() / ((double) archerKills)
+                        * BowRunServer.KILL_COINS_POOL), true);
             }
         }
 
@@ -297,18 +311,22 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
                 }
             }
             default -> {
-                Server.broadcastTitle(Component.text("Game has ended", ExTextColor.PUBLIC), Component.empty(),
+                Server.broadcastTitle(Component.text("Game has ended", ExTextColor.PUBLIC),
+                        Component.empty(),
                         Duration.ofSeconds(5));
                 this.broadcastGameMessage(Component.text("Game has ended", ExTextColor.PUBLIC));
             }
         }
 
         this.broadcastGameMessage(Chat.getLongLineSeparator());
-        this.broadcastHighscore("Kills", (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3,
+        this.broadcastHighscore("Kills",
+                (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3,
                 GameUser::getKills);
-        this.broadcastHighscore("Deaths", (Collection) (BowRunServer.getGame().getRunnerTeam().getUsers()), 3,
+        this.broadcastHighscore("Deaths",
+                (Collection) (BowRunServer.getGame().getRunnerTeam().getUsers()), 3,
                 GameUser::getDeaths);
-        this.broadcastHighscore("Longest Shot", (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3,
+        this.broadcastHighscore("Longest Shot",
+                (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3,
                 u -> u.getLongestShot() > 0, GameUser::getLongestShot);
         this.broadcastGameMessage(Chat.getLongLineSeparator());
 
@@ -336,12 +354,14 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         // stats
         List<String> stats = new ArrayList<>();
 
-        stats.add("Teams (R vs. A): " + this.getGame().getRunnerTeam().getUsers().size() + " vs. " + this.getGame().getArcherTeam().getUsers().size());
+        stats.add("Teams (R vs. A): " + this.getGame().getRunnerTeam().getUsers().size() + " vs. "
+                + this.getGame().getArcherTeam().getUsers().size());
         stats.add("Time: " + this.getPlayingTime() + " of " + map.getTime());
         stats.add("Map: " + map.getName());
         if (recordTime != null) {
             if (lastRecord != null) {
-                stats.add("New Record: " + recordTime + " " + finisher.getUniqueId() + "(old: " + oldRecord + " " + lastRecord + ")");
+                stats.add("New Record: " + recordTime + " " + finisher.getUniqueId() + "(old: "
+                        + oldRecord + " " + lastRecord + ")");
             } else {
                 stats.add("New Record: " + recordTime + " " + finisher.getUniqueId());
             }
@@ -360,13 +380,18 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
             }
 
             if (gameUser.getBowShots().equals(0)) {
-                stats.add(gameUser.getName() + ": " + gameUser.getTeam().getName() + " " + gameUser.getDeaths() + " " +
-                        gameUser.getKills() + " " + gameUser.getBowHits() + " " + gameUser.getBowShots() + " " +
+                stats.add(gameUser.getName() + ": " + gameUser.getTeam().getName() + " "
+                        + gameUser.getDeaths() + " " +
+                        gameUser.getKills() + " " + gameUser.getBowHits() + " "
+                        + gameUser.getBowShots() + " " +
                         gameUser.getBowHitTarget() + " " + (gameUser.getBowHitTarget()));
             } else {
-                stats.add(gameUser.getName() + ": " + gameUser.getTeam().getName() + " " + gameUser.getDeaths() + " " +
-                        gameUser.getKills() + " " + gameUser.getBowHits() + " " + gameUser.getBowShots() + " " +
-                        gameUser.getBowHitTarget() + " " + gameUser.getBowHitTarget() / ((double) gameUser.getBowShots()));
+                stats.add(gameUser.getName() + ": " + gameUser.getTeam().getName() + " "
+                        + gameUser.getDeaths() + " " +
+                        gameUser.getKills() + " " + gameUser.getBowHits() + " "
+                        + gameUser.getBowShots() + " " +
+                        gameUser.getBowHitTarget() + " "
+                        + gameUser.getBowHitTarget() / ((double) gameUser.getBowShots()));
             }
         }
 
@@ -387,7 +412,9 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
             return;
         }
 
-        this.winType = user.getTeam().equals(this.getGame().getArcherTeam()) ? BowRunServer.WinType.RUNNER : BowRunServer.WinType.ARCHER;
+        this.winType =
+                user.getTeam().equals(this.getGame().getArcherTeam()) ? BowRunServer.WinType.RUNNER
+                        : BowRunServer.WinType.ARCHER;
         this.finisher = null;
         this.stopGame();
     }
@@ -472,11 +499,15 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     }
 
     public ExItemStack getRandomRunnerItem() {
-        return BowRunServer.RUNNER_ITEMS.get((int) ((Math.random() * BowRunServer.RUNNER_ITEMS.size() + Math.random() * BowRunServer.RUNNER_ITEMS.size()) / 2));
+        return BowRunServer.RUNNER_ITEMS.get(
+                (int) ((Math.random() * BowRunServer.RUNNER_ITEMS.size()
+                        + Math.random() * BowRunServer.RUNNER_ITEMS.size()) / 2));
     }
 
     public ExItemStack getRandomArcherItem() {
-        return BowRunServer.ARCHER_ITEMS.get((int) ((Math.random() * BowRunServer.ARCHER_ITEMS.size() + Math.random() * BowRunServer.ARCHER_ITEMS.size()) / 2));
+        return BowRunServer.ARCHER_ITEMS.get(
+                (int) ((Math.random() * BowRunServer.ARCHER_ITEMS.size()
+                        + Math.random() * BowRunServer.ARCHER_ITEMS.size()) / 2));
     }
 
     public void addRunnerDeath() {
@@ -523,11 +554,13 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     }
 
     public double getRunnerItemChance() {
-        return (1 - ((double) this.getPlayingTime() / this.getMap().getTime())) * BowRunServer.RUNNER_ITEM_CHANCE_MULTIPLIER;
+        return (1 - ((double) this.getPlayingTime() / this.getMap().getTime()))
+                * BowRunServer.RUNNER_ITEM_CHANCE_MULTIPLIER;
     }
 
     public void giveArcherSpecialItems() {
-        if (!this.getMap().isOnlyInstant() && !this.getMap().isOnlyPunch() && !this.getMap().isArcherNoSpecialItems()) {
+        if (!this.getMap().isOnlyInstant() && !this.getMap().isOnlyPunch() && !this.getMap()
+                .isArcherNoSpecialItems()) {
             for (User user : this.getGame().getArcherTeam().getInGameUsers()) {
                 if (Math.random() < BowRunServer.ARCHER_ITEM_CHANCE) {
                     ItemStack item = BowRunServer.getRandomArcherItem();
@@ -568,7 +601,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
                 Integer archerWins = user.getStat(BowRunServer.ARCHER_WINS).get(period);
                 Integer runnerWins = user.getStat(BowRunServer.RUNNER_WINS).get(period);
                 Integer gamesPlayed = user.getStat(GAMES_PLAYED).get(period);
-                user.getStat(BowRunServer.WIN_CHANCE).set(period, (archerWins + runnerWins) / ((float) gamesPlayed));
+                user.getStat(BowRunServer.WIN_CHANCE)
+                        .set(period, (archerWins + runnerWins) / ((float) gamesPlayed));
             }
         }
 
@@ -580,7 +614,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
     @Override
     public Set<StatType<?>> getStats() {
-        return Set.of(BowRunServer.RUNNER_WINS, BowRunServer.ARCHER_WINS, BowRunServer.WIN_CHANCE, BowRunServer.KILLS,
+        return Set.of(BowRunServer.RUNNER_WINS, BowRunServer.ARCHER_WINS, BowRunServer.WIN_CHANCE,
+                BowRunServer.KILLS,
                 BowRunServer.DEATHS, BowRunServer.MOST_KILLS_PER_MATCH, BowRunServer.LONGEST_SHOT);
     }
 
@@ -594,9 +629,11 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
             this.task = Server.runTaskTimerSynchrony(() -> {
                 if (BowRunServer.getMap() != null) {
                     for (TeamUser user : BowRunServer.getGame().getArcherTeam().getInGameUsers()) {
-                        int delta = user.containsAtLeast(BowRunUser.ARROW, BowRunServer.MAX_ARROWS, true);
+                        int delta = user.containsAtLeast(BowRunUser.ARROW, BowRunServer.MAX_ARROWS,
+                                true);
                         if (delta < 0) {
-                            user.addItem(BowRunUser.ARROW.cloneWithId().asQuantity(Math.min(BowRunServer.RESPAWN_ARROW_AMOUNT, -delta)));
+                            user.addItem(BowRunUser.ARROW.cloneWithId().asQuantity(
+                                    Math.min(BowRunServer.RESPAWN_ARROW_AMOUNT, -delta)));
                         }
                     }
                 }
