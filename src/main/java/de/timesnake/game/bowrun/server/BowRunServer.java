@@ -13,6 +13,7 @@ import de.timesnake.library.basic.util.Tuple;
 import de.timesnake.library.basic.util.statistics.IntegerStat;
 import de.timesnake.library.basic.util.statistics.PercentStat;
 import de.timesnake.library.basic.util.statistics.StatType;
+import java.util.List;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -21,17 +22,18 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.List;
-
 public class BowRunServer extends LoungeBridgeServer {
 
     public static final List<ExItemStack> RUNNER_ITEMS = List.of(
-            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 2, "§6Heal II", PotionEffectType.HEAL, 0, 2),
-            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Jump II  (7 s)", PotionEffectType.JUMP,
+            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 2, "§6Heal II",
+                    PotionEffectType.HEAL, 0, 2),
+            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Jump II  (7 s)",
+                    PotionEffectType.JUMP,
                     20 * 7, 2),
             ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Slow Fall (20 s)",
                     PotionEffectType.SLOW_FALLING, 20 * 20, 1),
-            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Speed II (30 s)", PotionEffectType.SPEED,
+            ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Speed II (30 s)",
+                    PotionEffectType.SPEED,
                     20 * 15, 2),
             ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Invisibility (8 s)",
                     PotionEffectType.INVISIBILITY, 20 * 8, 1, List.of("§fRemoves your armor")),
@@ -45,9 +47,12 @@ public class BowRunServer extends LoungeBridgeServer {
             new ExItemStack(Material.CHORUS_FRUIT, 5));
 
     public static final List<ExItemStack> ARCHER_ITEMS = List.of(
-            new ExItemStack(Material.BOW, "§6Flame-Bow").setDamage(380).addEnchantments(new Tuple<>(Enchantment.ARROW_FIRE, 1)),
-            new ExItemStack(Material.BOW, "§6Power-Bow").setDamage(384).addEnchantments(new Tuple<>(Enchantment.ARROW_DAMAGE, 7)),
-            new ExItemStack(Material.BOW, "§6Punch-Bow").setDamage(382).addEnchantments(new Tuple<>(Enchantment.ARROW_KNOCKBACK, 2)),
+            new ExItemStack(Material.BOW, "§6Flame-Bow").setDamage(380)
+                    .addEnchantments(new Tuple<>(Enchantment.ARROW_FIRE, 1)),
+            new ExItemStack(Material.BOW, "§6Power-Bow").setDamage(384)
+                    .addEnchantments(new Tuple<>(Enchantment.ARROW_DAMAGE, 7)),
+            new ExItemStack(Material.BOW, "§6Punch-Bow").setDamage(382)
+                    .addEnchantments(new Tuple<>(Enchantment.ARROW_KNOCKBACK, 2)),
             new ExItemStack(Material.SPECTRAL_ARROW, 32, "§6Spectral-Arrow"));
 
     public static final Instrument TIME_INSTRUMENT = Instrument.PLING;
@@ -58,10 +63,10 @@ public class BowRunServer extends LoungeBridgeServer {
     public static final Double RUNNER_ITEM_CHANCE_MULTIPLIER = 0.6;
     public static final Double ARCHER_ITEM_CHANCE = 0.2;
 
-    public static final int MAX_ARROWS = 5;
+    public static final int MAX_ARROWS = 4;
     public static final int RESPAWN_ARROW_AMOUNT = 2;
-    public static final double ARROW_GENERATION_SPEED = 15;
-    public static final double ARROW_GENERATION_PLAYER_MULTIPLIER = 1.5;
+    public static final double ARROW_GENERATION_PERIOD = 20;
+    public static final double ARROW_GENERATION_PLAYER_MULTIPLIER = 2;
 
     public static final float KILL_COINS_POOL = 16 * TimeCoins.MULTIPLIER;
     public static final float WIN_COINS = 10 * TimeCoins.MULTIPLIER;
@@ -71,9 +76,11 @@ public class BowRunServer extends LoungeBridgeServer {
     public static final String SIDEBOARD_DEATHS_TEXT = "§c§lDeaths";
     public static final String SIDEBOARD_MAP_TEXT = "§c§lMap";
 
-    public static final StatType<Integer> RUNNER_WINS = new IntegerStat("runner_wins", "Runner Wins",
+    public static final StatType<Integer> RUNNER_WINS = new IntegerStat("runner_wins",
+            "Runner Wins",
             0, 10, 2, true, 0, 1);
-    public static final StatType<Integer> ARCHER_WINS = new IntegerStat("archer_wins", "Archer Wins",
+    public static final StatType<Integer> ARCHER_WINS = new IntegerStat("archer_wins",
+            "Archer Wins",
             0, 10, 3, true, 0, 2);
     public static final StatType<Float> WIN_CHANCE = new PercentStat("win_chance", "Win Chance",
             0f, 10, 4, false, null, null);
@@ -81,10 +88,12 @@ public class BowRunServer extends LoungeBridgeServer {
             0, 10, 5, true, 0, 3);
     public static final StatType<Integer> KILLS = new IntegerStat("archer_kills", "Kills",
             0, 10, 6, true, 1, 1);
-    public static final StatType<Integer> MOST_KILLS_PER_MATCH = new IntegerStat("archer_most_kills_match",
+    public static final StatType<Integer> MOST_KILLS_PER_MATCH = new IntegerStat(
+            "archer_most_kills_match",
             "Most Kills in a Match",
             0, 10, 7, true, 1, 2);
-    public static final StatType<Integer> LONGEST_SHOT = new IntegerStat("archer_longest_shot", "Longest Shot",
+    public static final StatType<Integer> LONGEST_SHOT = new IntegerStat("archer_longest_shot",
+            "Longest Shot",
             0, 10, 8, true, 1, 3);
 
     public static BossBar getTimeBar() {
