@@ -16,11 +16,10 @@ import de.timesnake.library.basic.util.chat.ExTextColor;
 import de.timesnake.library.extension.util.chat.Code;
 import de.timesnake.library.extension.util.cmd.Arguments;
 import de.timesnake.library.extension.util.cmd.ExCommand;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextDecoration;
-
-import java.util.List;
 
 public class RecordVerification implements CommandListener {
 
@@ -32,8 +31,8 @@ public class RecordVerification implements CommandListener {
 
     private boolean rejected;
 
-    private Code.Permission verifyPerm;
-    private Code.Permission rejectPerm;
+    private Code verifyPerm;
+    private Code rejectPerm;
 
     public void checkRecord(int time, User finisher, BowRunMap map) {
         this.time = time;
@@ -54,7 +53,8 @@ public class RecordVerification implements CommandListener {
                 continue;
             }
 
-            if (gameUser.getTeam().equals(BowRunServer.getGame().getArcherTeam()) && gameUser.getBowShots() == 0) {
+            if (gameUser.getTeam().equals(BowRunServer.getGame().getArcherTeam())
+                    && gameUser.getBowShots() == 0) {
                 this.sendVerificationRequest();
                 return;
             }
@@ -75,9 +75,12 @@ public class RecordVerification implements CommandListener {
                 continue;
             }
 
-            user.sendClickablePluginMessage(Plugin.BOWRUN, Component.text("Verify ", ExTextColor.GREEN, TextDecoration.BOLD)
-                            .append(Component.text("record, if it was legal", ExTextColor.WARNING, TextDecoration.BOLD)),
-                    "/bowrun_verify", Component.text("Click to verify"), ClickEvent.Action.RUN_COMMAND);
+            user.sendClickablePluginMessage(Plugin.BOWRUN,
+                    Component.text("Verify ", ExTextColor.GREEN, TextDecoration.BOLD)
+                            .append(Component.text("record, if it was legal", ExTextColor.WARNING,
+                                    TextDecoration.BOLD)),
+                    "/bowrun_verify", Component.text("Click to verify"),
+                    ClickEvent.Action.RUN_COMMAND);
         }
     }
 
@@ -88,7 +91,9 @@ public class RecordVerification implements CommandListener {
                 continue;
             }
 
-            user.sendClickablePluginMessage(Plugin.BOWRUN, Component.text("Reject record, if it was illegal", ExTextColor.WARNING, TextDecoration.BOLD),
+            user.sendClickablePluginMessage(Plugin.BOWRUN,
+                    Component.text("Reject record, if it was illegal", ExTextColor.WARNING,
+                            TextDecoration.BOLD),
                     "/bowrun_reject", Component.text("Click to reject"),
                     ClickEvent.Action.RUN_COMMAND);
         }
@@ -101,7 +106,8 @@ public class RecordVerification implements CommandListener {
                         continue;
                     }
 
-                    user.sendPluginMessage(Plugin.BOWRUN, Component.text("Saved verified record", ExTextColor.WARNING));
+                    user.sendPluginMessage(Plugin.BOWRUN,
+                            Component.text("Saved verified record", ExTextColor.WARNING));
                 }
             } else {
                 for (User user : Server.getUsers()) {
@@ -109,7 +115,8 @@ public class RecordVerification implements CommandListener {
                         continue;
                     }
 
-                    user.sendPluginMessage(Plugin.BOWRUN, Component.text("Discarded unverified record", ExTextColor.WARNING));
+                    user.sendPluginMessage(Plugin.BOWRUN,
+                            Component.text("Discarded unverified record", ExTextColor.WARNING));
                 }
             }
         }, 20 * 8, GameBowRun.getPlugin());
@@ -122,7 +129,8 @@ public class RecordVerification implements CommandListener {
     }
 
     @Override
-    public void onCommand(Sender sender, ExCommand<Sender, Argument> cmd, Arguments<Argument> args) {
+    public void onCommand(Sender sender, ExCommand<Sender, Argument> cmd,
+            Arguments<Argument> args) {
         if (cmd.getName().equalsIgnoreCase("bowrun_verify")) {
             if (!sender.hasPermission(this.verifyPerm)) {
                 return;
@@ -133,7 +141,8 @@ public class RecordVerification implements CommandListener {
                 sender.sendPluginMessage(Component.text("Verified record", ExTextColor.WARNING));
                 Server.printText(Plugin.BOWRUN, "Record verified by " + sender.getChatName());
             } else {
-                sender.sendPluginMessage(Component.text("Record already verified", ExTextColor.WARNING));
+                sender.sendPluginMessage(
+                        Component.text("Record already verified", ExTextColor.WARNING));
             }
         } else if (cmd.getName().equalsIgnoreCase("bowrun_reject")) {
             if (!sender.hasPermission(this.rejectPerm)) {
@@ -145,20 +154,22 @@ public class RecordVerification implements CommandListener {
                 sender.sendPluginMessage(Component.text("Rejected record", ExTextColor.WARNING));
                 Server.printText(Plugin.BOWRUN, "Record rejected by " + sender.getChatName());
             } else {
-                sender.sendPluginMessage(Component.text("Record already rejected", ExTextColor.WARNING));
+                sender.sendPluginMessage(
+                        Component.text("Record already rejected", ExTextColor.WARNING));
             }
         }
 
     }
 
     @Override
-    public List<String> getTabCompletion(ExCommand<Sender, Argument> cmd, Arguments<Argument> args) {
+    public List<String> getTabCompletion(ExCommand<Sender, Argument> cmd,
+            Arguments<Argument> args) {
         return null;
     }
 
     @Override
     public void loadCodes(de.timesnake.library.extension.util.chat.Plugin plugin) {
-        this.verifyPerm = plugin.createPermssionCode("brr", "game.bowrun.verify");
-        this.rejectPerm = plugin.createPermssionCode("brr", "game.bowrun.reject");
+        this.verifyPerm = plugin.createPermssionCode("game.bowrun.verify");
+        this.rejectPerm = plugin.createPermssionCode("game.bowrun.reject");
     }
 }
