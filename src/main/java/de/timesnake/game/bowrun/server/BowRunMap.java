@@ -13,10 +13,13 @@ import de.timesnake.basic.loungebridge.util.tool.Timeable;
 import de.timesnake.database.util.game.DbMap;
 import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.library.basic.util.Tuple;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import org.bukkit.GameRule;
 import org.bukkit.Material;
-
-import java.util.*;
 
 public class BowRunMap extends Map implements Timeable, ResetableMap {
 
@@ -75,7 +78,6 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
 
         ExWorld world = this.getWorld();
         if (world != null) {
-            Server.getWorldManager().backupWorld(world);
             world.restrict(ExWorld.Restriction.BLOCK_PLACE, true);
             world.restrict(ExWorld.Restriction.FIRE_SPREAD, true);
             world.restrict(ExWorld.Restriction.BLOCK_BREAK, true);
@@ -91,7 +93,8 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
             world.setGameRule(GameRule.DO_FIRE_TICK, false);
             world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
             world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
-            world.restrict(ExWorld.Restriction.OPEN_INVENTORIES, List.of(Material.DROPPER, Material.HOPPER, Material.DISPENSER));
+            world.restrict(ExWorld.Restriction.OPEN_INVENTORIES,
+                    List.of(Material.DROPPER, Material.HOPPER, Material.DISPENSER));
             world.setTime(1000);
             world.setStorm(false);
             world.setAutoSave(false);
@@ -161,7 +164,8 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
             try {
                 this.runnerDeathHeight = Integer.parseInt(info.get(2));
             } catch (NumberFormatException e) {
-                Server.printWarning(Plugin.BOWRUN, "Could not load death-height of map " + this.getName());
+                Server.printWarning(Plugin.BOWRUN,
+                        "Could not load death-height of map " + this.getName());
             }
         }
 
@@ -172,7 +176,8 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
             try {
                 bestTime = Integer.parseInt(info.get(3));
             } catch (NumberFormatException e) {
-                Server.printWarning(Plugin.BOWRUN, "Could not load best-time of map " + this.getName());
+                Server.printWarning(Plugin.BOWRUN,
+                        "Could not load best-time of map " + this.getName());
             }
         } else {
             Server.printWarning(Plugin.BOWRUN, "Could not load best-time of map " + this.getName());
@@ -184,7 +189,8 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
             try {
                 this.bestTimeUser = UUID.fromString(info.get(4));
             } catch (IllegalArgumentException e) {
-                Server.printWarning(Plugin.BOWRUN, "Could not load best-user of map " + this.getName());
+                Server.printWarning(Plugin.BOWRUN,
+                        "Could not load best-user of map " + this.getName());
             }
 
         }
@@ -217,11 +223,15 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
             this.archerBorderLocs.add(new Tuple<>(loc.getBlockX(), loc.getBlockZ()));
             loc.getBlock().setType(Material.AIR);
 
-            this.searchArcherBorder(new ExLocation(loc.getExWorld(), loc.getX() - 1, loc.getY(), loc.getZ()));
-            this.searchArcherBorder(new ExLocation(loc.getExWorld(), loc.getX() + 1, loc.getY(), loc.getZ()));
+            this.searchArcherBorder(
+                    new ExLocation(loc.getExWorld(), loc.getX() - 1, loc.getY(), loc.getZ()));
+            this.searchArcherBorder(
+                    new ExLocation(loc.getExWorld(), loc.getX() + 1, loc.getY(), loc.getZ()));
 
-            this.searchArcherBorder(new ExLocation(loc.getExWorld(), loc.getX(), loc.getY(), loc.getZ() - 1));
-            this.searchArcherBorder(new ExLocation(loc.getExWorld(), loc.getX(), loc.getY(), loc.getZ() + 1));
+            this.searchArcherBorder(
+                    new ExLocation(loc.getExWorld(), loc.getX(), loc.getY(), loc.getZ() - 1));
+            this.searchArcherBorder(
+                    new ExLocation(loc.getExWorld(), loc.getX(), loc.getY(), loc.getZ() + 1));
         }
     }
 
@@ -254,8 +264,9 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
         this.bestTime = bestTime;
         this.bestTimeUser = bestTimeUser;
         String tags = this.tags != null ? this.tags : "";
-        this.getDatabase().setInfo(List.of("" + this.time, tags, "" + this.runnerDeathHeight, "" + this.bestTime,
-                this.bestTimeUser.toString()));
+        this.getDatabase().setInfo(
+                List.of("" + this.time, tags, "" + this.runnerDeathHeight, "" + this.bestTime,
+                        this.bestTimeUser.toString()));
     }
 
     public UUID getBestTimeUser() {
