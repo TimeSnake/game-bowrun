@@ -5,7 +5,6 @@
 package de.timesnake.game.bowrun.server;
 
 import de.timesnake.basic.bukkit.util.user.inventory.ExItemStack;
-import de.timesnake.basic.bukkit.util.user.scoreboard.Sideboard;
 import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServer;
 import de.timesnake.game.bowrun.user.BowRunUser;
 import de.timesnake.library.basic.util.TimeCoins;
@@ -122,10 +121,6 @@ public class BowRunServer extends LoungeBridgeServer {
 
     public static void setSpectatorSideboardScore(int line, String text) {
         server.setSpectatorSideboardScore(line, text);
-    }
-
-    public static Sideboard getGameSideboard() {
-        return server.getGameSideboard();
     }
 
     public static void updateGameTimeOnSideboard() {

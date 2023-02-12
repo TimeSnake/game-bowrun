@@ -87,6 +87,7 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
             world.restrict(ExWorld.Restriction.FLUID_COLLECT, true);
             world.restrict(ExWorld.Restriction.FLUID_PLACE, true);
             world.restrict(ExWorld.Restriction.FLINT_AND_STEEL, true);
+            world.restrict(ExWorld.Restriction.CRAFTING, true);
             world.setExceptService(true);
             world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
             world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
