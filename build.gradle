@@ -28,6 +28,7 @@ dependencies {
     compileOnly project(':library-reflection')
     compileOnly project(':library-extension')
     compileOnly project(':library-basic')
+    compileOnly project(':library-chat')
 
     compileOnly project.paper_api
     compileOnly project.spigot_api
