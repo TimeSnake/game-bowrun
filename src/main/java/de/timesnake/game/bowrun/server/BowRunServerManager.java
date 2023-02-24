@@ -7,8 +7,11 @@ package de.timesnake.game.bowrun.server;
 import de.timesnake.basic.bukkit.util.Server;
 import de.timesnake.basic.bukkit.util.ServerManager;
 import de.timesnake.basic.bukkit.util.chat.ChatColor;
-import de.timesnake.basic.bukkit.util.user.inventory.ExItemStack;
 import de.timesnake.basic.bukkit.util.user.User;
+import de.timesnake.basic.bukkit.util.user.inventory.ExItemStack;
+import de.timesnake.basic.bukkit.util.user.scoreboard.ExSideboard;
+import de.timesnake.basic.bukkit.util.user.scoreboard.ExSideboard.LineId;
+import de.timesnake.basic.bukkit.util.user.scoreboard.ExSideboardBuilder;
 import de.timesnake.basic.bukkit.util.user.scoreboard.Sideboard;
 import de.timesnake.basic.bukkit.util.world.ExLocation;
 import de.timesnake.basic.game.util.game.Team;
@@ -28,9 +31,9 @@ import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.game.bowrun.user.BowRunUser;
 import de.timesnake.game.bowrun.user.UserManager;
 import de.timesnake.library.basic.util.Status;
-import de.timesnake.library.chat.ExTextColor;
 import de.timesnake.library.basic.util.statistics.StatPeriod;
 import de.timesnake.library.basic.util.statistics.StatType;
+import de.timesnake.library.chat.ExTextColor;
 import de.timesnake.library.extension.util.chat.Chat;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -57,8 +60,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     }
 
     private final RecordVerification recordVerification = new RecordVerification();
-    private Sideboard sideboard;
-    private Sideboard spectatorSideboard;
+    private ExSideboard sideboard;
+    private ExSideboard spectatorSideboard;
     private BossBar timeBar;
     private int runnerDeaths = 0;
     private boolean stopAfterStart = false;
@@ -80,20 +83,20 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
         this.relayManager = new RelayManager();
 
-        this.sideboard = Server.getScoreboardManager().registerSideboard("bowrun", "§6§lBowRun");
-        this.sideboard.setScore(4, BowRunServer.SIDEBOARD_TIME_TEXT);
-        //time (method after spec sideboard)
-        this.sideboard.setScore(2, "§r§f-----------");
-        // kills/deaths
-        // kills/deaths amount
+        this.sideboard = Server.getScoreboardManager().registerExSideboard(new ExSideboardBuilder()
+                .name("bowrun")
+                .title("§6§lBowRun")
+                .lineSpacer()
+                .addLine(LineId.TIME)
+                .addLine(LineId.EMPTY));
 
         this.spectatorSideboard = Server.getScoreboardManager()
-                .registerSideboard("bowrunSpectator", "§6§lBowRun");
-        this.spectatorSideboard.setScore(4, BowRunServer.SIDEBOARD_TIME_TEXT);
-        // time
-        this.spectatorSideboard.setScore(2, "§r§f-----------");
-        this.spectatorSideboard.setScore(1, BowRunServer.SIDEBOARD_MAP_TEXT);
-        // map
+                .registerExSideboard(new ExSideboardBuilder()
+                        .name("bowrunSpectator")
+                        .title("§6§lBowRun")
+                        .lineSpacer()
+                        .addLine(LineId.TIME)
+                        .addLine(LineId.MAP));
 
         this.timeBar = Server.createBossBar("", BarColor.YELLOW, BarStyle.SOLID);
 
@@ -474,13 +477,12 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     }
 
     public void updateGameTimeOnSideboard() {
-        String time = Chat.getTimeString(this.getPlayingTime());
 
-        this.setGameSideboardScore(3, time);
-        this.setSpectatorSideboardScore(3, time);
+        this.sideboard.updateScore(LineId.TIME, this.getPlayingTime());
+        this.spectatorSideboard.updateScore(LineId.TIME, this.getPlayingTime());
 
         if (this.getMap() != null) {
-            this.timeBar.setTitle(time);
+            this.timeBar.setTitle(this.getPlayingTime() + "");
             this.timeBar.setProgress(this.getPlayingTime() / ((double) this.getMap().getTime()));
 
             if (this.getPlayingTime() == 60) {
@@ -491,7 +493,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     }
 
     public void updateMapOnSideboard() {
-        this.spectatorSideboard.setScore(0, "§f" + BowRunServer.getMap().getDisplayName());
+        this.spectatorSideboard.updateScore(LineId.MAP,
+                "§f" + BowRunServer.getMap().getDisplayName());
     }
 
     public RecordVerification getRecordVerification() {
@@ -527,16 +530,6 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
     public BossBar getTimeBar() {
         return timeBar;
-    }
-
-    @Override
-    public void broadcastGameMessage(Component message) {
-        Server.broadcastMessage(Plugin.BOWRUN, message);
-    }
-
-    @Override
-    public boolean isGameRunning() {
-        return BowRunServer.getState() == BowRunServer.State.RUNNING;
     }
 
     public List<Boolean> getRunnerArmor() {

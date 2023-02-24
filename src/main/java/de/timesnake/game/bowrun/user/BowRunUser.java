@@ -21,21 +21,34 @@ import org.bukkit.util.Vector;
 
 public class BowRunUser extends GameUser {
 
-    public static final ItemStack RUNNER_REMOVER =
-            new ExItemStack(Material.NETHERITE_SWORD, "§6RunnerRemover").unbreakable().addEnchantments(
-                    new Tuple<>(Enchantment.DAMAGE_ALL, 10), new Tuple<>(Enchantment.SWEEPING_EDGE, 10)).setDropable(false);
-    public static final ExItemStack BOW = new ExItemStack(Material.BOW).unbreakable().enchant().setDropable(false);
+    public static final ItemStack RUNNER_REMOVER = new ExItemStack(Material.NETHERITE_SWORD,
+            "§6RunnerRemover")
+            .unbreakable()
+            .addEnchantments(new Tuple<>(Enchantment.DAMAGE_ALL, 10),
+                    new Tuple<>(Enchantment.SWEEPING_EDGE, 10))
+            .setDropable(false);
+    public static final ExItemStack BOW = new ExItemStack(Material.BOW)
+            .unbreakable()
+            .enchant()
+            .setDropable(false);
     public static final ExItemStack FOOD = new ExItemStack(Material.COOKED_BEEF, 32);
-    public static final ExItemStack ARROW = new ExItemStack(Material.ARROW).setDropable(false);
-    public static final ExItemStack DEATH =
-            new ExItemStack(8, Material.RED_DYE, "§cSuicide (left click, no special item)").setDropable(false);
+    public static final ExItemStack ARROW = new ExItemStack(Material.ARROW)
+            .setDropable(false);
+    public static final ExItemStack DEATH = new ExItemStack(8, Material.RED_DYE,
+            "§cSuicide (left click, no special item)")
+            .setDropable(false);
 
     public static final ExItemStack INSTANT_BOW =
-            new ExItemStack(Material.BOW, "§6Instant-Bow").unbreakable().addEnchantments(
-                    new Tuple<>(Enchantment.ARROW_DAMAGE, 10)).setDropable(false);
+            new ExItemStack(Material.BOW, "§6Instant-Bow")
+                    .unbreakable()
+                    .addEnchantments(new Tuple<>(Enchantment.ARROW_DAMAGE, 10))
+                    .setDropable(false);
 
-    public static final ExItemStack PUNCH_BOW = new ExItemStack(Material.BOW, "§6Punch-Bow").unbreakable().
-            addEnchantments(new Tuple<>(Enchantment.ARROW_KNOCKBACK, 5)).setDropable(false);
+    public static final ExItemStack PUNCH_BOW = new ExItemStack(Material.BOW,
+            "§6Punch-Bow")
+            .unbreakable()
+            .addEnchantments(new Tuple<>(Enchantment.ARROW_KNOCKBACK, 5))
+            .setDropable(false);
 
     private ItemStack[] armor;
 
@@ -77,10 +90,12 @@ public class BowRunUser extends GameUser {
         this.setGravity(true);
         this.setInvulnerable(true);
 
-        if (this.getTeam() != null && this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
-            this.lockLocation(true);
+        if (this.getTeam() != null && this.getTeam()
+                .equals(BowRunServer.getGame().getRunnerTeam())) {
+            this.lockLocation();
             this.setCollitionWithEntites(true);
-        } else if (this.getTeam() != null && this.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
+        } else if (this.getTeam() != null && this.getTeam()
+                .equals(BowRunServer.getGame().getArcherTeam())) {
             if (map.isArcherHover()) {
                 Server.runTaskSynchrony(() -> {
                     this.setAllowFlight(true);
@@ -102,10 +117,11 @@ public class BowRunUser extends GameUser {
 
     public void startGame() {
         BowRunMap map = BowRunServer.getMap();
-        if (this.getTeam() != null && this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
+        if (this.getTeam() != null && this.getTeam()
+                .equals(BowRunServer.getGame().getRunnerTeam())) {
             this.setWalkSpeed((float) 0.2);
             this.setFlySpeed((float) 0.2);
-            this.lockLocation(false);
+            this.unlockLocation();
             this.setInvulnerable(false);
 
             if (map.isRunnerSpeed()) {
@@ -153,7 +169,8 @@ public class BowRunUser extends GameUser {
         this.getPlayer().setVelocity(new Vector(0, 0, 0));
 
         if (this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
-            int spawnNumber = (int) (Math.random() * BowRunServer.getMap().getRunnerSpawns().size());
+            int spawnNumber = (int) (Math.random() * BowRunServer.getMap().getRunnerSpawns()
+                    .size());
             this.teleport(BowRunServer.getMap().getRunnerSpawns().get(spawnNumber));
         } else if (this.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
             this.teleport(BowRunServer.getMap().getArcherSpawn());
@@ -249,7 +266,6 @@ public class BowRunUser extends GameUser {
     }
 
     public void loadGameSideboard() {
-        this.setSideboard(BowRunServer.getGameSideboard());
         if (this.getTeam() == null) {
             return;
         }
