@@ -482,7 +482,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         this.spectatorSideboard.updateScore(LineId.TIME, this.getPlayingTime());
 
         if (this.getMap() != null) {
-            this.timeBar.setTitle(this.getPlayingTime() + "");
+            this.timeBar.setTitle(Chat.getTimeString(this.getPlayingTime()) + "");
             this.timeBar.setProgress(this.getPlayingTime() / ((double) this.getMap().getTime()));
 
             if (this.getPlayingTime() == 60) {
