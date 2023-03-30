@@ -30,6 +30,7 @@ import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.game.bowrun.user.BowRunUser;
 import de.timesnake.game.bowrun.user.UserManager;
+import de.timesnake.library.basic.util.Loggers;
 import de.timesnake.library.basic.util.Status;
 import de.timesnake.library.basic.util.statistics.StatPeriod;
 import de.timesnake.library.basic.util.statistics.StatType;
@@ -398,7 +399,11 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
             }
         }
 
-        Server.printSection(Plugin.BOWRUN, "GameStats", stats);
+        Loggers.GAME.info("---- Stats ----");
+        for (String line : stats) {
+            Loggers.GAME.info(line);
+        }
+        Loggers.GAME.info("---- Stats ----");
     }
 
     @Override
