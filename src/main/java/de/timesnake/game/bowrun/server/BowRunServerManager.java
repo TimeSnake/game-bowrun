@@ -18,9 +18,10 @@ import de.timesnake.basic.game.util.game.Team;
 import de.timesnake.basic.game.util.user.TeamUser;
 import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServerManager;
 import de.timesnake.basic.loungebridge.util.tool.GameTool;
-import de.timesnake.basic.loungebridge.util.tool.StartableTool;
-import de.timesnake.basic.loungebridge.util.tool.StopableTool;
-import de.timesnake.basic.loungebridge.util.tool.TimerTool;
+import de.timesnake.basic.loungebridge.util.tool.advanced.MapTimerTool;
+import de.timesnake.basic.loungebridge.util.tool.advanced.TimerTool;
+import de.timesnake.basic.loungebridge.util.tool.scheduler.StartableTool;
+import de.timesnake.basic.loungebridge.util.tool.scheduler.StopableTool;
 import de.timesnake.basic.loungebridge.util.user.GameUser;
 import de.timesnake.basic.loungebridge.util.user.Kit;
 import de.timesnake.database.util.Database;
@@ -111,7 +112,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
                         Enchantment.PROTECTION_PROJECTILE, 1),
                 ExItemStack.getLeatherArmor(Material.LEATHER_HELMET, color));
 
-        this.timerTool = new TimerTool() {
+        this.timerTool = new MapTimerTool() {
             @Override
             public void onTimerUpdate() {
                 updateGameTimeOnSideboard();

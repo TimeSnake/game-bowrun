@@ -82,7 +82,9 @@ public class BowRunUser extends GameUser {
     }
 
     @Override
-    public void joinGame() {
+    public void onGameJoin() {
+        super.onGameJoin();
+
         this.setDefault();
 
         BowRunMap map = BowRunServer.getMap();
