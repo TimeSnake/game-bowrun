@@ -6,7 +6,6 @@ package de.timesnake.game.bowrun.server;
 
 import de.timesnake.basic.bukkit.util.Server;
 import de.timesnake.basic.bukkit.util.ServerManager;
-import de.timesnake.basic.bukkit.util.chat.ChatColor;
 import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.bukkit.util.user.inventory.ExItemStack;
 import de.timesnake.basic.bukkit.util.user.scoreboard.ExSideboard;
@@ -23,7 +22,6 @@ import de.timesnake.basic.loungebridge.util.tool.advanced.TimerTool;
 import de.timesnake.basic.loungebridge.util.tool.scheduler.StartableTool;
 import de.timesnake.basic.loungebridge.util.tool.scheduler.StopableTool;
 import de.timesnake.basic.loungebridge.util.user.GameUser;
-import de.timesnake.basic.loungebridge.util.user.Kit;
 import de.timesnake.database.util.Database;
 import de.timesnake.database.util.game.DbGame;
 import de.timesnake.database.util.game.DbTmpGame;
@@ -173,13 +171,10 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         if (map.getBestTime() != null) {
             String recordTime = Chat.getTimeString(map.getBestTime());
             if (map.getBestTimeUser() != null) {
-                BowRunServer.getGameTablist()
-                        .setFooter(ChatColor.GOLD + "Record: " + ChatColor.BLUE + recordTime +
-                                ChatColor.GOLD + " by " + ChatColor.BLUE + Database.getUsers()
-                                .getUser(map.getBestTimeUser()).getName());
+                BowRunServer.getGameTablist().setFooter("§hRecord: §u" + recordTime + " §hby §u" +
+                        Database.getUsers().getUser(map.getBestTimeUser()).getName());
             } else {
-                BowRunServer.getGameTablist()
-                        .setFooter(ChatColor.GOLD + "Record: " + ChatColor.BLUE + "- - -");
+                BowRunServer.getGameTablist().setFooter("§hRecord: §u- - -");
             }
 
             String playTime = Chat.getTimeString(this.getPlayingTime());
@@ -204,14 +199,12 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
                 int size = Server.getInGameUsers().size();
                 double runnerRatio = runnerSize / ((double) size);
                 double ratioDiff = this.getGame().getRunnerTeam().getRatio() - runnerRatio;
-                if (ratioDiff > 0.05) { // < 0.2
-                    runnerArmor = List.of(false, false, true, true);
-                }
-                if (ratioDiff > 0.1) {
-                    runnerArmor = List.of(true, false, true, true);
-                }
                 if (ratioDiff > 0.15) {
                     runnerArmor = List.of(true, true, true, true);
+                } else if (ratioDiff > 0.05) {
+                    runnerArmor = List.of(false, false, true, true);
+                } else if (ratioDiff > 0.1) {
+                    runnerArmor = List.of(true, false, true, true);
                 }
             }
 
@@ -460,16 +453,6 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         this.winType = null;
     }
 
-    @Override
-    public Kit getKit(int index) {
-        return null;
-    }
-
-    @Override
-    public Kit[] getKits() {
-        return null;
-    }
-
     public void setGameSideboardScore(int line, String text) {
         this.sideboard.setScore(line, text);
     }
@@ -491,8 +474,10 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
             this.timeBar.setTitle(Chat.getTimeString(this.getPlayingTime()) + "");
             this.timeBar.setProgress(this.getPlayingTime() / ((double) this.getMap().getTime()));
 
-            if (this.getPlayingTime() == 60) {
+            if (this.getPlayingTime() < this.getMap().getTime() / 10) {
                 this.timeBar.setColor(BarColor.RED);
+            } else if (this.getPlayingTime() < this.getMap().getTime() / 4) {
+                this.timeBar.setColor(BarColor.YELLOW);
             }
         }
 
