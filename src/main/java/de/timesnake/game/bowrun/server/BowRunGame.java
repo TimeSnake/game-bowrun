@@ -6,9 +6,7 @@ package de.timesnake.game.bowrun.server;
 
 import de.timesnake.basic.bukkit.util.exception.UnsupportedGroupRankException;
 import de.timesnake.basic.game.util.game.Team;
-import de.timesnake.basic.game.util.game.TmpGame;
-import de.timesnake.basic.loungebridge.util.user.Kit;
-import de.timesnake.database.util.game.DbKit;
+import de.timesnake.basic.loungebridge.util.game.TmpGame;
 import de.timesnake.database.util.game.DbMap;
 import de.timesnake.database.util.game.DbTeam;
 import de.timesnake.database.util.game.DbTmpGame;
@@ -30,11 +28,6 @@ public class BowRunGame extends TmpGame {
     @Override
     public BowRunMap loadMap(DbMap dbMap, boolean loadWorld) {
         return new BowRunMap(dbMap);
-    }
-
-    @Override
-    public Kit loadKit(DbKit dbKit) {
-        return new Kit(dbKit, null);
     }
 
     public Team getRunnerTeam() {
