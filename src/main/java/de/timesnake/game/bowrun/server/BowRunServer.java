@@ -70,10 +70,9 @@ public class BowRunServer extends LoungeBridgeServer {
     public static final float KILL_COINS_POOL = 16 * TimeCoins.MULTIPLIER;
     public static final float WIN_COINS = 10 * TimeCoins.MULTIPLIER;
     public static final float RECORD_COINS = 20 * TimeCoins.MULTIPLIER;
-    public static final String SIDEBOARD_TIME_TEXT = "§9§lTime";
+
     public static final String SIDEBOARD_KILLS_TEXT = "§c§lKills";
     public static final String SIDEBOARD_DEATHS_TEXT = "§c§lDeaths";
-    public static final String SIDEBOARD_MAP_TEXT = "§c§lMap";
 
     public static final StatType<Integer> RUNNER_WINS = new IntegerStat("runner_wins",
             "Runner Wins",
