@@ -157,17 +157,12 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     }
 
     @Override
-    public void onGamePrepare() {
-        this.updateGameTimeOnSideboard();
-        this.updateMapOnSideboard();
-    }
-
-
-    @Override
     public void onMapLoad() {
         BowRunMap map = BowRunServer.getMap();
         map.getWorld().setTime(map.isTimeNight() ? 19000 : 1000);
         this.updateGameTimeOnSideboard();
+        this.updateMapOnSideboard();
+
         if (map.getBestTime() != null) {
             String recordTime = Chat.getTimeString(map.getBestTime());
             if (map.getBestTimeUser() != null) {
@@ -176,14 +171,12 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
             } else {
                 BowRunServer.getGameTablist().setFooter("§hRecord: §u- - -");
             }
-
-            String playTime = Chat.getTimeString(this.getPlayingTime());
-
-            this.timeBar.setTitle(playTime);
-            this.timeBar.setColor(BarColor.GREEN);
-            this.timeBar.setProgress(1);
-            this.timeBar.setVisible(true);
         }
+
+        this.timeBar.setTitle(Chat.getTimeString(this.getPlayingTime()));
+        this.timeBar.setColor(BarColor.GREEN);
+        this.timeBar.setProgress(1);
+        this.timeBar.setVisible(true);
 
     }
 

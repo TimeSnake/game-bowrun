@@ -78,7 +78,7 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
         ExWorld world = this.getWorld();
         if (world != null) {
             world.restrict(ExWorld.Restriction.BLOCK_PLACE, true);
-            world.restrict(ExWorld.Restriction.FIRE_SPREAD, true);
+            world.restrict(ExWorld.Restriction.FIRE_SPREAD_SPEED, 0f);
             world.restrict(ExWorld.Restriction.BLOCK_BREAK, true);
             world.restrict(ExWorld.Restriction.ENTITY_EXPLODE, true);
             world.restrict(ExWorld.Restriction.BLOCK_BURN_UP, true);
