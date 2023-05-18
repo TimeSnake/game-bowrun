@@ -1,38 +1,38 @@
 repositories {
-    mavenLocal()
-    maven {
-        url = uri 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-    }
-    maven {
-        url = uri 'https://papermc.io/repo/repository/maven-public/'
-    }
-    maven {
-        url = uri 'https://repo.maven.apache.org/maven2/'
-    }
+  mavenLocal()
+  maven {
+    url = uri 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+  }
+  maven {
+    url = uri 'https://papermc.io/repo/repository/maven-public/'
+  }
+  maven {
+    url = uri 'https://repo.maven.apache.org/maven2/'
+  }
 }
 
 dependencies {
-    compileOnly project(':basic-loungebridge')
-    compileOnly project(':basic-game')
-    compileOnly project(':basic-bukkit')
+  compileOnly project(':basic-loungebridge')
+  compileOnly project(':basic-game')
+  compileOnly project(':basic-bukkit')
 
-    compileOnly project(':database-bukkit')
-    compileOnly project(':database-api')
+  compileOnly project(':database-bukkit')
+  compileOnly project(':database-api')
 
-    compileOnly project(':channel-bukkit')
-    compileOnly project(':channel-api')
+  compileOnly project(':channel-bukkit')
+  compileOnly project(':channel-api')
 
-    compileOnly project(':library-game')
-    compileOnly project(':library-packets')
-    compileOnly project(':library-entities')
-    compileOnly project(':library-reflection')
-    compileOnly project(':library-extension')
-    compileOnly project(':library-basic')
-    compileOnly project(':library-chat')
+  compileOnly project(':library-game')
+  compileOnly project(':library-packets')
+  compileOnly project(':library-entities')
+  compileOnly project(':library-reflection')
+  compileOnly project(':library-extension')
+  compileOnly project(':library-basic')
+  compileOnly project(':library-chat')
 
-    compileOnly project.paper_api
-    compileOnly project.spigot_api
-    compileOnly project.spigot
+  compileOnly project.paper_api
+  compileOnly project.spigot_api
+  compileOnly project.spigot
 }
 
 group = project.group
@@ -40,18 +40,18 @@ version = '1.0-SNAPSHOT'
 archivesBaseName = 'game-bowrun'
 
 task deleteOldPluginJar(type: Delete) {
-    delete fileTree(dir: "${project.plugins_dir}", include: "**/${archivesBaseName}-*.jar")
-    onlyIf {
-        !jar.state.upToDate
-    }
+  delete fileTree(dir: "${project.plugins_dir}", include: "**/${archivesBaseName}-*.jar")
+  onlyIf {
+    !jar.state.upToDate
+  }
 }
 
 task copyJarToPlugins(type: Copy) {
-    from jar
-    into project.plugins_dir
-    onlyIf {
-        !jar.state.upToDate
-    }
+  from jar
+  into project.plugins_dir
+  onlyIf {
+    !jar.state.upToDate
+  }
 }
 
 copyJarToPlugins.dependsOn(deleteOldPluginJar)
