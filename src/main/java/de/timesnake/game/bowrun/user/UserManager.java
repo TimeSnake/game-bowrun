@@ -44,304 +44,304 @@ import org.bukkit.potion.PotionEffectType;
 
 public class UserManager implements Listener, UserInventoryInteractListener {
 
-    private static final double WATER_DAMAGE = 2; // per sec
-    private static final int ITEM_REMOVE_DELAY = 15 * 20; // in ticks
+  private static final double WATER_DAMAGE = 2; // per sec
+  private static final int ITEM_REMOVE_DELAY = 15 * 20; // in ticks
 
-    public UserManager() {
-        Server.registerListener(this, GameBowRun.getPlugin());
-        Server.getInventoryEventManager().addInteractListener(this, BowRunUser.DEATH);
+  public UserManager() {
+    Server.registerListener(this, GameBowRun.getPlugin());
+    Server.getInventoryEventManager().addInteractListener(this, BowRunUser.DEATH);
 
-        this.runWaterDamage();
-    }
+    this.runWaterDamage();
+  }
 
-    private void runWaterDamage() {
-        Server.runTaskTimerSynchrony(() -> {
-            if (BowRunServer.getMap() != null && BowRunServer.getMap().isRunnerWaterDamage()) {
-                for (User user : Server.getInGameUsers()) {
-                    if (user.getLocation().getBlock().getType().equals(Material.WATER)) {
-                        user.getPlayer().damage(WATER_DAMAGE);
-                    }
-                }
-            }
-        }, 0, 10, GameBowRun.getPlugin());
-    }
-
-    @EventHandler
-    public void onUserDamageByUser(UserDamageByUserEvent e) {
-        TeamUser user = ((TeamUser) e.getUser());
-        TeamUser damager = (TeamUser) e.getUserDamager();
-
-        if (e.getDamageCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)) {
-            if (damager.getTeam() != null && damager.getTeam()
-                    .equals(BowRunServer.getGame().getArcherTeam())) {
-                e.setCancelled(true);
-                e.setCancelDamage(true);
-                user.setLastDamager(new UserDamage(user, damager, e.getDamageCause(),
-                        UserDamage.DamageType.INSTANT));
-                user.kill();
-            }
+  private void runWaterDamage() {
+    Server.runTaskTimerSynchrony(() -> {
+      if (BowRunServer.getMap() != null && BowRunServer.getMap().isRunnerWaterDamage()) {
+        for (User user : Server.getInGameUsers()) {
+          if (user.getLocation().getBlock().getType().equals(Material.WATER)) {
+            user.getPlayer().damage(WATER_DAMAGE);
+          }
         }
+      }
+    }, 0, 10, GameBowRun.getPlugin());
+  }
 
-        if (user.getTeam() != null && damager.getTeam() != null && user.getTeam()
-                .equals(damager.getTeam())) {
-            e.setCancelled(true);
-            e.setCancelDamage(true);
-        }
-    }
+  @EventHandler
+  public void onUserDamageByUser(UserDamageByUserEvent e) {
+    TeamUser user = ((TeamUser) e.getUser());
+    TeamUser damager = (TeamUser) e.getUserDamager();
 
-    @EventHandler
-    public void onPotion(EntityPotionEffectEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
-            return;
-        }
-
-        BowRunUser user = (BowRunUser) Server.getUser(((Player) e.getEntity()));
-
-        if (user.getTeam() != null && user.getTeam()
-                .equals(BowRunServer.getGame().getArcherTeam())) {
-            e.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onUserDamage(UserDamageEvent e) {
-        TeamUser user = (TeamUser) e.getUser();
-
-        if (user.getTeam() == null) {
-            return;
-        }
-
-        if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
-            e.getUser().getPlayer().setFireTicks(0);
-            e.setCancelled(true);
-        }
-        // user fall damage in map with game rule
-    }
-
-    @EventHandler
-    public void onPlayerPickUpArrow(PlayerPickupArrowEvent e) {
-        e.getArrow().remove();
+    if (e.getDamageCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)) {
+      if (damager.getTeam() != null && damager.getTeam()
+          .equals(BowRunServer.getGame().getArcherTeam())) {
         e.setCancelled(true);
+        e.setCancelDamage(true);
+        user.setLastDamager(new UserDamage(user, damager, e.getDamageCause(),
+            UserDamage.DamageType.INSTANT));
+        user.kill();
+      }
     }
 
-    @EventHandler
-    public void onUserMoveEvent(UserMoveEvent e) {
+    if (user.getTeam() != null && damager.getTeam() != null && user.getTeam()
+        .equals(damager.getTeam())) {
+      e.setCancelled(true);
+      e.setCancelDamage(true);
+    }
+  }
 
-        BowRunUser user = (BowRunUser) e.getUser();
+  @EventHandler
+  public void onPotion(EntityPotionEffectEvent e) {
+    if (!(e.getEntity() instanceof Player)) {
+      return;
+    }
 
-        if (user.getTeam() == null) {
-            return;
+    BowRunUser user = (BowRunUser) Server.getUser(((Player) e.getEntity()));
+
+    if (user.getTeam() != null && user.getTeam()
+        .equals(BowRunServer.getGame().getArcherTeam())) {
+      e.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  public void onUserDamage(UserDamageEvent e) {
+    TeamUser user = (TeamUser) e.getUser();
+
+    if (user.getTeam() == null) {
+      return;
+    }
+
+    if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
+      e.getUser().getPlayer().setFireTicks(0);
+      e.setCancelled(true);
+    }
+    // user fall damage in map with game rule
+  }
+
+  @EventHandler
+  public void onPlayerPickUpArrow(PlayerPickupArrowEvent e) {
+    e.getArrow().remove();
+    e.setCancelled(true);
+  }
+
+  @EventHandler
+  public void onUserMoveEvent(UserMoveEvent e) {
+
+    BowRunUser user = (BowRunUser) e.getUser();
+
+    if (user.getTeam() == null) {
+      return;
+    }
+
+    if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
+      if (BowRunServer.getMap().isArcherHover()) {
+        if (e.getFrom().getY() != e.getTo().getY()) {
+          e.setCancelled(true);
         }
+      }
 
-        if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
-            if (BowRunServer.getMap().isArcherHover()) {
-                if (e.getFrom().getY() != e.getTo().getY()) {
-                    e.setCancelled(true);
-                }
-            }
-
-            if ((BowRunServer.getMap().isArcherBorder() || BowRunServer.getMap()
-                    .isArcherKnockbackBorder()) && !e.getFrom().getBlock()
-                    .equals(e.getTo().getBlock())) {
-                if (BowRunServer.getMap().getArcherBorderLocs()
-                        .contains(new Tuple<>(e.getTo().getBlockX(),
-                                e.getTo().getBlockZ()))) {
-                    if (BowRunServer.getMap().isArcherBorder()) {
-                        user.teleportToTeamSpawn();
-                    } else if (BowRunServer.getMap().isArcherKnockbackBorder()) {
-                        e.setCancelled(true);
-                        Server.runTaskLaterSynchrony(() -> user.setVelocity(
-                                e.getFrom().toVector().subtract(e.getTo().toVector()).normalize()
-                                        .multiply(1)), 1, GameBowRun.getPlugin());
-                    }
-                }
-            }
+      if ((BowRunServer.getMap().isArcherBorder() || BowRunServer.getMap()
+          .isArcherKnockbackBorder()) && !e.getFrom().getBlock()
+          .equals(e.getTo().getBlock())) {
+        if (BowRunServer.getMap().getArcherBorderLocs()
+            .contains(new Tuple<>(e.getTo().getBlockX(),
+                e.getTo().getBlockZ()))) {
+          if (BowRunServer.getMap().isArcherBorder()) {
+            user.teleportToTeamSpawn();
+          } else if (BowRunServer.getMap().isArcherKnockbackBorder()) {
+            e.setCancelled(true);
+            Server.runTaskLaterSynchrony(() -> user.setVelocity(
+                e.getFrom().toVector().subtract(e.getTo().toVector()).normalize()
+                    .multiply(1)), 1, GameBowRun.getPlugin());
+          }
         }
+      }
+    }
 
-        if (!BowRunServer.isGameRunning()) {
-            if (e.getTo().getBlockY() < BowRunServer.getMap().getRunnerDeathHeight()) {
-                user.teleportToTeamSpawn();
-            }
-            return;
+    if (!BowRunServer.isGameRunning()) {
+      if (e.getTo().getBlockY() < BowRunServer.getMap().getRunnerDeathHeight()) {
+        user.teleportToTeamSpawn();
+      }
+      return;
+    }
+
+    if (!(user.getStatus().equals(Status.User.IN_GAME))) {
+      return;
+    }
+
+    if (e.getTo().getBlockY() < BowRunServer.getMap().getRunnerDeathHeight()) {
+      if (user.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
+        user.kill();
+      } else if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
+        user.teleportToTeamSpawn();
+      }
+    }
+
+    if (user.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
+      if (user.getLocation().getBlock()
+          .equals(BowRunServer.getMap().getRunnerFinish().getBlock())) {
+        if (BowRunServer.getMap().isRelayRace()) {
+          if (user.contains(RelayManager.RELAY)) {
+            user.addCoins(BowRunServer.WIN_COINS, true);
+            BowRunServer.stopGame(BowRunServer.WinType.RUNNER_FINISH, user);
+          }
+        } else {
+          user.addCoins(BowRunServer.WIN_COINS, true);
+          BowRunServer.stopGame(BowRunServer.WinType.RUNNER_FINISH, user);
         }
-
-        if (!(user.getStatus().equals(Status.User.IN_GAME))) {
-            return;
-        }
-
-        if (e.getTo().getBlockY() < BowRunServer.getMap().getRunnerDeathHeight()) {
-            if (user.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
-                user.kill();
-            } else if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
-                user.teleportToTeamSpawn();
-            }
-        }
-
-        if (user.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
-            if (user.getLocation().getBlock()
-                    .equals(BowRunServer.getMap().getRunnerFinish().getBlock())) {
-                if (BowRunServer.getMap().isRelayRace()) {
-                    if (user.contains(RelayManager.RELAY)) {
-                        user.addCoins(BowRunServer.WIN_COINS, true);
-                        BowRunServer.stopGame(BowRunServer.WinType.RUNNER_FINISH, user);
-                    }
-                } else {
-                    user.addCoins(BowRunServer.WIN_COINS, true);
-                    BowRunServer.stopGame(BowRunServer.WinType.RUNNER_FINISH, user);
-                }
-            }
-
-        }
+      }
 
     }
 
-    /**
-     * Keeps the archer-user inventory
-     *
-     * @param e The PlayerDeathEvent called by Bukkit
-     */
-    @EventHandler
-    public void onUserDeath(UserDeathEvent e) {
-        e.getDrops().clear();
-        e.setAutoRespawn(true);
+  }
+
+  /**
+   * Keeps the archer-user inventory
+   *
+   * @param e The PlayerDeathEvent called by Bukkit
+   */
+  @EventHandler
+  public void onUserDeath(UserDeathEvent e) {
+    e.getDrops().clear();
+    e.setAutoRespawn(true);
+  }
+
+  /**
+   * Sets the respawn location for user
+   *
+   * @param e The PlayerRespawnEvent called by Bukkit
+   */
+  @EventHandler
+  public void onUserRespawn(UserRespawnEvent e) {
+    User user = e.getUser();
+
+    if (user.getStatus().equals(Status.User.IN_GAME)) {
+      BowRunUser brUser = ((BowRunUser) user);
+      brUser.clearInventory();
+      brUser.setRespawnEquipment();
+
+      if (brUser.getTeam() == null) {
+        return;
+      }
+
+      if (brUser.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
+        int random = (int) (Math.random()
+            * ((BowRunMap) LoungeBridgeServer.getMap()).getRunnerSpawns().size());
+        e.setRespawnLocation(
+            ((BowRunMap) LoungeBridgeServer.getMap()).getRunnerSpawns().get(random));
+
+      } else if (brUser.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
+        e.setRespawnLocation(((BowRunMap) LoungeBridgeServer.getMap()).getArcherSpawn());
+      }
+      brUser.getPlayer().setAbsorptionAmount(0);
+    }
+  }
+
+  @EventHandler
+  public void onPlayerDropItem(UserDropItemEvent e) {
+    TeamUser user = (TeamUser) e.getUser();
+
+    if (user.getTeam() == null || user.isService()) {
+      return;
     }
 
-    /**
-     * Sets the respawn location for user
-     *
-     * @param e The PlayerRespawnEvent called by Bukkit
-     */
-    @EventHandler
-    public void onUserRespawn(UserRespawnEvent e) {
-        User user = e.getUser();
+    ExItemStack item = ExItemStack.getItem(e.getItemStack(), true);
 
-        if (user.getStatus().equals(Status.User.IN_GAME)) {
-            BowRunUser brUser = ((BowRunUser) user);
-            brUser.clearInventory();
-            brUser.setRespawnEquipment();
-
-            if (brUser.getTeam() == null) {
-                return;
-            }
-
-            if (brUser.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
-                int random = (int) (Math.random()
-                        * ((BowRunMap) LoungeBridgeServer.getMap()).getRunnerSpawns().size());
-                e.setRespawnLocation(
-                        ((BowRunMap) LoungeBridgeServer.getMap()).getRunnerSpawns().get(random));
-
-            } else if (brUser.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
-                e.setRespawnLocation(((BowRunMap) LoungeBridgeServer.getMap()).getArcherSpawn());
-            }
-            brUser.getPlayer().setAbsorptionAmount(0);
-        }
+    if (user.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
+      if (!item.equals(RelayManager.RELAY)) {
+        Server.runTaskLaterSynchrony(() -> {
+          if (!e.getItemDrop().isDead()) {
+            e.getItemDrop().remove();
+          }
+        }, ITEM_REMOVE_DELAY, GameBowRun.getPlugin());
+      }
     }
+  }
 
-    @EventHandler
-    public void onPlayerDropItem(UserDropItemEvent e) {
-        TeamUser user = (TeamUser) e.getUser();
+  @EventHandler
+  public void onPlayerPickUpItem(EntityPickupItemEvent e) {
+    if (e.getEntity() instanceof Player) {
 
-        if (user.getTeam() == null || user.isService()) {
-            return;
-        }
+      BowRunUser user = ((BowRunUser) Server.getUser(((Player) e.getEntity())));
 
-        ExItemStack item = ExItemStack.getItem(e.getItemStack(), true);
+      if (user.getTeam() == null || user.isService()) {
+        return;
+      }
 
-        if (user.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
-            if (!item.equals(RelayManager.RELAY)) {
-                Server.runTaskLaterSynchrony(() -> {
-                    if (!e.getItemDrop().isDead()) {
-                        e.getItemDrop().remove();
-                    }
-                }, ITEM_REMOVE_DELAY, GameBowRun.getPlugin());
-            }
-        }
-    }
-
-    @EventHandler
-    public void onPlayerPickUpItem(EntityPickupItemEvent e) {
-        if (e.getEntity() instanceof Player) {
-
-            BowRunUser user = ((BowRunUser) Server.getUser(((Player) e.getEntity())));
-
-            if (user.getTeam() == null || user.isService()) {
-                return;
-            }
-
-            if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
-                e.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler
-    public void onFoodLevelChange(FoodLevelChangeEvent e) {
-        if (e.getEntity() instanceof Player) {
-            TeamUser user = (TeamUser) Server.getUser(e.getEntity().getUniqueId());
-            if (user.getTeam() == null) {
-                return;
-            }
-
-            if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
-                e.setFoodLevel(20);
-            }
-        }
-    }
-
-    @Override
-    public void onUserInventoryInteract(UserInventoryInteractEvent e) {
-        BowRunUser user = ((BowRunUser) e.getUser());
-
-        if (user.isService()) {
-            return;
-        }
-
-        if (BowRunServerManager.getInstance().isGameRunning()) {
-            if (e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction()
-                    .equals(Action.LEFT_CLICK_BLOCK)) {
-                if (user.getLastDamager() == null) {
-                    user.suicided();
-                }
-                user.kill();
-            } else {
-                user.sendPluginMessage(Plugin.BOWRUN,
-                        Component.text("Left click the suicid item, to kill " +
-                                "yourself", ExTextColor.PERSONAL));
-            }
-        }
+      if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
         e.setCancelled(true);
+      }
+    }
+  }
+
+  @EventHandler
+  public void onFoodLevelChange(FoodLevelChangeEvent e) {
+    if (e.getEntity() instanceof Player) {
+      TeamUser user = (TeamUser) Server.getUser(e.getEntity().getUniqueId());
+      if (user.getTeam() == null) {
+        return;
+      }
+
+      if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
+        e.setFoodLevel(20);
+      }
+    }
+  }
+
+  @Override
+  public void onUserInventoryInteract(UserInventoryInteractEvent e) {
+    BowRunUser user = ((BowRunUser) e.getUser());
+
+    if (user.isService()) {
+      return;
     }
 
-    @EventHandler
-    public void onPotionEffect(EntityPotionEffectEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
-            return;
+    if (BowRunServerManager.getInstance().isGameRunning()) {
+      if (e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction()
+          .equals(Action.LEFT_CLICK_BLOCK)) {
+        if (user.getLastDamager() == null) {
+          user.suicided();
         }
+        user.kill();
+      } else {
+        user.sendPluginMessage(Plugin.BOWRUN,
+            Component.text("Left click the suicid item, to kill " +
+                "yourself", ExTextColor.PERSONAL));
+      }
+    }
+    e.setCancelled(true);
+  }
 
-        if ((e.getOldEffect() != null && e.getOldEffect().getType()
-                .equals(PotionEffectType.INVISIBILITY)) || (e.getNewEffect() != null
-                && e.getNewEffect().getType().equals(PotionEffectType.INVISIBILITY))) {
-            switch (e.getAction()) {
-                case ADDED, CHANGED -> Server.getUser(((Player) e.getEntity())).clearArmor();
-                case CLEARED, REMOVED ->
-                        ((BowRunUser) Server.getUser(((Player) e.getEntity()))).restoreArmor();
-            }
-        }
-
+  @EventHandler
+  public void onPotionEffect(EntityPotionEffectEvent e) {
+    if (!(e.getEntity() instanceof Player)) {
+      return;
     }
 
-    @EventHandler
-    public void onProjectileLaunch(PlayerLaunchProjectileEvent e) {
-        BowRunUser user = (BowRunUser) Server.getUser(e.getPlayer());
-
-        if (!BowRunServer.getMap().isArcherBowNoGravity()) {
-            return;
-        }
-
-        if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
-            Projectile projectile = e.getProjectile();
-            projectile.setGravity(false);
-        }
+    if ((e.getOldEffect() != null && e.getOldEffect().getType()
+        .equals(PotionEffectType.INVISIBILITY)) || (e.getNewEffect() != null
+        && e.getNewEffect().getType().equals(PotionEffectType.INVISIBILITY))) {
+      switch (e.getAction()) {
+        case ADDED, CHANGED -> Server.getUser(((Player) e.getEntity())).clearArmor();
+        case CLEARED, REMOVED ->
+            ((BowRunUser) Server.getUser(((Player) e.getEntity()))).restoreArmor();
+      }
     }
+
+  }
+
+  @EventHandler
+  public void onProjectileLaunch(PlayerLaunchProjectileEvent e) {
+    BowRunUser user = (BowRunUser) Server.getUser(e.getPlayer());
+
+    if (!BowRunServer.getMap().isArcherBowNoGravity()) {
+      return;
+    }
+
+    if (user.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
+      Projectile projectile = e.getProjectile();
+      projectile.setGravity(false);
+    }
+  }
 
 }
