@@ -13,28 +13,28 @@ import de.timesnake.database.util.game.DbTmpGame;
 
 public class BowRunGame extends TmpGame {
 
-    public static final String RUNNER_TEAM_NAME = "runner";
-    public static final String ARCHER_TEAM_NAME = "archer";
+  public static final String RUNNER_TEAM_NAME = "runner";
+  public static final String ARCHER_TEAM_NAME = "archer";
 
-    public BowRunGame(DbTmpGame game, boolean loadWorlds) {
-        super(game, loadWorlds);
-    }
+  public BowRunGame(DbTmpGame game, boolean loadWorlds) {
+    super(game, loadWorlds);
+  }
 
-    @Override
-    public Team loadTeam(DbTeam team) throws UnsupportedGroupRankException {
-        return new Team(team);
-    }
+  @Override
+  public Team loadTeam(DbTeam team) throws UnsupportedGroupRankException {
+    return new Team(team);
+  }
 
-    @Override
-    public BowRunMap loadMap(DbMap dbMap, boolean loadWorld) {
-        return new BowRunMap(dbMap);
-    }
+  @Override
+  public BowRunMap loadMap(DbMap dbMap, boolean loadWorld) {
+    return new BowRunMap(dbMap);
+  }
 
-    public Team getRunnerTeam() {
-        return super.getTeam(RUNNER_TEAM_NAME);
-    }
+  public Team getRunnerTeam() {
+    return super.getTeam(RUNNER_TEAM_NAME);
+  }
 
-    public Team getArcherTeam() {
-        return super.getTeam(ARCHER_TEAM_NAME);
-    }
+  public Team getArcherTeam() {
+    return super.getTeam(ARCHER_TEAM_NAME);
+  }
 }

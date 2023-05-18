@@ -12,26 +12,26 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class GameBowRun extends JavaPlugin {
 
-    private static GameBowRun plugin;
+  private static GameBowRun plugin;
 
-    @Override
-    public void onLoad() {
-        ServerManager.setInstance(new BowRunServerManager());
-    }
+  @Override
+  public void onLoad() {
+    ServerManager.setInstance(new BowRunServerManager());
+  }
 
-    @Override
-    public void onEnable() {
-        GameBowRun.plugin = this;
+  @Override
+  public void onEnable() {
+    GameBowRun.plugin = this;
 
-        BowRunServerManager.getInstance().onBowRunEnable();
+    BowRunServerManager.getInstance().onBowRunEnable();
 
-        Server.getCommandManager().addCommand(this, "bowrun_verify",
-                BowRunServerManager.getInstance().getRecordVerification(), Plugin.BOWRUN);
-        Server.getCommandManager().addCommand(this, "bowrun_reject",
-                BowRunServerManager.getInstance().getRecordVerification(), Plugin.BOWRUN);
-    }
+    Server.getCommandManager().addCommand(this, "bowrun_verify",
+        BowRunServerManager.getInstance().getRecordVerification(), Plugin.BOWRUN);
+    Server.getCommandManager().addCommand(this, "bowrun_reject",
+        BowRunServerManager.getInstance().getRecordVerification(), Plugin.BOWRUN);
+  }
 
-    public static GameBowRun getPlugin() {
-        return plugin;
-    }
+  public static GameBowRun getPlugin() {
+    return plugin;
+  }
 }

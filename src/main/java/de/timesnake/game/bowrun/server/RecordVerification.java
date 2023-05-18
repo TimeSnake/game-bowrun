@@ -24,153 +24,153 @@ import net.kyori.adventure.text.format.TextDecoration;
 
 public class RecordVerification implements CommandListener {
 
-    public static final Integer MIN_RECORD_SIZE = 4;
+  public static final Integer MIN_RECORD_SIZE = 4;
 
-    private Integer time;
-    private User finisher;
-    private BowRunMap map;
+  private Integer time;
+  private User finisher;
+  private BowRunMap map;
 
-    private boolean rejected;
+  private boolean rejected;
 
-    private Code verifyPerm;
-    private Code rejectPerm;
+  private Code verifyPerm;
+  private Code rejectPerm;
 
-    public void checkRecord(int time, User finisher, BowRunMap map) {
-        this.time = time;
-        this.finisher = finisher;
-        this.map = map;
+  public void checkRecord(int time, User finisher, BowRunMap map) {
+    this.time = time;
+    this.finisher = finisher;
+    this.map = map;
 
-        this.rejected = false;
+    this.rejected = false;
 
-        if (Server.getInOutGameUsers().size() < MIN_RECORD_SIZE) {
-            this.sendVerificationRequest();
-            return;
-        }
-
-        for (User user : Server.getInOutGameUsers()) {
-            GameUser gameUser = ((GameUser) user);
-
-            if (gameUser.getTeam() == null) {
-                continue;
-            }
-
-            if (gameUser.getTeam().equals(BowRunServer.getGame().getArcherTeam())
-                    && gameUser.getBowShots() == 0) {
-                this.sendVerificationRequest();
-                return;
-            }
-        }
-
-        if (BowRunServer.getGame().getArcherTeam().getKills() == 0) {
-            this.sendVerificationRequest();
-            return;
-        }
-
-        this.sendRejectRequest();
+    if (Server.getInOutGameUsers().size() < MIN_RECORD_SIZE) {
+      this.sendVerificationRequest();
+      return;
     }
 
-    public void sendVerificationRequest() {
-        Loggers.GAME.info("Send verification requests");
+    for (User user : Server.getInOutGameUsers()) {
+      GameUser gameUser = ((GameUser) user);
+
+      if (gameUser.getTeam() == null) {
+        continue;
+      }
+
+      if (gameUser.getTeam().equals(BowRunServer.getGame().getArcherTeam())
+          && gameUser.getBowShots() == 0) {
+        this.sendVerificationRequest();
+        return;
+      }
+    }
+
+    if (BowRunServer.getGame().getArcherTeam().getKills() == 0) {
+      this.sendVerificationRequest();
+      return;
+    }
+
+    this.sendRejectRequest();
+  }
+
+  public void sendVerificationRequest() {
+    Loggers.GAME.info("Send verification requests");
+    for (User user : Server.getUsers()) {
+      if (!user.hasPermission("game.bowrun.verify")) {
+        continue;
+      }
+
+      user.sendClickablePluginMessage(Plugin.BOWRUN,
+          Component.text("Verify ", ExTextColor.GREEN, TextDecoration.BOLD)
+              .append(Component.text("record, if it was legal", ExTextColor.WARNING,
+                  TextDecoration.BOLD)),
+          "/bowrun_verify", Component.text("Click to verify"),
+          ClickEvent.Action.RUN_COMMAND);
+    }
+  }
+
+  public void sendRejectRequest() {
+    Loggers.GAME.info("Send reject requests");
+    for (User user : Server.getUsers()) {
+      if (!user.hasPermission("game.bowrun.reject")) {
+        continue;
+      }
+
+      user.sendClickablePluginMessage(Plugin.BOWRUN,
+          Component.text("Reject record, if it was illegal", ExTextColor.WARNING,
+              TextDecoration.BOLD),
+          "/bowrun_reject", Component.text("Click to reject"),
+          ClickEvent.Action.RUN_COMMAND);
+    }
+
+    Server.runTaskLaterSynchrony(() -> {
+      if (!this.rejected) {
+        this.setRecord();
         for (User user : Server.getUsers()) {
-            if (!user.hasPermission("game.bowrun.verify")) {
-                continue;
-            }
+          if (!user.hasPermission("game.bowrun.reject")) {
+            continue;
+          }
 
-            user.sendClickablePluginMessage(Plugin.BOWRUN,
-                    Component.text("Verify ", ExTextColor.GREEN, TextDecoration.BOLD)
-                            .append(Component.text("record, if it was legal", ExTextColor.WARNING,
-                                    TextDecoration.BOLD)),
-                    "/bowrun_verify", Component.text("Click to verify"),
-                    ClickEvent.Action.RUN_COMMAND);
+          user.sendPluginMessage(Plugin.BOWRUN,
+              Component.text("Saved verified record", ExTextColor.WARNING));
         }
-    }
-
-    public void sendRejectRequest() {
-        Loggers.GAME.info("Send reject requests");
+      } else {
         for (User user : Server.getUsers()) {
-            if (!user.hasPermission("game.bowrun.reject")) {
-                continue;
-            }
+          if (!user.hasPermission("game.bowrun.reject")) {
+            continue;
+          }
 
-            user.sendClickablePluginMessage(Plugin.BOWRUN,
-                    Component.text("Reject record, if it was illegal", ExTextColor.WARNING,
-                            TextDecoration.BOLD),
-                    "/bowrun_reject", Component.text("Click to reject"),
-                    ClickEvent.Action.RUN_COMMAND);
+          user.sendPluginMessage(Plugin.BOWRUN,
+              Component.text("Discarded unverified record", ExTextColor.WARNING));
         }
+      }
+    }, 20 * 8, GameBowRun.getPlugin());
+  }
 
-        Server.runTaskLaterSynchrony(() -> {
-            if (!this.rejected) {
-                this.setRecord();
-                for (User user : Server.getUsers()) {
-                    if (!user.hasPermission("game.bowrun.reject")) {
-                        continue;
-                    }
+  public void setRecord() {
+    this.map.setBestTime(time, this.finisher.getUniqueId());
+    this.finisher.addCoins(BowRunServer.RECORD_COINS, true);
+    this.time = null;
+  }
 
-                    user.sendPluginMessage(Plugin.BOWRUN,
-                            Component.text("Saved verified record", ExTextColor.WARNING));
-                }
-            } else {
-                for (User user : Server.getUsers()) {
-                    if (!user.hasPermission("game.bowrun.reject")) {
-                        continue;
-                    }
+  @Override
+  public void onCommand(Sender sender, ExCommand<Sender, Argument> cmd,
+      Arguments<Argument> args) {
+    if (cmd.getName().equalsIgnoreCase("bowrun_verify")) {
+      if (!sender.hasPermission(this.verifyPerm)) {
+        return;
+      }
 
-                    user.sendPluginMessage(Plugin.BOWRUN,
-                            Component.text("Discarded unverified record", ExTextColor.WARNING));
-                }
-            }
-        }, 20 * 8, GameBowRun.getPlugin());
+      if (this.time != null) {
+        this.setRecord();
+        sender.sendPluginMessage(Component.text("Verified record", ExTextColor.WARNING));
+        Loggers.GAME.info("Record verified by " + sender.getChatName());
+      } else {
+        sender.sendPluginMessage(
+            Component.text("Record already verified", ExTextColor.WARNING));
+      }
+    } else if (cmd.getName().equalsIgnoreCase("bowrun_reject")) {
+      if (!sender.hasPermission(this.rejectPerm)) {
+        return;
+      }
+
+      if (!this.rejected) {
+        this.rejected = true;
+        sender.sendPluginMessage(Component.text("Rejected record", ExTextColor.WARNING));
+        Loggers.GAME.info("Record rejected by " + sender.getChatName());
+      } else {
+        sender.sendPluginMessage(
+            Component.text("Record already rejected", ExTextColor.WARNING));
+      }
     }
 
-    public void setRecord() {
-        this.map.setBestTime(time, this.finisher.getUniqueId());
-        this.finisher.addCoins(BowRunServer.RECORD_COINS, true);
-        this.time = null;
-    }
+  }
 
-    @Override
-    public void onCommand(Sender sender, ExCommand<Sender, Argument> cmd,
-            Arguments<Argument> args) {
-        if (cmd.getName().equalsIgnoreCase("bowrun_verify")) {
-            if (!sender.hasPermission(this.verifyPerm)) {
-                return;
-            }
+  @Override
+  public List<String> getTabCompletion(ExCommand<Sender, Argument> cmd,
+      Arguments<Argument> args) {
+    return null;
+  }
 
-            if (this.time != null) {
-                this.setRecord();
-                sender.sendPluginMessage(Component.text("Verified record", ExTextColor.WARNING));
-                Loggers.GAME.info("Record verified by " + sender.getChatName());
-            } else {
-                sender.sendPluginMessage(
-                        Component.text("Record already verified", ExTextColor.WARNING));
-            }
-        } else if (cmd.getName().equalsIgnoreCase("bowrun_reject")) {
-            if (!sender.hasPermission(this.rejectPerm)) {
-                return;
-            }
-
-            if (!this.rejected) {
-                this.rejected = true;
-                sender.sendPluginMessage(Component.text("Rejected record", ExTextColor.WARNING));
-                Loggers.GAME.info("Record rejected by " + sender.getChatName());
-            } else {
-                sender.sendPluginMessage(
-                        Component.text("Record already rejected", ExTextColor.WARNING));
-            }
-        }
-
-    }
-
-    @Override
-    public List<String> getTabCompletion(ExCommand<Sender, Argument> cmd,
-            Arguments<Argument> args) {
-        return null;
-    }
-
-    @Override
-    public void loadCodes(de.timesnake.library.extension.util.chat.Plugin plugin) {
-        this.verifyPerm = plugin.createPermssionCode("game.bowrun.verify");
-        this.rejectPerm = plugin.createPermssionCode("game.bowrun.reject");
-    }
+  @Override
+  public void loadCodes(de.timesnake.library.extension.util.chat.Plugin plugin) {
+    this.verifyPerm = plugin.createPermssionCode("game.bowrun.verify");
+    this.rejectPerm = plugin.createPermssionCode("game.bowrun.reject");
+  }
 }
