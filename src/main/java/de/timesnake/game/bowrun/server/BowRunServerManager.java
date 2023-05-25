@@ -112,6 +112,17 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
     this.timerTool = new MapTimerTool() {
       @Override
+      public void onTimerPrepare() {
+        super.onTimerPrepare();
+        BowRunServerManager.this.updateGameTimeOnSideboard();
+        BowRunServerManager.this.timeBar.setTitle(
+            Chat.getTimeString(BowRunServerManager.this.getPlayingTime()));
+        BowRunServerManager.this.timeBar.setColor(BarColor.GREEN);
+        BowRunServerManager.this.timeBar.setProgress(1);
+        BowRunServerManager.this.timeBar.setVisible(true);
+      }
+
+      @Override
       public void onTimerUpdate() {
         updateGameTimeOnSideboard();
         if (this.getTime() % 20 == 0) {
@@ -160,7 +171,6 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   public void onMapLoad() {
     BowRunMap map = BowRunServer.getMap();
     map.getWorld().setTime(map.isTimeNight() ? 19000 : 1000);
-    this.updateGameTimeOnSideboard();
     this.updateMapOnSideboard();
 
     if (map.getBestTime() != null) {
@@ -172,12 +182,6 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         BowRunServer.getGameTablist().setFooter("§hRecord: §u- - -");
       }
     }
-
-    this.timeBar.setTitle(Chat.getTimeString(this.getPlayingTime()));
-    this.timeBar.setColor(BarColor.GREEN);
-    this.timeBar.setProgress(1);
-    this.timeBar.setVisible(true);
-
   }
 
   @Override
@@ -464,7 +468,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     this.spectatorSideboard.updateScore(LineId.TIME, this.getPlayingTime());
 
     if (this.getMap() != null) {
-      this.timeBar.setTitle(Chat.getTimeString(this.getPlayingTime()) + "");
+      this.timeBar.setTitle(Chat.getTimeString(this.getPlayingTime()));
       this.timeBar.setProgress(this.getPlayingTime() / ((double) this.getMap().getTime()));
 
       if (this.getPlayingTime() < this.getMap().getTime() / 10) {
