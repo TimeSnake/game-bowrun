@@ -1,5 +1,13 @@
+plugins {
+  id 'java-library'
+  id 'maven-publish'
+  id('io.papermc.paperweight.userdev')
+  id('xyz.jpenilla.run-paper')
+  id('com.github.johnrengelman.shadow')
+}
+
 group = project.group
-version = '1.0-SNAPSHOT'
+version = '1-1.0'
 archivesBaseName = 'game-bowrun'
 var projectId = 25
 
@@ -7,13 +15,7 @@ repositories {
   mavenLocal()
   mavenCentral()
   maven {
-    url = uri 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-  }
-  maven {
     url = uri 'https://papermc.io/repo/repository/maven-public/'
-  }
-  maven {
-    url = uri 'https://repo.maven.apache.org/maven2/'
   }
 }
 
@@ -30,34 +32,44 @@ dependencies {
 
   compileOnly project(':library-game')
   compileOnly project(':library-packets')
-  compileOnly project(':library-entities')
-  compileOnly project(':library-reflection')
   compileOnly project(':library-extension')
   compileOnly project(':library-basic')
   compileOnly project(':library-chat')
 
-  compileOnly project.paper_api
-  compileOnly project.spigot_api
-  compileOnly project.spigot
+  paperweight.paperDevBundle(project.paperweight_version)
 }
 
-task deleteOldPluginJar(type: Delete) {
-  delete fileTree(dir: "${project.plugins_dir}", include: "**/${archivesBaseName}-*.jar")
-  onlyIf {
-    !jar.state.upToDate
+tasks {
+  assemble {
+    dependsOn(reobfJar)
+  }
+
+  compileJava {
+    options.encoding = "UTF-8"
+    options.release.set(17)
+  }
+
+  javadoc {
+    options.encoding = "UTF-8"
+  }
+
+  processResources {
+    filteringCharset = "UTF-8"
+    def props = [
+        "name"      : archivesBaseName,
+        "version"   : project.version,
+        "apiVersion": "1.20.1"
+    ]
+    inputs.properties(props)
+    filesMatching("plugin.yml") {
+      expand(props)
+    }
+  }
+
+  reobfJar {
+    outputJar.set(layout.buildDirectory.file("${project.plugins_dir}/${archivesBaseName}-${project.version}.jar"))
   }
 }
-
-task copyJarToPlugins(type: Copy) {
-  from jar
-  into project.plugins_dir
-  onlyIf {
-    !jar.state.upToDate
-  }
-}
-
-copyJarToPlugins.dependsOn(deleteOldPluginJar)
-jar.finalizedBy(copyJarToPlugins)
 
 publishing {
   repositories {
