@@ -12,13 +12,10 @@ import de.timesnake.basic.loungebridge.util.tool.Timeable;
 import de.timesnake.database.util.game.DbMap;
 import de.timesnake.library.basic.util.Loggers;
 import de.timesnake.library.basic.util.Tuple;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import org.bukkit.GameRule;
 import org.bukkit.Material;
+
+import java.util.*;
 
 public class BowRunMap extends Map implements Timeable, ResetableMap {
 
@@ -105,7 +102,7 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
     // time
     int time = 7 * 60;
 
-    if (info.size() >= 1) {
+    if (!info.isEmpty()) {
       try {
         time = Integer.parseInt(info.get(0));
       } catch (NumberFormatException e) {
