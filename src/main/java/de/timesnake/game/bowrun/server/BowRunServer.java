@@ -56,8 +56,6 @@ public class BowRunServer extends LoungeBridgeServer {
 
   public static final Instrument TIME_INSTRUMENT = Instrument.PLING;
   public static final Note TIME_NOTE = Note.natural(1, Note.Tone.A);
-  public static final Sound KILL_SOUND = Sound.ENTITY_PLAYER_LEVELUP;
-  public static final Sound END_SOUND = Sound.BLOCK_BEACON_ACTIVATE;
 
   public static final Double RUNNER_ITEM_CHANCE_MULTIPLIER = 0.6;
   public static final Double ARCHER_ITEM_CHANCE = 0.2;
