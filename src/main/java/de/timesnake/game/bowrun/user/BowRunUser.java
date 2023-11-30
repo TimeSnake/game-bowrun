@@ -6,6 +6,7 @@ package de.timesnake.game.bowrun.user;
 
 import de.timesnake.basic.bukkit.util.Server;
 import de.timesnake.basic.bukkit.util.user.inventory.ExItemStack;
+import de.timesnake.basic.bukkit.util.world.ExLocation;
 import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServer;
 import de.timesnake.basic.loungebridge.util.user.GameUser;
 import de.timesnake.game.bowrun.main.GameBowRun;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 public class BowRunUser extends GameUser {
 
@@ -137,6 +139,23 @@ public class BowRunUser extends GameUser {
       }
       this.setArmor();
     }
+  }
+
+  @Override
+  public @Nullable ExLocation onGameRespawn() {
+    this.clearInventory();
+    this.setRespawnEquipment();
+    this.setAbsorptionAmount(0);
+
+    if (this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
+      int random = (int) (Math.random() * ((BowRunMap) LoungeBridgeServer.getMap()).getRunnerSpawns().size());
+      return ((BowRunMap) LoungeBridgeServer.getMap()).getRunnerSpawns().get(random);
+
+    } else if (this.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
+      return ((BowRunMap) LoungeBridgeServer.getMap()).getArcherSpawn();
+    }
+
+    return null;
   }
 
   private void setArmor() {

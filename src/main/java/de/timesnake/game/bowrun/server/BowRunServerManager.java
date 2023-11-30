@@ -15,6 +15,7 @@ import de.timesnake.basic.bukkit.util.user.scoreboard.Sideboard;
 import de.timesnake.basic.bukkit.util.world.ExLocation;
 import de.timesnake.basic.game.util.game.Team;
 import de.timesnake.basic.game.util.user.TeamUser;
+import de.timesnake.basic.loungebridge.util.server.EndMessage;
 import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServerManager;
 import de.timesnake.basic.loungebridge.util.tool.GameTool;
 import de.timesnake.basic.loungebridge.util.tool.advanced.MapTimerTool;
@@ -33,14 +34,7 @@ import de.timesnake.library.basic.util.Loggers;
 import de.timesnake.library.basic.util.Status;
 import de.timesnake.library.basic.util.statistics.StatPeriod;
 import de.timesnake.library.basic.util.statistics.StatType;
-import de.timesnake.library.chat.ExTextColor;
 import de.timesnake.library.extension.util.chat.Chat;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -53,6 +47,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> implements Listener {
 
   public static BowRunServerManager getInstance() {
@@ -64,7 +64,6 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   private ExSideboard spectatorSideboard;
   private BossBar timeBar;
   private int runnerDeaths = 0;
-  private boolean stopAfterStart = false;
   private TimerTool timerTool;
   private List<Boolean> runnerArmor;
   private UserManager userManager;
@@ -186,36 +185,29 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
   @Override
   public void onGameStart() {
-    if (stopAfterStart) {
-      this.winType = BowRunServer.WinType.END;
-      this.finisher = null;
-    } else {
-      runnerArmor = List.of(false, false, false, false);
-      if (BowRunServer.getMap().isRunnerArmor()) {
-        int runnerSize = this.getGame().getRunnerTeam().getUsers().size();
-        int size = Server.getInGameUsers().size();
-        double runnerRatio = runnerSize / ((double) size);
-        double ratioDiff = this.getGame().getRunnerTeam().getRatio() - runnerRatio;
-        if (ratioDiff > 0.15) {
-          runnerArmor = List.of(true, true, true, true);
-        } else if (ratioDiff > 0.05) {
-          runnerArmor = List.of(false, false, true, true);
-        } else if (ratioDiff > 0.1) {
-          runnerArmor = List.of(true, false, true, true);
-        }
+    runnerArmor = List.of(false, false, false, false);
+    if (BowRunServer.getMap().isRunnerArmor()) {
+      int runnerSize = this.getGame().getRunnerTeam().getUsers().size();
+      int size = Server.getInGameUsers().size();
+      double runnerRatio = runnerSize / ((double) size);
+      double ratioDiff = this.getGame().getRunnerTeam().getRatio() - runnerRatio;
+      if (ratioDiff > 0.15) {
+        runnerArmor = List.of(true, true, true, true);
+      } else if (ratioDiff > 0.1) {
+        runnerArmor = List.of(true, false, true, true);
+      } else if (ratioDiff > 0.05) {
+        runnerArmor = List.of(false, false, true, true);
       }
-
-      for (User user : Server.getInGameUsers()) {
-        ((BowRunUser) user).startGame();
-      }
-
-      int period =
-          (int) (BowRunServer.ARROW_GENERATION_PERIOD +
-              Math.sqrt(BowRunServer.ARROW_GENERATION_PLAYER_MULTIPLIER *
-                  BowRunServer.getGame().getArcherTeam().getInGameUsers()
-                      .size()));
-      this.arrowGenerator.setPeriod(period);
     }
+
+    for (User user : Server.getInGameUsers()) {
+      ((BowRunUser) user).startGame();
+    }
+
+    int period = (int) (BowRunServer.ARROW_GENERATION_PERIOD +
+        Math.sqrt(BowRunServer.ARROW_GENERATION_PLAYER_MULTIPLIER *
+            BowRunServer.getGame().getArcherTeam().getInGameUsers().size()));
+    this.arrowGenerator.setPeriod(period);
   }
 
   @Override
@@ -260,70 +252,14 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
       }
     }
 
-    this.broadcastGameMessage(Chat.getLongLineSeparator());
-    Server.broadcastSound(BowRunServer.END_SOUND, 5F);
-    switch (winType) {
-      case ARCHER -> {
-        Server.broadcastTitle(Component.text("Archers ", archerTeam.getTextColor())
-                .append(Component.text("win!", ExTextColor.PUBLIC)), Component.empty(),
-            Duration.ofSeconds(5));
-        this.broadcastGameMessage(Component.text("Archers ", archerTeam.getTextColor())
-            .append(Component.text("win!", ExTextColor.PUBLIC)));
-        for (User user : this.getGame().getArcherTeam().getUsers()) {
-          user.addCoins(BowRunServer.WIN_COINS, true);
-        }
-      }
-      case RUNNER -> {
-        Server.broadcastTitle(Component.text("Runners ", runnerTeam.getTextColor())
-                .append(Component.text("win!", ExTextColor.PUBLIC)), Component.empty(),
-            Duration.ofSeconds(5));
-        this.broadcastGameMessage(Component.text("Runners ", runnerTeam.getTextColor())
-            .append(Component.text("win!", ExTextColor.PUBLIC)));
-        for (User user : this.getGame().getRunnerTeam().getUsers()) {
-          user.addCoins(BowRunServer.WIN_COINS, true);
-        }
-      }
-      case ARCHER_TIME -> {
-        Server.broadcastTitle(Component.text("Archers ", archerTeam.getTextColor())
-                .append(Component.text("win!", ExTextColor.PUBLIC)),
-            Component.text("Time is up", ExTextColor.PUBLIC), Duration.ofSeconds(5));
-        this.broadcastGameMessage(Component.text("Archers ", archerTeam.getTextColor())
-            .append(Component.text("win!", ExTextColor.PUBLIC)));
-        for (User user : this.getGame().getArcherTeam().getUsers()) {
-          user.addCoins(BowRunServer.WIN_COINS, true);
-        }
-      }
-      case RUNNER_FINISH -> {
-        Server.broadcastTitle(Component.text("Runners ", runnerTeam.getTextColor())
-                .append(Component.text("win!", ExTextColor.PUBLIC)),
-            finisher.getChatNameComponent()
-                .append(Component.text(" reached the finish", ExTextColor.PUBLIC)),
-            Duration.ofSeconds(5));
-        this.broadcastGameMessage(Component.text("Runners ", runnerTeam.getTextColor())
-            .append(Component.text("win!", ExTextColor.PUBLIC)));
-        for (User user : this.getGame().getRunnerTeam().getUsers()) {
-          user.addCoins(BowRunServer.WIN_COINS, true);
-        }
-      }
-      default -> {
-        Server.broadcastTitle(Component.text("Game has ended", ExTextColor.PUBLIC),
-            Component.empty(),
-            Duration.ofSeconds(5));
-        this.broadcastGameMessage(Component.text("Game has ended", ExTextColor.PUBLIC));
-      }
-    }
-
-    this.broadcastGameMessage(Chat.getLongLineSeparator());
-    this.broadcastHighscore("Kills",
-        (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3,
-        GameUser::getKills);
-    this.broadcastHighscore("Deaths",
-        (Collection) (BowRunServer.getGame().getRunnerTeam().getUsers()), 3,
-        GameUser::getDeaths);
-    this.broadcastHighscore("Longest Shot",
-        (Collection) BowRunServer.getGame().getArcherTeam().getUsers(), 3,
-        u -> u.getLongestShot() > 0, GameUser::getLongestShot);
-    this.broadcastGameMessage(Chat.getLongLineSeparator());
+    EndMessage endMessage = new EndMessage()
+        .winner(this.winType != null ? this.winType.getTeam() : null)
+        .applyIf(this.winType == BowRunServer.WinType.ARCHER_TIME, e -> e.subTitle("Time is up"))
+        .applyIf(this.winType == BowRunServer.WinType.RUNNER_FINISH, e -> e.subTitle(finisher.getTDChatName() + "§p " +
+            "reached the goal"))
+        .addStat("Kills", archerTeam.getUsers(), 3, GameUser::getKills)
+        .addStat("Deaths", runnerTeam.getUsers(), 3, GameUser::getDeaths)
+        .addStat("Longest Shot", archerTeam.getUsers(), 3, u -> u.getLongestShot() > 0, GameUser::getLongestShot);
 
     String recordTime = null;
     UUID lastRecord = null;
@@ -336,35 +272,35 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
       lastRecord = map.getBestTimeUser();
     }
 
-    if (oldRecord > time && winType == BowRunServer.WinType.RUNNER_FINISH && finisher != null) {
+    if (winType == BowRunServer.WinType.RUNNER_FINISH && oldRecord > time && finisher != null) {
       recordTime = Chat.getTimeString(time);
 
-      this.broadcastGameMessage(Component.text("New record: ", ExTextColor.GOLD)
-          .append(Component.text(recordTime, ExTextColor.BLUE))
-          .append(Component.text(" by ", ExTextColor.GOLD))
-          .append(finisher.getChatNameComponent()));
+      endMessage.addExtra("§hNew record: §v" + recordTime + " §hby " + finisher.getTDChatName());
+      endMessage.send();
 
       this.recordVerification.checkRecord(time, finisher, map);
+    } else {
+      endMessage.send();
     }
+
     // stats
     List<String> stats = new ArrayList<>();
 
-    stats.add("Teams (R vs. A): " + this.getGame().getRunnerTeam().getUsers().size() + " vs. "
-        + this.getGame().getArcherTeam().getUsers().size());
+    stats.add("Teams (R vs. A): " + runnerTeam.getUsers().size() + " vs. " + archerTeam.getUsers().size());
     stats.add("Time: " + this.getPlayingTime() + " of " + map.getTime());
     stats.add("Map: " + map.getName());
     if (recordTime != null) {
       if (lastRecord != null) {
-        stats.add("New Record: " + recordTime + " " + finisher.getUniqueId() + "(old: "
-            + oldRecord + " " + lastRecord + ")");
+        stats.add("New Record: " + recordTime + " " + finisher.getUniqueId() + " (old: " + oldRecord + " " + lastRecord + ")");
       } else {
         stats.add("New Record: " + recordTime + " " + finisher.getUniqueId());
       }
     }
 
     stats.add("GameUserStats: Team Deaths Kills BowHits BowShots BowShotHits Hit/Shot");
+
     for (User user : Server.getGameNotServiceUsers()) {
-      if (user.getStatus().equals(Status.User.SPECTATOR)) {
+      if (user.hasStatus(Status.User.SPECTATOR)) {
         continue;
       }
 
@@ -376,16 +312,12 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
       if (gameUser.getBowShots().equals(0)) {
         stats.add(gameUser.getName() + ": " + gameUser.getTeam().getName() + " "
-            + gameUser.getDeaths() + " " +
-            gameUser.getKills() + " " + gameUser.getBowHits() + " "
-            + gameUser.getBowShots() + " " +
-            gameUser.getBowHitTarget() + " " + (gameUser.getBowHitTarget()));
+            + gameUser.getDeaths() + " " + gameUser.getKills() + " " + gameUser.getBowHits() + " "
+            + gameUser.getBowShots() + " " + gameUser.getBowHitTarget() + " " + (gameUser.getBowHitTarget()));
       } else {
         stats.add(gameUser.getName() + ": " + gameUser.getTeam().getName() + " "
-            + gameUser.getDeaths() + " " +
-            gameUser.getKills() + " " + gameUser.getBowHits() + " "
-            + gameUser.getBowShots() + " " +
-            gameUser.getBowHitTarget() + " "
+            + gameUser.getDeaths() + " " + gameUser.getKills() + " " + gameUser.getBowHits() + " "
+            + gameUser.getBowShots() + " " + gameUser.getBowHitTarget() + " "
             + gameUser.getBowHitTarget() / ((double) gameUser.getBowShots()));
       }
     }
@@ -407,28 +339,20 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
       return;
     }
 
-    if (user.getTeam().getUsers().size() > 0) {
+    if (!user.getTeam().getUsers().isEmpty()) {
       return;
     }
 
-    this.winType =
-        user.getTeam().equals(this.getGame().getArcherTeam()) ? BowRunServer.WinType.RUNNER
+    this.winType = user.getTeam().equals(this.getGame().getArcherTeam()) ? BowRunServer.WinType.RUNNER
             : BowRunServer.WinType.ARCHER;
     this.finisher = null;
     this.stopGame();
   }
 
   @Override
-  public void onGameUserQuitBeforeStart(GameUser user) {
-    if (user.getTeam() == null) {
-      return;
-    }
-
-    if (user.getTeam().getUsers().size() > 1) {
-      return;
-    }
-
-    this.stopAfterStart = true;
+  public boolean checkGameEnd() {
+    return this.getGame().getRunnerTeam().isEmpty() || this.getGame().getArcherTeam().isEmpty()
+        || this.timerTool.getTime() == 0;
   }
 
   @Override
@@ -445,7 +369,6 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   @Override
   public void onGameReset() {
     this.updateGameTimeOnSideboard();
-    this.stopAfterStart = false;
     this.relayManager.reset();
     this.winType = null;
   }
@@ -490,14 +413,12 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   }
 
   public ExItemStack getRandomRunnerItem() {
-    return BowRunServer.RUNNER_ITEMS.get(
-        (int) ((Math.random() * BowRunServer.RUNNER_ITEMS.size()
+    return BowRunServer.RUNNER_ITEMS.get((int) ((Math.random() * BowRunServer.RUNNER_ITEMS.size()
             + Math.random() * BowRunServer.RUNNER_ITEMS.size()) / 2));
   }
 
   public ExItemStack getRandomArcherItem() {
-    return BowRunServer.ARCHER_ITEMS.get(
-        (int) ((Math.random() * BowRunServer.ARCHER_ITEMS.size()
+    return BowRunServer.ARCHER_ITEMS.get((int) ((Math.random() * BowRunServer.ARCHER_ITEMS.size()
             + Math.random() * BowRunServer.ARCHER_ITEMS.size()) / 2));
   }
 

@@ -5,6 +5,7 @@
 package de.timesnake.game.bowrun.server;
 
 import de.timesnake.basic.bukkit.util.user.inventory.ExItemStack;
+import de.timesnake.basic.game.util.game.Team;
 import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServer;
 import de.timesnake.game.bowrun.user.BowRunUser;
 import de.timesnake.library.basic.util.TimeCoins;
@@ -12,14 +13,14 @@ import de.timesnake.library.basic.util.Tuple;
 import de.timesnake.library.basic.util.statistics.IntegerStat;
 import de.timesnake.library.basic.util.statistics.PercentStat;
 import de.timesnake.library.basic.util.statistics.StatType;
-import java.util.List;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.Note;
-import org.bukkit.Sound;
 import org.bukkit.boss.BossBar;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.List;
 
 public class BowRunServer extends LoungeBridgeServer {
 
@@ -27,13 +28,11 @@ public class BowRunServer extends LoungeBridgeServer {
       ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 2, "§6Heal II",
           PotionEffectType.HEAL, 0, 2),
       ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Jump II  (7 s)",
-          PotionEffectType.JUMP,
-          20 * 7, 2),
+          PotionEffectType.JUMP, 20 * 7, 2),
       ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Slow Fall (20 s)",
           PotionEffectType.SLOW_FALLING, 20 * 20, 1),
       ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Speed II (30 s)",
-          PotionEffectType.SPEED,
-          20 * 15, 2),
+          PotionEffectType.SPEED, 20 * 15, 2),
       ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Invisibility (8 s)",
           PotionEffectType.INVISIBILITY, 20 * 8, 1, List.of("§fRemoves your armor")),
       ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Fire Resistance (45 s)",
@@ -152,11 +151,21 @@ public class BowRunServer extends LoungeBridgeServer {
   public static List<ExItemStack> armor;
 
   public enum WinType {
-    RUNNER_FINISH,
-    RUNNER,
-    ARCHER,
-    ARCHER_TIME,
-    END
+    RUNNER_FINISH(BowRunServer.getGame().getRunnerTeam()),
+    RUNNER(BowRunServer.getGame().getRunnerTeam()),
+    ARCHER(BowRunServer.getGame().getArcherTeam()),
+    ARCHER_TIME(BowRunServer.getGame().getArcherTeam()),
+    END(null);
+
+    private final Team team;
+
+    WinType(Team team) {
+      this.team = team;
+    }
+
+    public Team getTeam() {
+      return team;
+    }
   }
 
 }
