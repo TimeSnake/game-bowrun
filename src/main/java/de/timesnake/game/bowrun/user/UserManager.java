@@ -10,25 +10,19 @@ import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.bukkit.util.user.UserDamage;
 import de.timesnake.basic.bukkit.util.user.event.UserDamageByUserEvent;
 import de.timesnake.basic.bukkit.util.user.event.UserDamageEvent;
-import de.timesnake.basic.bukkit.util.user.event.UserDeathEvent;
 import de.timesnake.basic.bukkit.util.user.event.UserDropItemEvent;
 import de.timesnake.basic.bukkit.util.user.event.UserMoveEvent;
-import de.timesnake.basic.bukkit.util.user.event.UserRespawnEvent;
 import de.timesnake.basic.bukkit.util.user.inventory.ExItemStack;
 import de.timesnake.basic.bukkit.util.user.inventory.UserInventoryInteractEvent;
 import de.timesnake.basic.bukkit.util.user.inventory.UserInventoryInteractListener;
 import de.timesnake.basic.game.util.user.TeamUser;
-import de.timesnake.basic.loungebridge.util.server.LoungeBridgeServer;
 import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
-import de.timesnake.game.bowrun.server.BowRunMap;
 import de.timesnake.game.bowrun.server.BowRunServer;
 import de.timesnake.game.bowrun.server.BowRunServerManager;
 import de.timesnake.game.bowrun.server.RelayManager;
 import de.timesnake.library.basic.util.Status;
 import de.timesnake.library.basic.util.Tuple;
-import de.timesnake.library.chat.ExTextColor;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -72,18 +66,15 @@ public class UserManager implements Listener, UserInventoryInteractListener {
     TeamUser damager = (TeamUser) e.getUserDamager();
 
     if (e.getDamageCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)) {
-      if (damager.getTeam() != null && damager.getTeam()
-          .equals(BowRunServer.getGame().getArcherTeam())) {
+      if (damager.getTeam() != null && damager.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
         e.setCancelled(true);
         e.setCancelDamage(true);
-        user.setLastDamager(new UserDamage(user, damager, e.getDamageCause(),
-            UserDamage.DamageType.INSTANT));
+        user.setLastDamager(new UserDamage(user, damager, e.getDamageCause(), UserDamage.DamageType.INSTANT));
         user.kill();
       }
     }
 
-    if (user.getTeam() != null && damager.getTeam() != null && user.getTeam()
-        .equals(damager.getTeam())) {
+    if (user.getTeam() != null && user.getTeam().equals(damager.getTeam())) {
       e.setCancelled(true);
       e.setCancelDamage(true);
     }
@@ -140,19 +131,16 @@ public class UserManager implements Listener, UserInventoryInteractListener {
         }
       }
 
-      if ((BowRunServer.getMap().isArcherBorder() || BowRunServer.getMap()
-          .isArcherKnockbackBorder()) && !e.getFrom().getBlock()
-          .equals(e.getTo().getBlock())) {
-        if (BowRunServer.getMap().getArcherBorderLocs()
-            .contains(new Tuple<>(e.getTo().getBlockX(),
-                e.getTo().getBlockZ()))) {
+      if ((BowRunServer.getMap().isArcherBorder() || BowRunServer.getMap().isArcherKnockbackBorder())
+          && !e.getFrom().getBlock().equals(e.getTo().getBlock())) {
+        if (BowRunServer.getMap().getArcherBorderLocs().contains(new Tuple<>(e.getTo().getBlockX(),
+            e.getTo().getBlockZ()))) {
           if (BowRunServer.getMap().isArcherBorder()) {
             user.teleportToTeamSpawn();
           } else if (BowRunServer.getMap().isArcherKnockbackBorder()) {
             e.setCancelled(true);
-            Server.runTaskLaterSynchrony(() -> user.setVelocity(
-                e.getFrom().toVector().subtract(e.getTo().toVector()).normalize()
-                    .multiply(1)), 1, GameBowRun.getPlugin());
+            Server.runTaskLaterSynchrony(() -> user.setVelocity(e.getFrom().toVector().subtract(e.getTo().toVector())
+                .normalize().multiply(1)), 1, GameBowRun.getPlugin());
           }
         }
       }
@@ -178,8 +166,7 @@ public class UserManager implements Listener, UserInventoryInteractListener {
     }
 
     if (user.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
-      if (user.getLocation().getBlock()
-          .equals(BowRunServer.getMap().getRunnerFinish().getBlock())) {
+      if (user.getLocation().getBlock().equals(BowRunServer.getMap().getRunnerFinish().getBlock())) {
         if (BowRunServer.getMap().isRelayRace()) {
           if (user.contains(RelayManager.RELAY)) {
             user.addCoins(BowRunServer.WIN_COINS, true);
@@ -193,48 +180,6 @@ public class UserManager implements Listener, UserInventoryInteractListener {
 
     }
 
-  }
-
-  /**
-   * Keeps the archer-user inventory
-   *
-   * @param e The PlayerDeathEvent called by Bukkit
-   */
-  @EventHandler
-  public void onUserDeath(UserDeathEvent e) {
-    e.getDrops().clear();
-    e.setAutoRespawn(true);
-  }
-
-  /**
-   * Sets the respawn location for user
-   *
-   * @param e The PlayerRespawnEvent called by Bukkit
-   */
-  @EventHandler
-  public void onUserRespawn(UserRespawnEvent e) {
-    User user = e.getUser();
-
-    if (user.getStatus().equals(Status.User.IN_GAME)) {
-      BowRunUser brUser = ((BowRunUser) user);
-      brUser.clearInventory();
-      brUser.setRespawnEquipment();
-
-      if (brUser.getTeam() == null) {
-        return;
-      }
-
-      if (brUser.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
-        int random = (int) (Math.random()
-            * ((BowRunMap) LoungeBridgeServer.getMap()).getRunnerSpawns().size());
-        e.setRespawnLocation(
-            ((BowRunMap) LoungeBridgeServer.getMap()).getRunnerSpawns().get(random));
-
-      } else if (brUser.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
-        e.setRespawnLocation(((BowRunMap) LoungeBridgeServer.getMap()).getArcherSpawn());
-      }
-      brUser.getPlayer().setAbsorptionAmount(0);
-    }
   }
 
   @EventHandler
@@ -297,16 +242,13 @@ public class UserManager implements Listener, UserInventoryInteractListener {
     }
 
     if (BowRunServerManager.getInstance().isGameRunning()) {
-      if (e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction()
-          .equals(Action.LEFT_CLICK_BLOCK)) {
+      if (e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
         if (user.getLastDamager() == null) {
           user.suicided();
         }
         user.kill();
       } else {
-        user.sendPluginMessage(Plugin.BOWRUN,
-            Component.text("Left click the suicid item, to kill " +
-                "yourself", ExTextColor.PERSONAL));
+        user.sendPluginTDMessage(Plugin.BOWRUN, "§sLeft click, to kill yourself");
       }
     }
     e.setCancelled(true);
@@ -318,13 +260,11 @@ public class UserManager implements Listener, UserInventoryInteractListener {
       return;
     }
 
-    if ((e.getOldEffect() != null && e.getOldEffect().getType()
-        .equals(PotionEffectType.INVISIBILITY)) || (e.getNewEffect() != null
-        && e.getNewEffect().getType().equals(PotionEffectType.INVISIBILITY))) {
+    if ((e.getOldEffect() != null && e.getOldEffect().getType().equals(PotionEffectType.INVISIBILITY))
+        || (e.getNewEffect() != null && e.getNewEffect().getType().equals(PotionEffectType.INVISIBILITY))) {
       switch (e.getAction()) {
         case ADDED, CHANGED -> Server.getUser(((Player) e.getEntity())).clearArmor();
-        case CLEARED, REMOVED ->
-            ((BowRunUser) Server.getUser(((Player) e.getEntity()))).restoreArmor();
+        case CLEARED, REMOVED -> ((BowRunUser) Server.getUser(((Player) e.getEntity()))).restoreArmor();
       }
     }
 
