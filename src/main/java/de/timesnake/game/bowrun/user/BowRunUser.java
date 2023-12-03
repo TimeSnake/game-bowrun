@@ -94,12 +94,10 @@ public class BowRunUser extends GameUser {
     this.setGravity(true);
     this.setInvulnerable(true);
 
-    if (this.getTeam() != null && this.getTeam()
-        .equals(BowRunServer.getGame().getRunnerTeam())) {
+    if (this.getTeam() != null && this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
       this.lockLocation();
       this.setCollitionWithEntites(true);
-    } else if (this.getTeam() != null && this.getTeam()
-        .equals(BowRunServer.getGame().getArcherTeam())) {
+    } else if (this.getTeam() != null && this.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
       if (map.isArcherHover()) {
         Server.runTaskSynchrony(() -> {
           this.setAllowFlight(true);
@@ -142,7 +140,7 @@ public class BowRunUser extends GameUser {
   }
 
   @Override
-  public @Nullable ExLocation onGameRespawn() {
+  public @Nullable ExLocation getRespawnLocation() {
     this.clearInventory();
     this.setRespawnEquipment();
     this.setAbsorptionAmount(0);
@@ -190,8 +188,7 @@ public class BowRunUser extends GameUser {
     this.getPlayer().setVelocity(new Vector(0, 0, 0));
 
     if (this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
-      int spawnNumber = (int) (Math.random() * BowRunServer.getMap().getRunnerSpawns()
-          .size());
+      int spawnNumber = (int) (Math.random() * BowRunServer.getMap().getRunnerSpawns().size());
       this.teleport(BowRunServer.getMap().getRunnerSpawns().get(spawnNumber));
     } else if (this.getTeam().equals(BowRunServer.getGame().getArcherTeam())) {
       this.teleport(BowRunServer.getMap().getArcherSpawn());
