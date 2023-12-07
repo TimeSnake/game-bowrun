@@ -21,6 +21,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class BowRunUser extends GameUser {
 
   public static final ItemStack RUNNER_REMOVER = new ExItemStack(Material.NETHERITE_SWORD,
@@ -137,6 +139,12 @@ public class BowRunUser extends GameUser {
       }
       this.setArmor();
     }
+  }
+
+  @Override
+  public List<ItemStack> onGameDeath() {
+    super.onGameDeath();
+    return List.of();
   }
 
   @Override
