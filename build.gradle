@@ -1,10 +1,13 @@
 plugins {
+  id 'java'
+  id 'java-base'
   id 'java-library'
   id 'maven-publish'
-  id('io.papermc.paperweight.userdev')
-  id('xyz.jpenilla.run-paper')
-  id('com.github.johnrengelman.shadow')
+  id("io.papermc.paperweight.userdev") version "1.5.5"
+  id("xyz.jpenilla.run-paper") version "2.1.0"
+  id('com.github.johnrengelman.shadow') version "8.1.1"
 }
+
 
 group = "de.timesnake"
 version = '1.2.1'
@@ -95,7 +98,7 @@ tasks {
   }
 
   reobfJar {
-      outputJar.set(layout.buildDirectory.file("${timesnakePluginDir}/${archivesBaseName}-${project.version}.jar"))
+    outputJar.set(layout.buildDirectory.file("${timesnakePluginDir}/${archivesBaseName}-${project.version}.jar"))
   }
 }
 
@@ -118,4 +121,12 @@ publishing {
       from components.java
     }
   }
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.encoding = 'UTF-8'
+}
+
+java {
+  withSourcesJar()
 }
