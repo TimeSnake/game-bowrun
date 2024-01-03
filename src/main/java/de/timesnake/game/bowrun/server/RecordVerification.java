@@ -5,19 +5,19 @@
 package de.timesnake.game.bowrun.server;
 
 import de.timesnake.basic.bukkit.util.Server;
-import de.timesnake.basic.bukkit.util.chat.Argument;
-import de.timesnake.basic.bukkit.util.chat.CommandListener;
-import de.timesnake.basic.bukkit.util.chat.Sender;
+import de.timesnake.basic.bukkit.util.chat.cmd.Argument;
+import de.timesnake.basic.bukkit.util.chat.cmd.CommandListener;
+import de.timesnake.basic.bukkit.util.chat.cmd.Completion;
+import de.timesnake.basic.bukkit.util.chat.cmd.Sender;
 import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.loungebridge.util.user.GameUser;
 import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.library.basic.util.Loggers;
 import de.timesnake.library.chat.ExTextColor;
+import de.timesnake.library.commands.PluginCommand;
+import de.timesnake.library.commands.simple.Arguments;
 import de.timesnake.library.extension.util.chat.Code;
-import de.timesnake.library.extension.util.cmd.Arguments;
-import de.timesnake.library.extension.util.cmd.ExCommand;
-import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -32,8 +32,8 @@ public class RecordVerification implements CommandListener {
 
   private boolean rejected;
 
-  private Code verifyPerm;
-  private Code rejectPerm;
+  private final Code verifyPerm = Plugin.BOWRUN.createPermssionCode("game.bowrun.verify");
+  private final Code rejectPerm = Plugin.BOWRUN.createPermssionCode("game.bowrun.reject");
 
   public void checkRecord(int time, User finisher, BowRunMap map) {
     this.time = time;
@@ -130,8 +130,8 @@ public class RecordVerification implements CommandListener {
   }
 
   @Override
-  public void onCommand(Sender sender, ExCommand<Sender, Argument> cmd,
-      Arguments<Argument> args) {
+  public void onCommand(Sender sender, PluginCommand cmd,
+                        Arguments<Argument> args) {
     if (cmd.getName().equalsIgnoreCase("bowrun_verify")) {
       if (!sender.hasPermission(this.verifyPerm)) {
         return;
@@ -163,14 +163,12 @@ public class RecordVerification implements CommandListener {
   }
 
   @Override
-  public List<String> getTabCompletion(ExCommand<Sender, Argument> cmd,
-      Arguments<Argument> args) {
-    return null;
+  public Completion getTabCompletion() {
+    return new Completion(this.rejectPerm);
   }
 
   @Override
-  public void loadCodes(de.timesnake.library.extension.util.chat.Plugin plugin) {
-    this.verifyPerm = plugin.createPermssionCode("game.bowrun.verify");
-    this.rejectPerm = plugin.createPermssionCode("game.bowrun.reject");
+  public String getPermission() {
+    return this.rejectPerm.getPermission();
   }
 }
