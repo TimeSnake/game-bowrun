@@ -43,6 +43,7 @@ dependencies {
 
   compileOnly "de.timesnake:library-game:1.2"
   compileOnly "de.timesnake:library-packets:2.1.1"
+  compileOnly "de.timesnake:library-commands:1.0"
   compileOnly "de.timesnake:library-extension:1.2"
   compileOnly "de.timesnake:library-basic:1.2.2"
   compileOnly "de.timesnake:library-chat:1.1"
