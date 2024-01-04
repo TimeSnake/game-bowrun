@@ -34,7 +34,7 @@ import de.timesnake.library.basic.util.Loggers;
 import de.timesnake.library.basic.util.Status;
 import de.timesnake.library.basic.util.statistics.StatPeriod;
 import de.timesnake.library.basic.util.statistics.StatType;
-import de.timesnake.library.extension.util.chat.Chat;
+import de.timesnake.library.chat.Chat;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -162,7 +162,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   }
 
   @Override
-  public de.timesnake.library.extension.util.chat.Plugin getGamePlugin() {
+  public de.timesnake.library.chat.Plugin getGamePlugin() {
     return Plugin.BOWRUN;
   }
 
