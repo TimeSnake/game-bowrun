@@ -174,9 +174,9 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
     if (map.getBestTime() != null) {
       String recordTime = Chat.getTimeString(map.getBestTime());
-      if (map.getBestTimeUser() != null) {
+      if (map.getBestPlayer() != null) {
         BowRunServer.getGameTablist().setFooter("§hRecord: §u" + recordTime + " §hby §u" +
-            Database.getUsers().getUser(map.getBestTimeUser()).getName());
+            Database.getUsers().getUser(map.getBestPlayer()).getName());
       } else {
         BowRunServer.getGameTablist().setFooter("§hRecord: §u- - -");
       }
@@ -265,14 +265,14 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     UUID lastRecord = null;
     BowRunMap map = BowRunServer.getMap();
     int time = map.getTime() - this.getPlayingTime();
-    int oldRecord = map.getBestTime();
+    Integer oldRecord = map.getBestTime();
 
     // record check
-    if (map.getBestTimeUser() != null) {
-      lastRecord = map.getBestTimeUser();
+    if (map.getBestPlayer() != null) {
+      lastRecord = map.getBestPlayer();
     }
 
-    if (winType == BowRunServer.WinType.RUNNER_FINISH && oldRecord > time && finisher != null) {
+    if (winType == BowRunServer.WinType.RUNNER_FINISH && (oldRecord == null || oldRecord > time) && finisher != null) {
       recordTime = Chat.getTimeString(time);
 
       endMessage.addExtra("§hNew record: §v" + recordTime + " §hby " + finisher.getTDChatName());
@@ -291,7 +291,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     stats.add("Map: " + map.getName());
     if (recordTime != null) {
       if (lastRecord != null) {
-        stats.add("New Record: " + recordTime + " " + finisher.getUniqueId() + " (old: " + oldRecord + " " + lastRecord + ")");
+        stats.add("New Record: " + recordTime + " " + finisher.getUniqueId() + (oldRecord != null ?
+            " (old: " + oldRecord + " " + lastRecord + ")" : ""));
       } else {
         stats.add("New Record: " + recordTime + " " + finisher.getUniqueId());
       }

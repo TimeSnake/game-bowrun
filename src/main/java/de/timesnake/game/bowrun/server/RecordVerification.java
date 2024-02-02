@@ -78,8 +78,7 @@ public class RecordVerification implements CommandListener {
 
       user.sendClickablePluginMessage(Plugin.BOWRUN,
           Component.text("Verify ", ExTextColor.GREEN, TextDecoration.BOLD)
-              .append(Component.text("record, if it was legal", ExTextColor.WARNING,
-                  TextDecoration.BOLD)),
+              .append(Component.text("record, if it was legal", ExTextColor.WARNING, TextDecoration.BOLD)),
           "/bowrun_verify", Component.text("Click to verify"),
           ClickEvent.Action.RUN_COMMAND);
     }
@@ -93,8 +92,7 @@ public class RecordVerification implements CommandListener {
       }
 
       user.sendClickablePluginMessage(Plugin.BOWRUN,
-          Component.text("Reject record, if it was illegal", ExTextColor.WARNING,
-              TextDecoration.BOLD),
+          Component.text("Reject record, if it was illegal", ExTextColor.WARNING, TextDecoration.BOLD),
           "/bowrun_reject", Component.text("Click to reject"),
           ClickEvent.Action.RUN_COMMAND);
     }
