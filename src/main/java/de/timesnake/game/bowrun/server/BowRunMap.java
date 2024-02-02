@@ -44,10 +44,10 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
   private static final String RUNNER_NO_FALL_DAMAGE = "F";
   private static final String RUNNER_WATER_DAMAGE = "W";
 
-  private final Integer time;
   private final List<ExLocation> runnerSpawns = new ArrayList<>();
   private final Set<Tuple<Integer, Integer>> archerBorderLocs = new HashSet<>();
-  private String tags;
+
+  private Integer time;
   private boolean timeNight = false;
   private boolean archerNoSpecialItems = false;
   private boolean archerHover = false;
@@ -67,7 +67,7 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
   private boolean relayRace = false;
   private int runnerDeathHeight = 0;
   private Integer bestTime;
-  private UUID bestTimeUser;
+  private UUID bestPlayer;
 
   public BowRunMap(DbMap map) {
     super(map, true);
@@ -97,31 +97,12 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
       world.setStorm(false);
     }
 
-    ArrayList<String> info = new ArrayList<>(super.getInfo());
+    this.time = this.getProperty("time", Integer.class, 300,
+        v -> Loggers.GAME.warning("Could not load time of map " + this.getName()));
 
-    // time
-    int time = 7 * 60;
+    String tags = this.getProperty("tags");
 
-    if (!info.isEmpty()) {
-      try {
-        time = Integer.parseInt(info.get(0));
-      } catch (NumberFormatException e) {
-        Loggers.GAME.warning("Could not load time of map " + this.getName());
-      }
-    } else {
-      Loggers.GAME.warning("Could not load time of map " + this.getName());
-    }
-
-    this.time = time;
-
-    // tags
-    if (info.size() >= 2) {
-      this.tags = info.get(1);
-    } else {
-      Loggers.GAME.warning("Could not load tags of map " + this.getName());
-    }
-
-    if (this.tags != null) {
+    if (tags != null) {
       this.timeNight = tags.contains(TIME_NIGHT);
       if (world != null) {
         world.setTime(18000);
@@ -157,37 +138,17 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
       }
     }
 
-    if (info.size() >= 3) {
-      try {
-        this.runnerDeathHeight = Integer.parseInt(info.get(2));
-      } catch (NumberFormatException e) {
-        Loggers.GAME.warning("Could not load death-height of map " + this.getName());
-      }
-    }
+    this.runnerDeathHeight = this.getProperty("death_height", Integer.class, 0,
+        v -> Loggers.GAME.warning("Could not load death-height of map " + this.getName()));
 
-    // best time
-    int bestTime = this.time;
+    this.bestTime = this.getProperty("best_time", Integer.class, null, v -> {
+      if (v != null) Loggers.GAME.warning("Could not load best-time of map " + this.getName());
+    });
 
-    if (info.size() >= 4) {
-      try {
-        bestTime = Integer.parseInt(info.get(3));
-      } catch (NumberFormatException e) {
-        Loggers.GAME.warning("Could not load best-time of map " + this.getName());
-      }
-    } else {
-      Loggers.GAME.warning("Could not load best-time of map " + this.getName());
-    }
+    this.bestPlayer = this.getProperty("best_player", UUID.class, null, v -> {
+      if (v != null) Loggers.GAME.warning("Could not load best-player of map " + this.getName());
+    });
 
-    this.bestTime = bestTime;
-
-    if (info.size() >= 5) {
-      try {
-        this.bestTimeUser = UUID.fromString(info.get(4));
-      } catch (IllegalArgumentException e) {
-        Loggers.GAME.warning("Could not load best-user of map " + this.getName());
-      }
-
-    }
 
     for (int i = RUNNER_SPAWN_NUMBER; i < this.getSpawnsAmount() && i < RELAY_PICKUP; i++) {
       ExLocation location = super.getLocation(i);
@@ -254,21 +215,16 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
     return bestTime;
   }
 
-  public void setBestTime(Integer bestTime, UUID bestTimeUser) {
+  public void setBestTime(Integer bestTime, UUID bestPlayer) {
     this.bestTime = bestTime;
-    this.bestTimeUser = bestTimeUser;
-    String tags = this.tags != null ? this.tags : "";
-    this.getDatabase().setInfo(
-        List.of("" + this.time, tags, "" + this.runnerDeathHeight, "" + this.bestTime,
-            this.bestTimeUser.toString()));
+    this.setProperty("best_time", String.valueOf(bestTime));
+
+    this.bestPlayer = bestPlayer;
+    this.setProperty("best_player", String.valueOf(bestPlayer));
   }
 
-  public UUID getBestTimeUser() {
-    return bestTimeUser;
-  }
-
-  public String getTags() {
-    return tags;
+  public UUID getBestPlayer() {
+    return bestPlayer;
   }
 
   public boolean isOnlyInstant() {
