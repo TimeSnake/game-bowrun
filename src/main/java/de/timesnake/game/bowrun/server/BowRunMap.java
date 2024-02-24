@@ -10,8 +10,9 @@ import de.timesnake.basic.game.util.game.Map;
 import de.timesnake.basic.loungebridge.util.game.ResetableMap;
 import de.timesnake.basic.loungebridge.util.tool.Timeable;
 import de.timesnake.database.util.game.DbMap;
-import de.timesnake.library.basic.util.Loggers;
 import de.timesnake.library.basic.util.Tuple;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.GameRule;
 import org.bukkit.Material;
 
@@ -43,6 +44,8 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
   private static final String RUNNER_SPEED = "S";
   private static final String RUNNER_NO_FALL_DAMAGE = "F";
   private static final String RUNNER_WATER_DAMAGE = "W";
+
+  private final Logger logger = LogManager.getLogger("bowrun.map");
 
   private final List<ExLocation> runnerSpawns = new ArrayList<>();
   private final Set<Tuple<Integer, Integer>> archerBorderLocs = new HashSet<>();
@@ -98,7 +101,7 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
     }
 
     this.time = this.getProperty("time", Integer.class, 300,
-        v -> Loggers.GAME.warning("Could not load time of map " + this.getName()));
+        v -> this.logger.warn("Could not load time of map '{}'", this.getName()));
 
     String tags = this.getProperty("tags");
 
@@ -139,14 +142,14 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
     }
 
     this.runnerDeathHeight = this.getProperty("death_height", Integer.class, 0,
-        v -> Loggers.GAME.warning("Could not load death-height of map " + this.getName()));
+        v -> this.logger.warn("Could not load death-height of map '{}'", this.getName()));
 
     this.bestTime = this.getProperty("best_time", Integer.class, null, v -> {
-      if (v != null) Loggers.GAME.warning("Could not load best-time of map " + this.getName());
+      if (v != null) this.logger.warn("Could not load best-time of map '{}'", this.getName());
     });
 
     this.bestPlayer = this.getProperty("best_player", UUID.class, null, v -> {
-      if (v != null) Loggers.GAME.warning("Could not load best-player of map " + this.getName());
+      if (v != null) this.logger.warn("Could not load best-player of map '{}'", this.getName());
     });
 
 

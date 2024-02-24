@@ -13,7 +13,6 @@ import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.loungebridge.util.user.GameUser;
 import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
-import de.timesnake.library.basic.util.Loggers;
 import de.timesnake.library.chat.Code;
 import de.timesnake.library.chat.ExTextColor;
 import de.timesnake.library.commands.PluginCommand;
@@ -21,10 +20,14 @@ import de.timesnake.library.commands.simple.Arguments;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class RecordVerification implements CommandListener {
 
   public static final Integer MIN_RECORD_SIZE = 4;
+
+  private final Logger logger = LogManager.getLogger("bowrun.record-verify");
 
   private Integer time;
   private User finisher;
@@ -70,7 +73,7 @@ public class RecordVerification implements CommandListener {
   }
 
   public void sendVerificationRequest() {
-    Loggers.GAME.info("Send verification requests");
+    this.logger.info("Send verification requests");
     for (User user : Server.getUsers()) {
       if (!user.hasPermission("game.bowrun.verify")) {
         continue;
@@ -85,7 +88,7 @@ public class RecordVerification implements CommandListener {
   }
 
   public void sendRejectRequest() {
-    Loggers.GAME.info("Send reject requests");
+    this.logger.info("Send reject requests");
     for (User user : Server.getUsers()) {
       if (!user.hasPermission("game.bowrun.reject")) {
         continue;
@@ -138,7 +141,7 @@ public class RecordVerification implements CommandListener {
       if (this.time != null) {
         this.setRecord();
         sender.sendPluginMessage(Component.text("Verified record", ExTextColor.WARNING));
-        Loggers.GAME.info("Record verified by " + sender.getChatName());
+        this.logger.info("Record verified by " + sender.getChatName());
       } else {
         sender.sendPluginMessage(
             Component.text("Record already verified", ExTextColor.WARNING));
@@ -151,7 +154,7 @@ public class RecordVerification implements CommandListener {
       if (!this.rejected) {
         this.rejected = true;
         sender.sendPluginMessage(Component.text("Rejected record", ExTextColor.WARNING));
-        Loggers.GAME.info("Record rejected by " + sender.getChatName());
+        this.logger.info("Record rejected by " + sender.getChatName());
       } else {
         sender.sendPluginMessage(
             Component.text("Record already rejected", ExTextColor.WARNING));
