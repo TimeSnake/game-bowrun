@@ -30,12 +30,13 @@ import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.game.bowrun.user.BowRunUser;
 import de.timesnake.game.bowrun.user.UserManager;
-import de.timesnake.library.basic.util.Loggers;
 import de.timesnake.library.basic.util.Status;
 import de.timesnake.library.basic.util.statistics.StatPeriod;
 import de.timesnake.library.basic.util.statistics.StatType;
 import de.timesnake.library.chat.Chat;
 import net.kyori.adventure.text.Component;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
@@ -58,6 +59,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   public static BowRunServerManager getInstance() {
     return (BowRunServerManager) ServerManager.getInstance();
   }
+
+  private final Logger logger = LogManager.getLogger("bowrun.server");
 
   private final RecordVerification recordVerification = new RecordVerification();
   private ExSideboard sideboard;
@@ -323,11 +326,11 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
       }
     }
 
-    Loggers.GAME.info("---- Stats ----");
+    this.logger.info("---- Stats ----");
     for (String line : stats) {
-      Loggers.GAME.info(line);
+      this.logger.info(line);
     }
-    Loggers.GAME.info("---- Stats ----");
+    this.logger.info("---- Stats ----");
   }
 
   @Override
