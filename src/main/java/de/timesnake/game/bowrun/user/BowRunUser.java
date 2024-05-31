@@ -28,7 +28,7 @@ public class BowRunUser extends GameUser {
   public static final ItemStack RUNNER_REMOVER = new ExItemStack(Material.NETHERITE_SWORD,
       "§6RunnerRemover")
       .unbreakable()
-      .addEnchantments(new Tuple<>(Enchantment.DAMAGE_ALL, 10),
+      .addEnchantments(new Tuple<>(Enchantment.SHARPNESS, 10),
           new Tuple<>(Enchantment.SWEEPING_EDGE, 10))
       .setDropable(false);
   public static final ExItemStack BOW = new ExItemStack(Material.BOW)
@@ -45,13 +45,13 @@ public class BowRunUser extends GameUser {
   public static final ExItemStack INSTANT_BOW =
       new ExItemStack(Material.BOW, "§6Instant-Bow")
           .unbreakable()
-          .addEnchantments(new Tuple<>(Enchantment.ARROW_DAMAGE, 10))
+          .addEnchantments(new Tuple<>(Enchantment.POWER, 10))
           .setDropable(false);
 
   public static final ExItemStack PUNCH_BOW = new ExItemStack(Material.BOW,
       "§6Punch-Bow")
       .unbreakable()
-      .addEnchantments(new Tuple<>(Enchantment.ARROW_KNOCKBACK, 5))
+      .addEnchantments(new Tuple<>(Enchantment.PUNCH, 5))
       .setDropable(false);
 
   private ItemStack[] armor;
@@ -132,7 +132,7 @@ public class BowRunUser extends GameUser {
         this.addPotionEffect(PotionEffectType.SPEED, 2);
       }
       if (map.isRunnerJump()) {
-        this.addPotionEffect(PotionEffectType.JUMP, 9);
+        this.addPotionEffect(PotionEffectType.JUMP_BOOST, 9);
       }
       if (map.isRunnerHover()) {
         this.setGravity(false);
@@ -253,7 +253,7 @@ public class BowRunUser extends GameUser {
           this.addPotionEffect(PotionEffectType.SPEED, 1);
         }
         if (map.isRunnerJump()) {
-          this.addPotionEffect(PotionEffectType.JUMP, 9);
+          this.addPotionEffect(PotionEffectType.JUMP_BOOST, 9);
         }
       }, 5, GameBowRun.getPlugin());
 

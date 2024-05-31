@@ -67,13 +67,13 @@ public class RelayManager implements Listener {
 
   @EventHandler
   public void onEntityRemove(EntityRemoveFromWorldEvent e) {
-    if (!e.getEntityType().equals(EntityType.DROPPED_ITEM)) {
+    if (!e.getEntityType().equals(EntityType.ITEM)) {
       return;
     }
 
     Item item = (Item) e.getEntity();
 
-    if (item.getItemStack() == null || item.getItemStack().getType().equals(Material.AIR)) {
+    if (item.getItemStack().getType().equals(Material.AIR)) {
       return;
     }
 
@@ -108,7 +108,7 @@ public class RelayManager implements Listener {
     }
 
     ExItemStack customRelay = RELAY.cloneWithId()
-        .addExEnchantment(Enchantment.DAMAGE_ALL, this.counter).hideAll();
+        .addExEnchantment(Enchantment.SHARPNESS, this.counter).hideAll();
 
     user.addItem(customRelay);
     this.relays++;

@@ -26,9 +26,9 @@ public class BowRunServer extends LoungeBridgeServer {
 
   public static final List<ExItemStack> RUNNER_ITEMS = List.of(
       ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 2, "§6Heal II",
-          PotionEffectType.HEAL, 0, 2),
+          PotionEffectType.INSTANT_HEALTH, 0, 2),
       ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Jump II  (7 s)",
-          PotionEffectType.JUMP, 20 * 7, 2),
+          PotionEffectType.JUMP_BOOST, 20 * 7, 2),
       ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Slow Fall (20 s)",
           PotionEffectType.SLOW_FALLING, 20 * 20, 1),
       ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Speed II (30 s)",
@@ -38,7 +38,7 @@ public class BowRunServer extends LoungeBridgeServer {
       ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Fire Resistance (45 s)",
           PotionEffectType.FIRE_RESISTANCE, 20 * 45, 1),
       ExItemStack.getPotion(ExItemStack.PotionMaterial.SPLASH, 1, "§6Resistance (1 min)",
-          PotionEffectType.DAMAGE_RESISTANCE, 20 * 60, 1),
+          PotionEffectType.RESISTANCE, 20 * 60, 1),
       new ExItemStack(Material.GOLDEN_APPLE, 2),
       new ExItemStack(Material.SHIELD).setDamage(300),
       new ExItemStack(Material.TOTEM_OF_UNDYING),
@@ -46,11 +46,11 @@ public class BowRunServer extends LoungeBridgeServer {
 
   public static final List<ExItemStack> ARCHER_ITEMS = List.of(
       new ExItemStack(Material.BOW, "§6Flame-Bow").setDamage(380)
-          .addEnchantments(new Tuple<>(Enchantment.ARROW_FIRE, 1)),
+          .addEnchantments(new Tuple<>(Enchantment.FLAME, 1)),
       new ExItemStack(Material.BOW, "§6Power-Bow").setDamage(384)
-          .addEnchantments(new Tuple<>(Enchantment.ARROW_DAMAGE, 7)),
+          .addEnchantments(new Tuple<>(Enchantment.POWER, 7)),
       new ExItemStack(Material.BOW, "§6Punch-Bow").setDamage(382)
-          .addEnchantments(new Tuple<>(Enchantment.ARROW_KNOCKBACK, 2)),
+          .addEnchantments(new Tuple<>(Enchantment.PUNCH, 2)),
       new ExItemStack(Material.SPECTRAL_ARROW, 32, "§6Spectral-Arrow"));
 
   public static final Instrument TIME_INSTRUMENT = Instrument.PLING;

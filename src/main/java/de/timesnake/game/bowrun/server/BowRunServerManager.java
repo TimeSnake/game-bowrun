@@ -105,11 +105,11 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     Color color = this.getGame().getRunnerTeam().getColor();
     BowRunServer.armor = List.of(
         new ExItemStack(Material.GOLDEN_BOOTS).addExEnchantment(
-            Enchantment.PROTECTION_PROJECTILE, 1),
+            Enchantment.PROJECTILE_PROTECTION, 1),
         new ExItemStack(Material.GOLDEN_LEGGINGS).addExEnchantment(
-            Enchantment.PROTECTION_PROJECTILE, 1),
+            Enchantment.PROJECTILE_PROTECTION, 1),
         new ExItemStack(Material.GOLDEN_CHESTPLATE).addExEnchantment(
-            Enchantment.PROTECTION_PROJECTILE, 1),
+            Enchantment.PROJECTILE_PROTECTION, 1),
         ExItemStack.getLeatherArmor(Material.LEATHER_HELMET, color));
 
     this.timerTool = new MapTimerTool() {
