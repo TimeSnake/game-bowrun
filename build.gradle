@@ -1,3 +1,5 @@
+import io.papermc.paperweight.userdev.ReobfArtifactConfiguration
+
 plugins {
   id 'java'
   id 'java-base'
@@ -10,7 +12,7 @@ plugins {
 
 
 group = "de.timesnake"
-version = '1.4.0'
+version = '2.0.0'
 var projectId = 25
 
 repositories {
@@ -30,26 +32,26 @@ repositories {
 }
 
 dependencies {
-  compileOnly "de.timesnake:basic-loungebridge:1.+"
-  compileOnly "de.timesnake:basic-game:1.+"
-  compileOnly "de.timesnake:basic-bukkit:3.+"
+  compileOnly "de.timesnake:basic-loungebridge:2.+"
+  compileOnly "de.timesnake:basic-game:2.+"
+  compileOnly "de.timesnake:basic-bukkit:4.+"
 
-  compileOnly "de.timesnake:database-bukkit:2.+"
-  compileOnly "de.timesnake:database-api:2.+"
+  compileOnly "de.timesnake:database-bukkit:3.+"
+  compileOnly "de.timesnake:database-api:3.+"
 
-  compileOnly "de.timesnake:channel-bukkit:4.+"
-  compileOnly "de.timesnake:channel-api:4.+"
+  compileOnly "de.timesnake:channel-bukkit:5.+"
+  compileOnly "de.timesnake:channel-api:5.+"
 
-  compileOnly "de.timesnake:library-game:1.+"
+  compileOnly "de.timesnake:library-game:2.+"
 
-  compileOnly "de.timesnake:library-packets:2.+"
+  compileOnly "de.timesnake:library-packets:3.+"
 
-  compileOnly "de.timesnake:library-commands:1.+"
-  compileOnly "de.timesnake:library-permissions:1.+"
-  compileOnly "de.timesnake:library-basic:1.+"
-  compileOnly "de.timesnake:library-chat:1.+"
+  compileOnly "de.timesnake:library-commands:2.+"
+  compileOnly "de.timesnake:library-permissions:2.+"
+  compileOnly "de.timesnake:library-basic:2.+"
+  compileOnly "de.timesnake:library-chat:2.+"
 
-  paperweight.paperDevBundle("1.20.1-R0.1-SNAPSHOT")
+  paperweight.paperDevBundle("1.21-R0.1-SNAPSHOT")
 }
 
 configurations.configureEach {
@@ -73,34 +75,6 @@ configurations.configureEach {
       substitute module("de.timesnake:library-commands") using project(":library-commands")
       substitute module("de.timesnake:library-basic") using project(":library-basic")
       substitute module("de.timesnake:library-chat") using project(":library-chat")
-    }
-  }
-}
-
-tasks {
-  jar {
-    dependsOn(reobfJar)
-  }
-
-  compileJava {
-    options.encoding = "UTF-8"
-    options.release.set(17)
-  }
-
-  javadoc {
-    options.encoding = "UTF-8"
-  }
-
-  processResources {
-    filteringCharset = "UTF-8"
-    def props = [
-        "name"      : archivesBaseName,
-        "version"   : project.version,
-        "apiVersion": "1.20.1"
-    ]
-    inputs.properties(props)
-    filesMatching("plugin.yml") {
-      expand(props)
     }
   }
 }
@@ -129,16 +103,22 @@ publishing {
   publications {
     mavenJava(MavenPublication) {
       from components.java
-
-      artifact "$buildDir/libs/${archivesBaseName}-${project.version}.jar"
     }
   }
 }
 
-tasks.withType(JavaCompile).configureEach {
-  options.encoding = 'UTF-8'
+tasks {
+  compileJava {
+    options.encoding = "UTF-8"
+    options.release = 21
+  }
 }
 
 java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
   withSourcesJar()
 }
+
+paperweight.reobfArtifactConfiguration = ReobfArtifactConfiguration.getMOJANG_PRODUCTION()
