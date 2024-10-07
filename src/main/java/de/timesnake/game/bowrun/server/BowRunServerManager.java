@@ -366,7 +366,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
   @Override
   public void onGameUserRejoin(GameUser user) {
-    user.joinGame();
+    user.onGameJoin();
     ((BowRunUser) user).startGame();
   }
 
