@@ -314,7 +314,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         continue;
       }
 
-      if (gameUser.getBowShots().equals(0)) {
+      if (gameUser.getBowShots() == 0) {
         stats.add(gameUser.getName() + ": " + gameUser.getTeam().getName() + " "
             + gameUser.getDeaths() + " " + gameUser.getKills() + " " + gameUser.getBowHits() + " "
             + gameUser.getBowShots() + " " + gameUser.getBowHitTarget() + " " + (gameUser.getBowHitTarget()));
@@ -490,17 +490,17 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
       if (user.getTeam().equals(this.getGame().getRunnerTeam())) {
         if ((this.winType.equals(BowRunServer.WinType.RUNNER_FINISH)
             || this.winType.equals(BowRunServer.WinType.RUNNER))) {
-          user.getStat(BowRunServer.RUNNER_WINS).increaseAll(1);
+          user.getStat(BowRunServer.RUNNER_WINS).increaseAllBy(1);
         }
-        user.getStat(BowRunServer.DEATHS).increaseAll(user.getDeaths());
+        user.getStat(BowRunServer.DEATHS).increaseAllBy(user.getDeaths());
       } else if (user.getTeam().equals(this.getGame().getArcherTeam())) {
         if (this.winType.equals(BowRunServer.WinType.ARCHER_TIME)
             || this.winType.equals(BowRunServer.WinType.ARCHER)) {
-          user.getStat(BowRunServer.ARCHER_WINS).increaseAll(1);
+          user.getStat(BowRunServer.ARCHER_WINS).increaseAllBy(1);
         }
-        user.getStat(BowRunServer.KILLS).increaseAll(user.getKills());
+        user.getStat(BowRunServer.KILLS).increaseAllBy(user.getKills());
 
-        user.getStat(BowRunServer.LONGEST_SHOT).higherAll(user.getLongestShot());
+        user.getStat(BowRunServer.LONGEST_SHOT).updateAllToMax(user.getLongestShot());
       }
 
       for (StatPeriod period : StatPeriod.values()) {
@@ -513,7 +513,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
     }
 
     if (user.getTeam().equals(this.getGame().getArcherTeam())) {
-      user.getStat(BowRunServer.MOST_KILLS_PER_MATCH).higherAll(user.getKills());
+      user.getStat(BowRunServer.MOST_KILLS_PER_MATCH).updateAllToMax(user.getKills());
     }
 
   }

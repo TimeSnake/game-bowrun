@@ -70,7 +70,7 @@ public class BowRunUser extends GameUser {
   }
 
   @Override
-  public void setDeaths(Integer deaths) {
+  public void setDeaths(int deaths) {
     super.setDeaths(deaths);
     this.setScoreboardKillDeathScore();
   }
