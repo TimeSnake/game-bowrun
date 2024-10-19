@@ -45,13 +45,13 @@ public class BowRunServer extends LoungeBridgeServer {
       new ExItemStack(Material.CHORUS_FRUIT, 5));
 
   public static final List<ExItemStack> ARCHER_ITEMS = List.of(
-      new ExItemStack(Material.BOW, "§6Flame-Bow").setDamage(380)
+      new ExItemStack(Material.BOW).setDisplayName("§6Flame-Bow").setDamage(380)
           .addEnchantments(new Tuple<>(Enchantment.FLAME, 1)),
-      new ExItemStack(Material.BOW, "§6Power-Bow").setDamage(384)
+      new ExItemStack(Material.BOW).setDisplayName("§6Power-Bow").setDamage(384)
           .addEnchantments(new Tuple<>(Enchantment.POWER, 7)),
-      new ExItemStack(Material.BOW, "§6Punch-Bow").setDamage(382)
+      new ExItemStack(Material.BOW).setDisplayName("§6Punch-Bow").setDamage(382)
           .addEnchantments(new Tuple<>(Enchantment.PUNCH, 2)),
-      new ExItemStack(Material.SPECTRAL_ARROW, 32, "§6Spectral-Arrow"));
+      new ExItemStack(Material.SPECTRAL_ARROW, 32).setDisplayName("§6Spectral-Arrow"));
 
   public static final Instrument TIME_INSTRUMENT = Instrument.PLING;
   public static final Note TIME_NOTE = Note.natural(1, Note.Tone.A);
