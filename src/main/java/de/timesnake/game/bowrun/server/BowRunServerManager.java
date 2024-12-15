@@ -202,15 +202,6 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         runnerArmor = List.of(false, false, true, true);
       }
     }
-
-    for (User user : Server.getInGameUsers()) {
-      ((BowRunUser) user).startGame();
-    }
-
-    int period = (int) (BowRunServer.ARROW_GENERATION_PERIOD +
-        Math.sqrt(BowRunServer.ARROW_GENERATION_PLAYER_MULTIPLIER *
-            BowRunServer.getGame().getArcherTeam().getInGameUsers().size()));
-    this.arrowGenerator.setPeriod(period);
   }
 
   @Override
@@ -367,7 +358,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   @Override
   public void onGameUserRejoin(GameUser user) {
     user.onGameJoin();
-    ((BowRunUser) user).startGame();
+    user.onGameStart();
   }
 
   @Override
@@ -528,18 +519,20 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   public static class ArrowGenerator implements GameTool, StartableTool, StopableTool {
 
     private BukkitTask task;
-    private int periodInTicks;
 
     @Override
     public void start() {
+      int periodInTicks = (int) (BowRunServer.ARROW_GENERATION_PERIOD +
+                                 Math.sqrt(BowRunServer.ARROW_GENERATION_PLAYER_MULTIPLIER *
+                                           BowRunServer.getGame().getArcherTeam().getInGameUsers().size()));
+
       this.task = Server.runTaskTimerSynchrony(() -> {
         if (BowRunServer.getMap() != null) {
           for (TeamUser user : BowRunServer.getGame().getArcherTeam().getInGameUsers()) {
-            int delta = user.containsAtLeast(BowRunUser.ARROW, BowRunServer.MAX_ARROWS,
-                true);
+            int delta = user.containsAtLeast(BowRunUser.ARROW, BowRunServer.MAX_ARROWS, true);
             if (delta < 0) {
-              user.addItem(BowRunUser.ARROW.cloneWithId().asQuantity(
-                  Math.min(BowRunServer.RESPAWN_ARROW_AMOUNT, -delta)));
+              user.addItem(BowRunUser.ARROW.cloneWithId().asQuantity(Math.min(BowRunServer.RESPAWN_ARROW_AMOUNT,
+                  -delta)));
             }
           }
         }
@@ -551,10 +544,6 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
       if (this.task != null) {
         this.task.cancel();
       }
-    }
-
-    public void setPeriod(int period) {
-      this.periodInTicks = period;
     }
   }
 }
