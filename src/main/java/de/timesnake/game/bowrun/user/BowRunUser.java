@@ -60,7 +60,6 @@ public class BowRunUser extends GameUser {
 
   public BowRunUser(Player player) {
     super(player);
-    this.setBossBar(BowRunServer.getTimeBar());
   }
 
   @Override
@@ -117,9 +116,11 @@ public class BowRunUser extends GameUser {
     this.teleportToTeamSpawn();
     this.setGameEquipment();
     this.loadGameSideboard();
+    this.setBossBar(BowRunServer.getTimeBar());
   }
 
-  public void startGame() {
+  @Override
+  public void onGameStart() {
     BowRunMap map = BowRunServer.getMap();
     if (this.getTeam() != null && this.getTeam()
         .equals(BowRunServer.getGame().getRunnerTeam())) {
