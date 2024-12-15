@@ -88,8 +88,6 @@ public class BowRunUser extends GameUser {
   public void onGameJoin() {
     super.onGameJoin();
 
-    this.setDefault();
-
     BowRunMap map = BowRunServer.getMap();
 
     this.setGravity(true);
