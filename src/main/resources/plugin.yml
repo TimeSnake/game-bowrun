@@ -1,5 +1,5 @@
 main: de.timesnake.game.bowrun.main.GameBowRun
-version: 1.4.0
+version: ${version}
 name: game-bowrun
 author: timesnake
 depend: [ basic-lounge-bridge ]
