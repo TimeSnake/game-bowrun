@@ -13,9 +13,11 @@ import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.game.bowrun.server.BowRunMap;
 import de.timesnake.game.bowrun.server.BowRunServer;
 import de.timesnake.library.basic.util.Tuple;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -53,6 +55,24 @@ public class BowRunUser extends GameUser {
       .unbreakable()
       .addEnchantments(new Tuple<>(Enchantment.PUNCH, 5))
       .setDropable(false);
+
+  public static final ExItemStack BOOTS = new ExItemStack(Material.GOLDEN_BOOTS)
+      .addExEnchantment(Enchantment.PROJECTILE_PROTECTION, 1)
+      .setSlot(EquipmentSlot.FEET);
+
+  public static final ExItemStack LEGGINGS = new ExItemStack(Material.GOLDEN_LEGGINGS)
+      .addExEnchantment(Enchantment.PROJECTILE_PROTECTION, 1)
+      .setSlot(EquipmentSlot.LEGS);
+
+  public static final ExItemStack CHESTPLATE = new ExItemStack(Material.GOLDEN_CHESTPLATE)
+      .addExEnchantment(Enchantment.PROJECTILE_PROTECTION, 1)
+      .setSlot(EquipmentSlot.CHEST);
+
+  public static final ExItemStack RUNNER_HELMET = ExItemStack.getLeatherArmor(Material.LEATHER_HELMET, Color.BLUE)
+      .setSlot(EquipmentSlot.HEAD);
+
+  public static final ExItemStack ARCHER_HELMET = ExItemStack.getLeatherArmor(Material.LEATHER_HELMET, Color.RED)
+      .setSlot(EquipmentSlot.HEAD);
 
   private ItemStack[] armor;
 
@@ -119,14 +139,13 @@ public class BowRunUser extends GameUser {
 
   @Override
   public void onGameStart() {
-    BowRunMap map = BowRunServer.getMap();
-    if (this.getTeam() != null && this.getTeam()
-        .equals(BowRunServer.getGame().getRunnerTeam())) {
-      this.setWalkSpeed((float) 0.2);
-      this.setFlySpeed((float) 0.2);
+    super.onGameStart();
+
+    if (this.getTeam() != null && this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
       this.unlockLocation();
       this.setInvulnerable(false);
 
+      BowRunMap map = BowRunServer.getMap();
       if (map.isRunnerSpeed()) {
         this.addPotionEffect(PotionEffectType.SPEED, 2);
       }
@@ -148,10 +167,6 @@ public class BowRunUser extends GameUser {
 
   @Override
   public @Nullable ExLocation getRespawnLocation() {
-    this.clearInventory();
-    this.setRespawnEquipment();
-    this.setAbsorptionAmount(0);
-
     if (this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
       int random = (int) (Math.random() * ((BowRunMap) LoungeBridgeServer.getMap()).getRunnerSpawns().size());
       return ((BowRunMap) LoungeBridgeServer.getMap()).getRunnerSpawns().get(random);
@@ -163,19 +178,33 @@ public class BowRunUser extends GameUser {
     return null;
   }
 
+  @Override
+  public void onGameRespawn() {
+    super.onGameRespawn();
+
+    this.clearInventory();
+    this.setRespawnEquipment();
+    this.setAbsorptionAmount(0);
+  }
+
   private void setArmor() {
+    this.setItem(RUNNER_HELMET);
+
+    if (!BowRunServer.getMap().isRunnerArmor()) {
+      return;
+    }
+
     if (BowRunServer.getRunnerArmor().get(0)) {
-      this.getInventory().setBoots(BowRunServer.armor.get(0));
+      this.setItem(BOOTS);
     }
     if (BowRunServer.getRunnerArmor().get(1)) {
-      this.getInventory().setLeggings(BowRunServer.armor.get(1));
+      this.setItem(CHESTPLATE);
     }
     if (BowRunServer.getRunnerArmor().get(2)) {
-      this.getInventory().setChestplate(BowRunServer.armor.get(2));
+      this.setItem(LEGGINGS);
     }
-    if (BowRunServer.getRunnerArmor().get(3)) {
-      this.getInventory().setHelmet(BowRunServer.armor.get(3));
-    }
+
+    this.updateInventory();
   }
 
   @Override
@@ -211,8 +240,7 @@ public class BowRunUser extends GameUser {
     } else if (this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
       this.addItem(FOOD);
       this.setItem(DEATH);
-      this.getInventory().setHelmet(ExItemStack.getLeatherArmor(Material.LEATHER_HELMET,
-          BowRunServer.getGame().getRunnerTeam().getColor()));
+      this.setItem(RUNNER_HELMET);
     }
   }
 
@@ -232,9 +260,6 @@ public class BowRunUser extends GameUser {
     if (this.getTeam().equals(BowRunServer.getGame().getRunnerTeam())) {
       this.addItem(FOOD);
       this.setItem(DEATH);
-      this.getInventory().setHelmet(ExItemStack.getLeatherArmor(Material.LEATHER_HELMET,
-          BowRunServer.getGame().getRunnerTeam().getColor()));
-
       this.setArmor();
 
       if (!this.suicided) {
@@ -275,8 +300,7 @@ public class BowRunUser extends GameUser {
       this.setItem(1, BOW);
     }
     this.setItem(8, ARROW.cloneWithId().asQuantity(BowRunServer.MAX_ARROWS));
-    this.getInventory().setHelmet(ExItemStack.getLeatherArmor(Material.LEATHER_HELMET,
-        BowRunServer.getGame().getArcherTeam().getColor()));
+    this.setItem(ARCHER_HELMET);
   }
 
   public void setScoreboardKillDeathScore() {

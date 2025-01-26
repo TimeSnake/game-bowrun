@@ -148,7 +148,6 @@ public class BowRunServer extends LoungeBridgeServer {
   }
 
   private static final BowRunServerManager server = BowRunServerManager.getInstance();
-  public static List<ExItemStack> armor;
 
   public enum WinType {
     RUNNER_FINISH(BowRunServer.getGame().getRunnerTeam()),
