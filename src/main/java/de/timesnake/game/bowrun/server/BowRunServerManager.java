@@ -37,12 +37,9 @@ import de.timesnake.library.chat.Chat;
 import net.kyori.adventure.text.Component;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.Color;
-import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -71,7 +68,6 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   private List<Boolean> runnerArmor;
   private UserManager userManager;
   private RelayManager relayManager;
-  private ArrowGenerator arrowGenerator;
   private BowRunServer.WinType winType;
   private BowRunUser finisher;
 
@@ -101,16 +97,6 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
             .addLine(LineId.MAP));
 
     this.timeBar = Server.createBossBar("", BarColor.YELLOW, BarStyle.SOLID);
-
-    Color color = this.getGame().getRunnerTeam().getColor();
-    BowRunServer.armor = List.of(
-        new ExItemStack(Material.GOLDEN_BOOTS).addExEnchantment(
-            Enchantment.PROJECTILE_PROTECTION, 1),
-        new ExItemStack(Material.GOLDEN_LEGGINGS).addExEnchantment(
-            Enchantment.PROJECTILE_PROTECTION, 1),
-        new ExItemStack(Material.GOLDEN_CHESTPLATE).addExEnchantment(
-            Enchantment.PROJECTILE_PROTECTION, 1),
-        ExItemStack.getLeatherArmor(Material.LEATHER_HELMET, color));
 
     this.timerTool = new MapTimerTool() {
       @Override
@@ -150,8 +136,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
     this.updateGameTimeOnSideboard();
 
-    this.arrowGenerator = new ArrowGenerator();
-    super.getToolManager().add(this.arrowGenerator);
+    super.getToolManager().add(new ArrowGenerator());
   }
 
   @Override
@@ -187,7 +172,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   }
 
   @Override
-  public void onGameStart() {
+  public void onBeforeGameStart() {
     runnerArmor = List.of(false, false, false, false);
     if (BowRunServer.getMap().isRunnerArmor()) {
       int runnerSize = this.getGame().getRunnerTeam().getUsers().size();
@@ -205,6 +190,11 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   }
 
   @Override
+  public void onGameStart() {
+
+  }
+
+  @Override
   public BowRunGame getGame() {
     return super.getGame();
   }
@@ -213,7 +203,6 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   public BowRunMap getMap() {
     return (BowRunMap) super.getMap();
   }
-
 
   public void stopGame(BowRunServer.WinType winType, BowRunUser finisher) {
     this.winType = winType;
