@@ -11,10 +11,10 @@ import de.timesnake.basic.bukkit.util.chat.cmd.Completion;
 import de.timesnake.basic.bukkit.util.chat.cmd.Sender;
 import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.loungebridge.util.user.GameUser;
-import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.library.chat.Code;
 import de.timesnake.library.chat.ExTextColor;
+import de.timesnake.library.chat.Plugin;
 import de.timesnake.library.commands.PluginCommand;
 import de.timesnake.library.commands.simple.Arguments;
 import net.kyori.adventure.text.Component;
@@ -35,8 +35,8 @@ public class RecordVerification implements CommandListener {
 
   private boolean rejected;
 
-  private final Code verifyPerm = Plugin.BOWRUN.createPermssionCode("game.bowrun.verify");
-  private final Code rejectPerm = Plugin.BOWRUN.createPermssionCode("game.bowrun.reject");
+  private final Code verifyPerm = Plugin.GAME.createPermssionCode("game.bowrun.verify");
+  private final Code rejectPerm = Plugin.GAME.createPermssionCode("game.bowrun.reject");
 
   public void checkRecord(int time, User finisher, BowRunMap map) {
     this.time = time;
@@ -79,7 +79,7 @@ public class RecordVerification implements CommandListener {
         continue;
       }
 
-      user.sendClickablePluginMessage(Plugin.BOWRUN,
+      user.sendClickablePluginMessage(Plugin.GAME,
           Component.text("Verify ", ExTextColor.GREEN, TextDecoration.BOLD)
               .append(Component.text("record, if it was legal", ExTextColor.WARNING, TextDecoration.BOLD)),
           "/bowrun_verify", Component.text("Click to verify"),
@@ -94,7 +94,7 @@ public class RecordVerification implements CommandListener {
         continue;
       }
 
-      user.sendClickablePluginMessage(Plugin.BOWRUN,
+      user.sendClickablePluginMessage(Plugin.GAME,
           Component.text("Reject record, if it was illegal", ExTextColor.WARNING, TextDecoration.BOLD),
           "/bowrun_reject", Component.text("Click to reject"),
           ClickEvent.Action.RUN_COMMAND);
@@ -108,7 +108,7 @@ public class RecordVerification implements CommandListener {
             continue;
           }
 
-          user.sendPluginMessage(Plugin.BOWRUN,
+          user.sendPluginMessage(Plugin.GAME,
               Component.text("Saved verified record", ExTextColor.WARNING));
         }
       } else {
@@ -117,7 +117,7 @@ public class RecordVerification implements CommandListener {
             continue;
           }
 
-          user.sendPluginMessage(Plugin.BOWRUN,
+          user.sendPluginMessage(Plugin.GAME,
               Component.text("Discarded unverified record", ExTextColor.WARNING));
         }
       }

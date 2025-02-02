@@ -26,7 +26,6 @@ import de.timesnake.basic.loungebridge.util.user.GameUser;
 import de.timesnake.database.util.Database;
 import de.timesnake.database.util.game.DbGame;
 import de.timesnake.database.util.game.DbTmpGame;
-import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.game.bowrun.user.BowRunUser;
 import de.timesnake.game.bowrun.user.UserManager;
@@ -147,11 +146,6 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   @Override
   protected BowRunGame loadGame(DbGame dbGame, boolean loadWorlds) {
     return new BowRunGame((DbTmpGame) dbGame, true);
-  }
-
-  @Override
-  public de.timesnake.library.chat.Plugin getGamePlugin() {
-    return Plugin.BOWRUN;
   }
 
   @Override

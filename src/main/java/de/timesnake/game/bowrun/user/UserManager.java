@@ -16,13 +16,13 @@ import de.timesnake.basic.bukkit.util.user.inventory.ExItemStack;
 import de.timesnake.basic.bukkit.util.user.inventory.UserInventoryInteractEvent;
 import de.timesnake.basic.bukkit.util.user.inventory.UserInventoryInteractListener;
 import de.timesnake.basic.game.util.user.TeamUser;
-import de.timesnake.game.bowrun.chat.Plugin;
 import de.timesnake.game.bowrun.main.GameBowRun;
 import de.timesnake.game.bowrun.server.BowRunServer;
 import de.timesnake.game.bowrun.server.BowRunServerManager;
 import de.timesnake.game.bowrun.server.RelayManager;
 import de.timesnake.library.basic.util.Status;
 import de.timesnake.library.basic.util.Tuple;
+import de.timesnake.library.chat.Plugin;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -248,7 +248,7 @@ public class UserManager implements Listener, UserInventoryInteractListener {
         }
         user.kill();
       } else {
-        user.sendPluginTDMessage(Plugin.BOWRUN, "§sLeft click, to kill yourself");
+        user.sendPluginTDMessage(Plugin.GAME, "§sLeft click, to kill yourself");
       }
     }
     e.setCancelled(true);
