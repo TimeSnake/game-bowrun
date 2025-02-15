@@ -8,9 +8,9 @@ import de.timesnake.basic.bukkit.util.Server;
 import de.timesnake.basic.bukkit.util.ServerManager;
 import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.bukkit.util.user.inventory.ExItemStack;
-import de.timesnake.basic.bukkit.util.user.scoreboard.ExSideboard;
-import de.timesnake.basic.bukkit.util.user.scoreboard.ExSideboard.LineId;
 import de.timesnake.basic.bukkit.util.user.scoreboard.ExSideboardBuilder;
+import de.timesnake.basic.bukkit.util.user.scoreboard.KeyedSideboard;
+import de.timesnake.basic.bukkit.util.user.scoreboard.KeyedSideboard.LineId;
 import de.timesnake.basic.bukkit.util.user.scoreboard.Sideboard;
 import de.timesnake.basic.bukkit.util.world.ExLocation;
 import de.timesnake.basic.game.util.game.Team;
@@ -59,8 +59,8 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
   private final Logger logger = LogManager.getLogger("bowrun.server");
 
   private final RecordVerification recordVerification = new RecordVerification();
-  private ExSideboard sideboard;
-  private ExSideboard spectatorSideboard;
+  private KeyedSideboard sideboard;
+  private KeyedSideboard spectatorSideboard;
   private BossBar timeBar;
   private int runnerDeaths = 0;
   private TimerTool timerTool;
@@ -340,8 +340,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
   @Override
   public void onGameUserRejoin(GameUser user) {
-    user.onGameJoin();
-    user.onGameStart();
+    user.respawn();
   }
 
   @Override
