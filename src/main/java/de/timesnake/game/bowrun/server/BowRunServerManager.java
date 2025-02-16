@@ -8,9 +8,9 @@ import de.timesnake.basic.bukkit.util.Server;
 import de.timesnake.basic.bukkit.util.ServerManager;
 import de.timesnake.basic.bukkit.util.user.User;
 import de.timesnake.basic.bukkit.util.user.inventory.ExItemStack;
-import de.timesnake.basic.bukkit.util.user.scoreboard.ExSideboardBuilder;
 import de.timesnake.basic.bukkit.util.user.scoreboard.KeyedSideboard;
 import de.timesnake.basic.bukkit.util.user.scoreboard.KeyedSideboard.LineId;
+import de.timesnake.basic.bukkit.util.user.scoreboard.KeyedSideboardBuilder;
 import de.timesnake.basic.bukkit.util.user.scoreboard.Sideboard;
 import de.timesnake.basic.bukkit.util.world.ExLocation;
 import de.timesnake.basic.game.util.game.Team;
@@ -80,7 +80,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
 
     this.relayManager = new RelayManager();
 
-    this.sideboard = Server.getScoreboardManager().registerExSideboard(new ExSideboardBuilder()
+    this.sideboard = Server.getScoreboardManager().registerExSideboard(new KeyedSideboardBuilder()
         .name("bowrun")
         .title("§6§lBowRun")
         .lineSpacer()
@@ -88,7 +88,7 @@ public class BowRunServerManager extends LoungeBridgeServerManager<BowRunGame> i
         .addLine(LineId.EMPTY));
 
     this.spectatorSideboard = Server.getScoreboardManager()
-        .registerExSideboard(new ExSideboardBuilder()
+        .registerExSideboard(new KeyedSideboardBuilder()
             .name("bowrunSpectator")
             .title("§6§lBowRun")
             .lineSpacer()
