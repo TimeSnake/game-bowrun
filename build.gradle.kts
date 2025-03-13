@@ -12,7 +12,7 @@ plugins {
 
 
 group = "de.timesnake"
-version = "2.0.0"
+version = "3.0.0"
 var projectId = 25
 
 repositories {
@@ -28,63 +28,29 @@ repositories {
     }
 }
 
+val pluginImplementation: Configuration by configurations.creating
+val pluginFile = layout.buildDirectory.file("libs/${project.name}-${project.version}-plugin.jar")
+val pluginArtifact = artifacts.add("pluginImplementation", pluginFile.get().asFile) {
+    builtBy("pluginJar")
+}
+
 dependencies {
-    compileOnly("de.timesnake:basic-loungebridge:2.+")
-    compileOnly("de.timesnake:basic-game:2.+")
-    compileOnly("de.timesnake:basic-bukkit:4.+")
-
-    compileOnly("de.timesnake:database-bukkit:4.+")
-    compileOnly("de.timesnake:database-api:4.+")
-
-    compileOnly("de.timesnake:channel-bukkit:5.+")
-    compileOnly("de.timesnake:channel-api:5.+")
-
-    compileOnly("de.timesnake:library-game:2.+")
-
-    compileOnly("de.timesnake:library-packets:3.+")
-
-    compileOnly("de.timesnake:library-commands:2.+")
-    compileOnly("de.timesnake:library-permissions:2.+")
-    compileOnly("de.timesnake:library-basic:2.+")
-    compileOnly("de.timesnake:library-chat:2.+")
+    api("de.timesnake:basic-loungebridge:3.+")
 
     paperweight.paperDevBundle("1.21-R0.1-SNAPSHOT")
 }
 
-configurations.configureEach {
-    resolutionStrategy.dependencySubstitution {
-        if (project.parent != null) {
-            substitute(module("de.timesnake:basic-loungebridge")).using(project(":cores:basic-loungebridge"))
-            substitute(module("de.timesnake:basic-bukkit")).using(project(":cores:basic-bukkit"))
-            substitute(module("de.timesnake:basic-game")).using(project(":cores:basic-game"))
-
-            substitute(module("de.timesnake:database-bukkit")).using(project(":database:database-bukkit"))
-            substitute(module("de.timesnake:database-api")).using(project(":database:database-api"))
-
-            substitute(module("de.timesnake:channel-bukkit")).using(project(":channel:channel-bukkit"))
-            substitute(module("de.timesnake:channel-api")).using(project(":channel:channel-api"))
-
-            substitute(module("de.timesnake:library-game")).using(project(":libraries:library-game"))
-
-            substitute(module("de.timesnake:library-packets")).using(project(":libraries-mc:library-packets"))
-
-            substitute(module("de.timesnake:library-permissions")).using(project(":libraries:library-permissions"))
-            substitute(module("de.timesnake:library-commands")).using(project(":libraries:library-commands"))
-            substitute(module("de.timesnake:library-basic")).using(project(":libraries:library-basic"))
-            substitute(module("de.timesnake:library-chat")).using(project(":libraries:library-chat"))
+configurations.all {
+    resolutionStrategy.dependencySubstitution.all {
+        requested.let {
+            if (it is ModuleComponentSelector && it.group == "de.timesnake") {
+                val targetProject = findProject(":${it.module}")
+                if (targetProject != null) {
+                    useTarget(targetProject)
+                }
+            }
         }
     }
-}
-
-tasks.register<Copy>("exportAsPlugin") {
-    from(layout.buildDirectory.file("libs/${project.name}-${project.version}-all.jar"))
-    into(findProperty("timesnakePluginDir") ?: "")
-
-    dependsOn("shadowJar")
-}
-
-tasks.withType<PublishToMavenRepository> {
-    dependsOn("shadowJar")
 }
 
 publishing {
@@ -98,9 +64,30 @@ publishing {
 
     publications {
         create<MavenPublication>("maven") {
-            from(components["java"])
+            artifacts {
+                from(components["java"])
+                artifact(pluginArtifact)
+            }
         }
     }
+}
+
+tasks.register<Jar>("pluginJar") {
+    from(pluginImplementation.map { if (it.isDirectory) it else zipTree(it) })
+    with(tasks.jar.get() as CopySpec)
+    archiveClassifier = "plugin"
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    dependsOn("shadowJar", "assemble")
+}
+
+tasks.register<Copy>("exportPluginJar") {
+    from(pluginFile)
+    into(findProperty("timesnakePluginDir") ?: "")
+    dependsOn("pluginJar")
+}
+
+tasks.withType<PublishToMavenRepository> {
+    dependsOn("shadowJar", "pluginJar")
 }
 
 tasks {
