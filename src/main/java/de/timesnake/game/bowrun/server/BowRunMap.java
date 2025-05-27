@@ -6,6 +6,7 @@ package de.timesnake.game.bowrun.server;
 
 import de.timesnake.basic.bukkit.util.world.ExLocation;
 import de.timesnake.basic.bukkit.util.world.ExWorld;
+import de.timesnake.basic.bukkit.util.world.ExWorldOption;
 import de.timesnake.basic.game.util.game.Map;
 import de.timesnake.basic.loungebridge.util.game.ResetableMap;
 import de.timesnake.basic.loungebridge.util.tool.Timeable;
@@ -77,17 +78,17 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
 
     ExWorld world = this.getWorld();
     if (world != null) {
-      world.restrict(ExWorld.Restriction.BLOCK_PLACE, true);
-      world.restrict(ExWorld.Restriction.FIRE_SPREAD_SPEED, 0f);
-      world.restrict(ExWorld.Restriction.BLOCK_BREAK, true);
-      world.restrict(ExWorld.Restriction.ENTITY_EXPLODE, true);
-      world.restrict(ExWorld.Restriction.BLOCK_BURN_UP, true);
-      world.restrict(ExWorld.Restriction.LIGHT_UP_INTERACTION, false);
-      world.restrict(ExWorld.Restriction.FLUID_COLLECT, true);
-      world.restrict(ExWorld.Restriction.FLUID_PLACE, true);
-      world.restrict(ExWorld.Restriction.FLINT_AND_STEEL, true);
-      world.restrict(ExWorld.Restriction.CRAFTING, true);
-      world.restrict(ExWorld.Restriction.OPEN_INVENTORIES, List.of(Material.DROPPER, Material.HOPPER,
+      world.setOption(ExWorldOption.ALLOW_BLOCK_PLACE, false);
+      world.setOption(ExWorldOption.ALLOW_BLOCK_BREAK, false);
+      world.setOption(ExWorldOption.FIRE_SPREAD_SPEED, 0f);
+      world.setOption(ExWorldOption.ENABLE_ENTITY_EXPLOSION, false);
+      world.setOption(ExWorldOption.BLOCK_BURN_UP, false);
+      world.setOption(ExWorldOption.ALLOW_LIGHT_UP_INTERACTION, true);
+      world.setOption(ExWorldOption.ALLOW_FLUID_COLLECT, false);
+      world.setOption(ExWorldOption.ALLOW_FLUID_PLACE, false);
+      world.setOption(ExWorldOption.ALLOW_FLINT_AND_STEEL, false);
+      world.setOption(ExWorldOption.ALLOW_CRAFTING, false);
+      world.setOption(ExWorldOption.FORBIDDEN_BLOCK_INVENTORIES, List.of(Material.DROPPER, Material.HOPPER,
           Material.DISPENSER));
       world.setExceptService(true);
 
