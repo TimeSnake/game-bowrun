@@ -86,7 +86,7 @@ public class BowRunMap extends Map implements Timeable, ResetableMap {
       world.setOption(ExWorldOption.ALLOW_LIGHT_UP_INTERACTION, true);
       world.setOption(ExWorldOption.ALLOW_FLUID_COLLECT, false);
       world.setOption(ExWorldOption.ALLOW_FLUID_PLACE, false);
-      world.setOption(ExWorldOption.ALLOW_FLINT_AND_STEEL, false);
+      world.setOption(ExWorldOption.ALLOW_FLINT_AND_STEEL_AND_FIRE_CHARGE, false);
       world.setOption(ExWorldOption.ALLOW_CRAFTING, false);
       world.setOption(ExWorldOption.FORBIDDEN_BLOCK_INVENTORIES, List.of(Material.DROPPER, Material.HOPPER,
           Material.DISPENSER));
